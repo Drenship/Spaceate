@@ -59,13 +59,13 @@ function AdminProductsScreen() {
                         <p className="text-base text-gray-600" id="page-view">
                             Viewing 1 - 20 of 60
                         </p>
-                        <a className="ml-2 text-gray-600 border border-transparent rounded cursor-pointer">
+                        <a className="ml-2 text-gray-600 border border-transparent rounded cursor-pointer" onclick="pageView(false)">
                             <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chevron-left" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" />
                                 <polyline points="15 6 9 12 15 18" />
                             </svg>
                         </a>
-                        <a className="text-gray-600 border border-transparent rounded cursor-pointerfocus:outline-none">
+                        <a className="text-gray-600 border border-transparent rounded cursor-pointerfocus:outline-none" onclick="pageView(true)">
                             <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chevron-right" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" />
                                 <polyline points="9 6 15 12 9 18" />
@@ -132,7 +132,10 @@ function AdminProductsScreen() {
                             <td className="pr-8 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">More</td>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <TableProductLine checkAll={checkAll} />
+                        <TableProductLine checkAll={checkAll} />
+                    </tbody>
                 </table>
             </div>
 

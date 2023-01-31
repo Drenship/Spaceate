@@ -1,6 +1,4 @@
 import React, { useEffect, useReducer } from 'react';
-import Link from 'next/link';
-import axios from 'axios';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,9 +10,12 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
+import Link from 'next/link';
+import axios from 'axios';
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import { TypedChartComponent } from 'react-chartjs-2/dist/types';
 
-type OptionsChart = any
+type OptionsChart = TypedChartComponent<"bar">
 
 type SalesData = {
     _id: string,

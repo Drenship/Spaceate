@@ -1,6 +1,4 @@
 import React, { useEffect, useReducer } from 'react';
-import Link from 'next/link';
-import axios from 'axios';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,21 +10,27 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
+import Link from 'next/link';
+import axios from 'axios';
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
-
-type OptionsChart = any
 
 type SalesData = {
     _id: string,
-    totalSales: number
+    totalSales: Number
+}
+
+type ChartSalesData = {
+    label: String,
+    backgroundColor: String,
+    data: [number],
 }
 
 type Summary = {
     data: {
-        ordersCount: number,
-        productsCount: number,
-        usersCount: number,
-        ordersPrice: number,
+        ordersCount: Number,
+        productsCount: Number,
+        usersCount: Number,
+        ordersPrice: Number,
         salesData: SalesData[],
     },
     error: any
@@ -50,7 +54,7 @@ export const options = {
     },
 };
 
-function reducer(state: any, action: any) {
+function reducer(state, action) {
     switch (action.type) {
         case 'FETCH_REQUEST':
             return { ...state, loading: true, error: '' };
@@ -86,19 +90,15 @@ function AdminDashboardScreen() {
     }, []);
 
     const data = {
-        labels: summary.salesData.map((x: SalesData) => x._id), // 2022/01 2022/03
+        labels: summary.salesData.map((x) => x._id), // 2022/01 2022/03
         datasets: [
             {
                 label: 'Sales',
                 backgroundColor: 'rgba(162, 222, 208, 1)',
-                data: summary.salesData.map((x: SalesData) => x.totalSales),
+                data: summary.salesData.map((x) => x.totalSales),
             },
         ],
     };
-
-    const optionsChart: OptionsChart = {
-        legend: { display: true, position: 'right' },
-    }
 
 
     return (
@@ -136,7 +136,9 @@ function AdminDashboardScreen() {
                         </div>
                         <h2 className="text-xl">Sales Report</h2>
                         <Bar
-                            options={optionsChart}
+                            options={{
+                                legend: { display: true, position: 'right' },
+                            }}
                             data={data}
                         />
                     </div>
@@ -145,7 +147,6 @@ function AdminDashboardScreen() {
         </AdminscreenWrapper>
     );
 }
-
 
 AdminDashboardScreen.auth = { adminOnly: true };
 export default AdminDashboardScreen

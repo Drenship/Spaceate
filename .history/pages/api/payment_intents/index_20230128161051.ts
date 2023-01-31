@@ -6,7 +6,7 @@ import { formatAmountForStripe } from '@libs/utils/stripe-helpers';
 import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     // https://github.com/stripe/stripe-node#configuration
-    apiVersion: "2022-11-15" //'2020-03-02',
+    apiVersion: '2020-03-02',
 });
 
 export default async function handler(
@@ -30,7 +30,7 @@ export default async function handler(
 
             res.status(200).json(payment_intent);
         } catch (err) {
-            res.status(500).json({ statusCode: 500, message: err });
+            res.status(500).json({ statusCode: 500, message: err.message });
         }
     } else {
         res.setHeader('Allow', 'POST');

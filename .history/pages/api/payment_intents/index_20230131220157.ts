@@ -30,7 +30,7 @@ export default async function handler(
 
             res.status(200).json(payment_intent);
         } catch (err) {
-            res.status(500).json({ statusCode: 500, message: err });
+            res.status(500).json({ statusCode: 500, message: err.message });
         }
     } else {
         res.setHeader('Allow', 'POST');

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link'
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 import TableProductLine from '@components/tables/TableProductLine';
 
@@ -7,7 +8,7 @@ function AdminProductsScreen() {
     const [checkAll, setcheckAll] = useState(false);
 
     return (
-        <AdminscreenWrapper title="Products">
+        <AdminscreenWrapper title="Categorie">
             <h1 className='text-xl font-bold uppercase'>Products</h1>
 
             <div className="flex flex-col items-start justify-between w-full p-4 lg:flex-row lg:p-8 lg:items-stretch">
@@ -28,19 +29,6 @@ function AdminProductsScreen() {
                                 <circle cx={12} cy={12} r={3} />
                             </svg>
                         </a>
-                        <a className="p-2 mr-2 text-gray-600 bg-gray-100 border border-transparent rounded cursor-pointer hover:bg-gray-200 focus:outline-none focus:border-gray-800 focus:shadow-outline-gray" href="javascript: void(0)">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-bookmark" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <path d="M9 4h6a2 2 0 0 1 2 2v14l-5-3l-5 3v-14a2 2 0 0 1 2 -2" />
-                            </svg>
-                        </a>
-                        <a className="p-2 mr-2 text-gray-600 bg-gray-100 border border-transparent rounded cursor-pointer hover:bg-gray-200 focus:outline-none focus:border-gray-800 focus:shadow-outline-gray" href="javascript: void(0)">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-copy" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <rect x={8} y={8} width={12} height={12} rx={2} />
-                                <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
-                            </svg>
-                        </a>
                         <a className="p-2 text-red-500 bg-gray-100 border border-transparent rounded cursor-pointer hover:bg-gray-200 focus:outline-none focus:border-gray-800 focus:shadow-outline-gray" href="javascript: void(0)">
                             <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer icon icon-tabler icon-tabler-trash" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" />
@@ -53,48 +41,19 @@ function AdminProductsScreen() {
                         </a>
                     </div>
                 </div>
-                
+
                 <div className="flex flex-col items-start justify-end w-full lg:w-2/3 lg:flex-row lg:items-center">
-                    <div className="flex items-center py-3 border-gray-300 lg:border-l lg:border-r lg:py-0 lg:px-6">
-                        <p className="text-base text-gray-600" id="page-view">
-                            Viewing 1 - 20 of 60
-                        </p>
-                        <a className="ml-2 text-gray-600 border border-transparent rounded cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chevron-left" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <polyline points="15 6 9 12 15 18" />
-                            </svg>
-                        </a>
-                        <a className="text-gray-600 border border-transparent rounded cursor-pointerfocus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chevron-right" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <polyline points="9 6 15 12 9 18" />
-                            </svg>
-                        </a>
-                    </div>
-                    <div className="flex items-center pb-3 border-gray-300 lg:border-r lg:pb-0 lg:px-6">
-                        <div className="relative z-10 w-32">
-                            <div className="absolute inset-0 z-0 w-5 h-5 m-auto mr-2 text-gray-600 pointer-events-nonexl:mr-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer icon icon-tabler icon-tabler-chevron-down" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" />
-                                    <polyline points="6 9 12 15 18 9" />
-                                </svg>
-                            </div>
-                            <select aria-label="Selected tab" className="block w-full px-2 py-2 text-base text-gray-600 bg-transparent border border-transparent rounded appearance-none focus:outline-none focus:border-gray-800 focus:shadow-outline-gray form-select xl:px-3">
-                                <option>List View</option>
-                                <option>Grid View</option>
-                            </select>
-                        </div>
-                    </div>
                     <div className="flex items-center lg:ml-6">
-                        <button className="flex items-center h-8 px-5 text-sm text-indigo-700 transition duration-150 ease-in-out bg-gray-200 border border-transparent rounded focus:outline-none focus:border-gray-800 focus:shadow-outline-gray hover:bg-gray-300">Download All</button>
-                        <div className="flex items-center justify-center w-8 h-8 ml-4 text-white transition duration-150 ease-in-out bg-indigo-700 border border-transparent rounded cursor-pointer focus:outline-none focus:border-gray-800 focus:shadow-outline-gray hover:bg-indigo-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-plus" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <line x1={12} y1={5} x2={12} y2={19} />
-                                <line x1={5} y1={12} x2={19} y2={12} />
-                            </svg>
-                        </div>
+                        <Link href="/admin/categories/edit">
+                            <button className="flex items-center justify-center px-3 py-2 ml-4 text-white transition duration-150 ease-in-out bg-indigo-700 border border-transparent rounded cursor-pointer button-click-effect focus:outline-none hover:bg-indigo-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-plus" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" />
+                                    <line x1={12} y1={5} x2={12} y2={19} />
+                                    <line x1={5} y1={12} x2={19} y2={12} />
+                                </svg>
+                                <span className='text-normal'>Ajouter une categorie</span>
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -122,9 +81,7 @@ function AdminProductsScreen() {
                             </th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Nom</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Slug</th>
-                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">En stock</th>
-                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Total des ventes</th>
-                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Prix</th>
+                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Total sous-catégorie</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Date</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">
                                 <div className="w-2 h-2 bg-indigo-400 rounded-full opacity-0" />
@@ -132,7 +89,9 @@ function AdminProductsScreen() {
                             <td className="pr-8 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">More</td>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <TableProductLine checkAll={checkAll} />
+                    </tbody>
                 </table>
             </div>
 

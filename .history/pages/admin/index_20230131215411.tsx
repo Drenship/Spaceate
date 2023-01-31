@@ -1,6 +1,4 @@
 import React, { useEffect, useReducer } from 'react';
-import Link from 'next/link';
-import axios from 'axios';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,9 +10,16 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
+import Link from 'next/link';
+import axios from 'axios';
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 
-type OptionsChart = any
+type OptionsChart = {
+    legend: {
+        display: boolean,
+        position: string
+    }
+}
 
 type SalesData = {
     _id: string,
