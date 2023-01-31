@@ -1,0 +1,15 @@
+import React from 'react';
+
+export default function InputText() {
+    return (
+        <div>
+            <p className="text-base font-medium leading-none text-gray-800">
+                Meta Keywords
+            </p>
+            <input className="w-full p-3 mt-4 border border-gray-300 rounded outline-none focus:bg-gray-50" />
+            <p className="mt-3 text-xs leading-[15px] text-gray-600">
+                Set words that are related to the product
+            </p>
+        </div>
+    );
+}

@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .button-click-effect {
+        @apply transition duration-200 ease-out hover:shadow-lg active:scale-95;
+    }
+}
