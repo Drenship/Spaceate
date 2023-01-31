@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link'
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
-import TableProductLine from '@components/tables/TableProductLine';
 
 function AdminProductsScreen() {
 
@@ -89,9 +88,7 @@ function AdminProductsScreen() {
                             <td className="pr-8 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">More</td>
                         </tr>
                     </thead>
-                    <tbody>
-                        <TableProductLine checkAll={checkAll} />
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 
