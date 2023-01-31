@@ -16,21 +16,15 @@ import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 
 type SalesData = {
     _id: string,
-    totalSales: Number
-}
-
-type ChartSalesData = {
-    label: String,
-    backgroundColor: String,
-    data: [number],
+    totalSales: number
 }
 
 type Summary = {
     data: {
-        ordersCount: Number,
-        productsCount: Number,
-        usersCount: Number,
-        ordersPrice: Number,
+        ordersCount: number,
+        productsCount: number,
+        usersCount: number,
+        ordersPrice: number,
         salesData: SalesData[],
     },
     error: any
@@ -54,7 +48,7 @@ export const options = {
     },
 };
 
-function reducer(state, action) {
+function reducer(state: any, action: any) {
     switch (action.type) {
         case 'FETCH_REQUEST':
             return { ...state, loading: true, error: '' };
@@ -90,12 +84,12 @@ function AdminDashboardScreen() {
     }, []);
 
     const data = {
-        labels: summary.salesData.map((x) => x._id), // 2022/01 2022/03
+        labels: summary.salesData.map((x: SalesData) => x._id), // 2022/01 2022/03
         datasets: [
             {
                 label: 'Sales',
                 backgroundColor: 'rgba(162, 222, 208, 1)',
-                data: summary.salesData.map((x) => x.totalSales),
+                data: summary.salesData.map((x: SalesData) => x.totalSales),
             },
         ],
     };
