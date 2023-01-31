@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 type Props = {
-    min: number,
-    max: number,
-    defaultValue: number,
+    min: Number,
+    max: Number,
+    defaultValue: Number,
     setUpdate: (value: number) => void
 }
 
 export default function InputNumber({ min, max, defaultValue, setUpdate }: Props) {
-    const [count, setCount] = useState<number>(defaultValue || min);
+    const [count, setCount] = useState<Number>(defaultValue || 1);
 
     const addCount = () => {
         if (max > count) {
@@ -20,27 +20,29 @@ export default function InputNumber({ min, max, defaultValue, setUpdate }: Props
 
     const minusCount = () => {
         if (count > min) {
-            setCount(prev => prev - 1);
+            setCount((prev) => Number(prev) - 1);
         }
     };
 
     const writeCount = (e: React.FormEvent<HTMLInputElement>) => {
-        const inputValue = e.currentTarget.value;
-        if (inputValue.length === 0) {
-            setCount(min)
+
+        if (e.currentTarget.value.length === 0) {
+            setCount(1)
             return;
         }
 
-        const number = Number(inputValue)
-        if (min <= number && number < max) {
-            setCount(number)
+        const number = Number(e.currentTarget.value)
+        const n = number >= min ? number : 1
+
+        if (min <= n && n < max) {
+            setCount(n)
         } else {
             setCount(max)
         }
     }
 
     const writeCountBlur = () => {
-        if (count === 0) setCount(min)
+        if (count === 0) setCount(1)
     }
 
     useEffect(() => { setUpdate(count) }, [count]);
