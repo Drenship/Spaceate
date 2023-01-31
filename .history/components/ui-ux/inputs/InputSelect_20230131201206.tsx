@@ -7,7 +7,7 @@ interface OptionType {
 
 type PropsOption = {
     option: OptionType,
-    setUpdate: (value: OptionType) => void
+    setUpdate: () => void
 }
 
 function Option({ option, setUpdate }: PropsOption) {
