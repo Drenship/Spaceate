@@ -1,4 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
+import Link from 'next/link';
+import axios from 'axios';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -10,9 +12,9 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
-import Link from 'next/link';
-import axios from 'axios';
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+
+type OptionsChart = any
 
 type SalesData = {
     _id: string,
@@ -94,6 +96,10 @@ function AdminDashboardScreen() {
         ],
     };
 
+    const optionsChart: OptionsChart = {
+        legend: { display: true, position: 'right' },
+    }
+
 
     return (
         <AdminscreenWrapper title="Dashboard">
@@ -130,9 +136,7 @@ function AdminDashboardScreen() {
                         </div>
                         <h2 className="text-xl">Sales Report</h2>
                         <Bar
-                            options={{
-                                legend: { display: true, position: 'right' },
-                            }}
+                            options={optionsChart}
                             data={data}
                         />
                     </div>
@@ -141,6 +145,7 @@ function AdminDashboardScreen() {
         </AdminscreenWrapper>
     );
 }
+
 
 AdminDashboardScreen.auth = { adminOnly: true };
 export default AdminDashboardScreen
