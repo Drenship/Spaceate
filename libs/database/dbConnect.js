@@ -1,18 +1,20 @@
 import mongoose from 'mongoose';
 
-if (!process.env.MONGODB_URI) {
-    throw new Error(
-        'Please define the MONGODB_URI environment variable inside .env.local'
-    )
-}
-
 const connection = {};
 
 async function connect() {
+
+    if (!process.env.MONGODB_URI) {
+        throw new Error(
+            'Please define the MONGODB_URI environment variable inside .env.local'
+        )
+    }
+
     if (connection.isConnected) {
         console.log('already connected');
         return;
     }
+
     if (mongoose.connections.length > 0) {
         connection.isConnected = mongoose.connections[0].readyState;
         if (connection.isConnected === 1) {
@@ -21,6 +23,7 @@ async function connect() {
         }
         await mongoose.disconnect();
     }
+
     const db = await mongoose.connect(process.env.MONGODB_URI);
     console.log('new connection');
     connection.isConnected = db.connections[0].readyState;
@@ -31,10 +34,10 @@ async function disconnect() {
         if (process.env.NODE_ENV === 'production') {
             await mongoose.disconnect();
             connection.isConnected = false;
-        } else {
-            console.log('not disconnected');
         }
+        console.log('not disconnected');
     }
+    console.log('not connect');
 }
 
 function convertDocToObj(doc) {
