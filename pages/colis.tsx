@@ -1,10 +1,11 @@
 import React from 'react';
+import type { NextPage } from 'next/types'
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
 import BlurImage from '@components/ui-ux/BlurImage'
 
-export default function colis() {
+const MyColis: NextPage = () => {
     return (
-        <BasescreenWrapper title="Colis à la carte">
+        <BasescreenWrapper title="Colis à la carte" footer={true}>
             <div className="flex flex-col w-full max-w-2xl px-4 py-16 mx-auto space-y-5 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
                 <h1 className='text-3xl font-bold text-left'>Colis de saison</h1>
                 <div className='block space-x-5 space-y-5 md:space-y-0 md:flex'>
@@ -21,7 +22,7 @@ export default function colis() {
             </div>
             <div className="px-6 py-20 xl:mx-auto xl:container 2xl:px-0">
                 <div className="items-center justify-between lg:flex">
-                    <div className="w-full  lg:w-1/2">
+                    <div className="w-full lg:w-1/2">
                         <p className="text-base leading-4 text-gray-600">Choose your plan</p>
                         <h1 role="heading" className="mt-3 text-3xl font-bold leading-10 text-gray-800 md:text-5xl">
                             Our pricing plan
@@ -76,3 +77,6 @@ export default function colis() {
         </BasescreenWrapper>
     );
 }
+
+
+export default MyColis

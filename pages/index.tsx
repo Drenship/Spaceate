@@ -1,23 +1,11 @@
-import type { NextPage } from 'next'
+import type { NextPage } from 'next/types'
 import React from 'react'
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
 import Productcard from '@components/cards/product-card'
 
 import database from "@devasset/database.json"
 
-interface Product {
-  slug: string;
-  name: string;
-  categorie_products_id: string;
-  description: string;
-  main_image: string;
-  images: string[];
-  price: number;
-  count_in_stock: number;
-  price_in: string;
-  rating: number;
-  reviews: number;
-}
+import { Product } from '@libs/typings'
 
 type Props = {
   products: Product[];

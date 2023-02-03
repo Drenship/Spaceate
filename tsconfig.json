@@ -54,7 +54,7 @@
     "pages/auth/signin.ts",
     "hooks/useAuth.js",
     "atoms/cartState.js",
-    "pages/cart.js",
+    "pages/cart.tsx",
     "pages/api/checkout_sessions/checkout_sessions.js",
     "pages/api/admin/products/index.js",
     "pages/admin/index.js",

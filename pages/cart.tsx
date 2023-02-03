@@ -1,34 +1,35 @@
 import React, { useMemo, useState } from 'react'
+import type { NextPage } from 'next/types'
 import dynamic from 'next/dynamic';
+import { CartItem } from '@libs/typings'
 import { useRecoilState } from 'recoil';
 import { cartState } from '@atoms/cartState';
 
 import { fetchPostJSON } from "@libs/utils/api-helpers";
 import { getStripe } from "@libs/utils/stripe-helpers";
 
-
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CartItemCard from '@components/cards/CartItemCard';
 
-const Cart = () => {
+const Cart: NextPage = () => {
 
     const [loading, setLoading] = useState(false)
-    const [cartItem] = useRecoilState(cartState)
+    const [cartItems] = useRecoilState<CartItem[]>(cartState)
 
     const shipping = 9.99;
 
     // sub total du panier
     const totalPrice = useMemo(() => {
         let total = 0
-        cartItem.forEach(item => total += (item.price * item.quantity))
+        cartItems.forEach(item => total += (item.price * item.quantity))
         return total
-    }, [cartItem]);
+    }, [cartItems]);
 
 
     const createCheckoutSession = async () => {
         setLoading(true);
 
-        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItem });
+        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems });
 
         // Internal Server Error
         if ((checkoutSession).statusCode === 500) {
@@ -38,12 +39,14 @@ const Cart = () => {
         }
         // Redirect to checkout
         const stripe = await getStripe();
-        const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
-
-        // If `redirectToCheckout` fails due to a browser or network
-        // error, display the localized error message to your customer
-        // using `error.message`.
-        console.log(error.message);
+        if(stripe !== null) {
+            const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
+    
+            // If `redirectToCheckout` fails due to a browser or network
+            // error, display the localized error message to your customer
+            // using `error.message`.
+            console.log(error.message);
+        }
 
         setLoading(false);
     };
@@ -57,9 +60,9 @@ const Cart = () => {
                     <div className='md:flex-grow w-full md:h-full md:min-w-[70%] overflow-x-hidden'>
                         <div className='w-full'>
                             {
-                                cartItem.length <= 0
+                                cartItems.length <= 0
                                     ? <h1 className='mt-32 text-4xl text-center'>Votre panier est vide</h1>
-                                    : cartItem.map((item, key) => <CartItemCard key={key} product={item} />)
+                                    : cartItems.map((item, key) => <CartItemCard key={key} product={item} />)
                             }
                         </div>
                     </div>

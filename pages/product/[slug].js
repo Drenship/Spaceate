@@ -41,13 +41,17 @@ function Product({ product, sameProducts }) {
             const searchResults = await fetch('/api/commentaires')
                 .then((res) => res.json())
                 .catch((err) => [])
-            setCommentaires([...commentaires, ...searchResults])
+            setCommentaires(prev => [...prev, ...searchResults])
         } catch {
             setCommentaires([])
         }
     }
 
-    useEffect(() => { getCommentaires(); }, []);
+    //useEffect(() => { getCommentaires(); }, []);
+    useEffect(() => {
+        setCommentaires([]);
+        getCommentaires()
+    }, [router.query]);
 
     return (
         <BasescreenWrapper title={product.name} mainClass="w-full">
