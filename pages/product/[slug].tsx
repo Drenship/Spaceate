@@ -13,16 +13,25 @@ import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import Rating from "@components/ui-ux/Rating"
 
 import database from "@devasset/database.json"
+import { NextPage } from 'next/types';
+import { TypeCartItem, TypeProduct, TypeCommentaire } from '@libs/typings';
 
-function Product({ product, sameProducts }) {
+type Props = {
+    product: TypeProduct
+    sameProducts: TypeProduct[]
+}
+
+const Product: NextPage<Props> = ({ product, sameProducts }) => {
     const router = useRouter()
     const [quantity, setQuantity] = useState(1);
 
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
     const addItemsToCart = () => {
-        let newProductCart = { ...product }
-        newProductCart.quantity = quantity
+        let newProductCart:TypeCartItem = { 
+            ...product,
+            quantity: quantity
+        }
 
         setCartState({
             action: CART_ADD_ITEM,
@@ -34,7 +43,7 @@ function Product({ product, sameProducts }) {
         router.push('/cart')
     }
 
-    const [commentaires, setCommentaires] = useState([]);
+    const [commentaires, setCommentaires] = useState<TypeCommentaire[]>([]);
 
     const getCommentaires = async () => {
         try {
@@ -54,7 +63,7 @@ function Product({ product, sameProducts }) {
     }, [router.query]);
 
     return (
-        <BasescreenWrapper title={product.name} mainClass="w-full">
+        <BasescreenWrapper title={product.name} footer={true}>
             <div className='flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100 '>
                 { /* left */}
                 <div className='flex flex-row md:block md:space-x-0 space-x-4 md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 md:p-9 lg:p-12 h-full md:sticky top-16 bg-gray-100'>
@@ -103,6 +112,7 @@ function Product({ product, sameProducts }) {
                             <InputNumber
                                 min={1}
                                 max={product.count_in_stock}
+                                defaultValue={1}
                                 setUpdate={setQuantity}
                             />
                         </div>
@@ -155,7 +165,7 @@ function Product({ product, sameProducts }) {
     )
 }
 
-export const getServerSideProps = async ({ query }) => {
+export const getServerSideProps = async ({ query }: any) => {
 
     const product = database.products.filter(p => p.slug === query.slug)[0]
 

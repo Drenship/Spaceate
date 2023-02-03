@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { Commentaire } from '@libs/typings';
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { TypeCommentaire } from '@libs/typings';
+import type { NextApiRequest, NextApiResponse } from 'next/types'
 
-type Data = Commentaire[]
+type Data = TypeCommentaire[]
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     const commentaires = [

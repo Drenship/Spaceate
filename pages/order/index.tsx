@@ -1,9 +1,11 @@
+import { NextPage } from 'next/types';
 import React from 'react';
 
-export default function index() {
+const OrderIndex: NextPage = () => {
     return (
         <div>
             order index
         </div>
     );
 }
+export default OrderIndex

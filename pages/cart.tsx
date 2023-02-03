@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import type { NextPage } from 'next/types'
 import dynamic from 'next/dynamic';
-import { CartItem } from '@libs/typings'
+import { TypeCartItem } from '@libs/typings'
 import { useRecoilState } from 'recoil';
 import { cartState } from '@atoms/cartState';
 
@@ -14,7 +14,7 @@ import CartItemCard from '@components/cards/CartItemCard';
 const Cart: NextPage = () => {
 
     const [loading, setLoading] = useState(false)
-    const [cartItems] = useRecoilState<CartItem[]>(cartState)
+    const [cartItems] = useRecoilState<TypeCartItem[]>(cartState)
 
     const shipping = 9.99;
 

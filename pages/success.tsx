@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router';
+import { NextPage } from 'next/types';
+import useSWR from 'swr';
 
 import { useRecoilState } from 'recoil';
 import { cartState } from '@atoms/cartState';
@@ -9,9 +11,8 @@ import { CART_EMPTY, setCartState } from '@atoms/setStates/setCartState';
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import PrintObject from '@components/PrintObject';
 import { fetchGetJSON } from '@libs/utils/api-helpers';
-import useSWR from 'swr';
 
-const Success = () => {
+const Success: NextPage = () => {
     const router = useRouter();
     const [cartItems, setCartItems] = useRecoilState(cartState)
 
@@ -43,7 +44,7 @@ const Success = () => {
                     <h1>Checkout Payment Result</h1>
                     <h2>Status: {data?.payment_intent?.status ?? 'loading...'}</h2>
                     <h3>CheckoutSession response:</h3>
-                    <PrintObject content={data ?? 'loading...'} />
+                    <PrintObject title="Print" content={data ?? 'loading...'} />
 
 
                     <Link href="/">
