@@ -4,10 +4,7 @@ import Productcard from '@components/cards/product-card'
 
 import database from "@devasset/database.json"
 
-const Home = () => {
-
-  const products = database.products;
-
+const Home = ({ products }) => {
 
   return (
     <BasescreenWrapper title="Accueil">
@@ -25,6 +22,15 @@ const Home = () => {
 
     </BasescreenWrapper>
   )
+}
+
+export const getServerSideProps = async () => {
+
+    return {
+        props: {
+            products: database.products
+        },
+    }
 }
 
 export default Home
