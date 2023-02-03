@@ -1,21 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useEscapeListener } from '@libs/hooks';
 
-type Props = {
-    checkAll: boolean,
-    product: {
-        _id: string,
-        main_image: string
-        name: string,
-        slug: string,
-        stock: number,
-        totalSelled: number,
-        price: number,
-        data: Date,
-    }
-}
-
-export default function TableProductLine({ product, checkAll }: Props) {
+export default function TableProductLine({ product, checkAll }) {
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);

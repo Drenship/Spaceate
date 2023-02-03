@@ -1,9 +1,10 @@
-import '../styles/globals.css'
+import type { AppProps } from 'next/app'
 import { SessionProvider, useSession } from 'next-auth/react';
 import { Router, useRouter } from 'next/router';
 import ProgressBar from "@badrap/bar-of-progress";
 import { RecoilRoot, RecoilEnv } from 'recoil';
 import { NotifyContextProvider } from '@libs/hooks/notify';
+import '../styles/globals.css'
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -18,7 +19,7 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } } : AppProps) {
   return (
     <SessionProvider session={session}>
       <RecoilRoot>

@@ -6,7 +6,11 @@ import { formatAmountForStripe } from '@libs/utils/stripe-helpers';
 import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     // https://github.com/stripe/stripe-node#configuration
+<<<<<<< HEAD
     apiVersion: "2022-11-15" //'2020-03-02',
+=======
+    apiVersion: '2022-11-15',
+>>>>>>> 797373776ec9f05876aef0e772f2c51dde824b69
 });
 
 export default async function handler(

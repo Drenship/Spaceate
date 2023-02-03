@@ -31,10 +31,10 @@ export default function colis() {
                         </p>
                         <div className="w-56">
                             <div className="flex items-center mt-10 bg-gray-100 rounded-full shadow">
-                                <button onclick="menuHandler1()" className="px-6 py-4 mr-1 text-base leading-none text-gray-600 bg-gray-100 rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 focus:outline-none" id="monthly">
+                                <button className="px-6 py-4 mr-1 text-base leading-none text-gray-600 bg-gray-100 rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 focus:outline-none" id="monthly">
                                     Monthly
                                 </button>
-                                <button onclick="menuHandler1()" className="px-6 py-4 text-base leading-none text-white bg-indigo-700 rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 focus:outline-none" id="annually">
+                                <button className="px-6 py-4 text-base leading-none text-white bg-indigo-700 rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 focus:outline-none" id="annually">
                                     Annually
                                 </button>
                             </div>
