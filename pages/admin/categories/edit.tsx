@@ -13,14 +13,16 @@ export default function edit() {
     const router = useRouter();
 
     const query: QueryUrl = useMemo(() => {
-        return query
+        return {
+            id: ""
+        }
     }, [router.query]);
 
     return (
         <AdminscreenWrapper title="Edit categorie">
 
             <div className="mt-10 px-7">
-                <p className="text-xl font-semibold leading-tight text-gray-800">Meta Details</p>
+                <p className="text-xl font-semibold leading-tight text-gray-800">Meta Details: { query }</p>
 
                 <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7 ">
                     <InputSelect

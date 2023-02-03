@@ -11,11 +11,14 @@ const AdminEditProduct: NextPage = () => {
     const router = useRouter();
 
     const query: QueryUrl = useMemo(() => {
-        return query
+        return {
+            id: ""
+        }
     }, [router.query]);
 
     return (
         <AdminscreenWrapper title="Edit Product">
+            <h1>{ query.id }</h1>
         </AdminscreenWrapper>
     );
 }

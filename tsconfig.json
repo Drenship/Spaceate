@@ -48,7 +48,7 @@
     "pages/search/[search].js",
     "pages/index.tsx",
     "pages/_app.tsx",
-    "pages/auth/recovery.js",
+    "pages/auth/recovery.tsx",
     "pages/auth/register.js",
     "pages/api/auth/[...nexthauth].jhs",
     "pages/auth/signin.ts",
