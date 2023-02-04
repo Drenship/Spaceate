@@ -1,14 +1,14 @@
+import { NextPage } from 'next/types';
 import React, { useState } from 'react';
 import Link from 'next/link'
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 
-function AdminProductsScreen() {
-
+const AdminEditCartegorieScreen: NextPage = () => {
     const [checkAll, setcheckAll] = useState(false);
 
     return (
         <AdminscreenWrapper title="Categorie">
-            <h1 className='text-xl font-bold uppercase'>Products</h1>
+            <h1 className='text-xl font-bold uppercase'>Categories</h1>
 
             <div className="flex flex-col items-start justify-between w-full p-4 lg:flex-row lg:p-8 lg:items-stretch">
                 <div className="flex flex-col items-start w-full lg:w-1/3 lg:flex-row lg:items-center">
@@ -96,5 +96,5 @@ function AdminProductsScreen() {
     );
 }
 
-AdminProductsScreen.auth = { adminOnly: true };
-export default AdminProductsScreen
+AdminEditCartegorieScreen.auth = { adminOnly: true };
+export default AdminEditCartegorieScreen

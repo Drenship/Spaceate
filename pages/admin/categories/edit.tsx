@@ -1,3 +1,4 @@
+import { NextPage } from 'next/types';
 import React, { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
@@ -9,7 +10,7 @@ interface QueryUrl {
     id: string
 }
 
-export default function edit() {
+const EditCartegorieScreen: NextPage = () => {
     const router = useRouter();
 
     const query: QueryUrl = useMemo(() => {
@@ -22,10 +23,10 @@ export default function edit() {
         <AdminscreenWrapper title="Edit categorie">
 
             <div className="mt-10 px-7">
-                <p className="text-xl font-semibold leading-tight text-gray-800">Meta Details: { query.id }</p>
+                <p className="text-xl font-semibold leading-tight text-gray-800">Meta Details: {query.id}</p>
 
                 <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7 ">
-                    <InputSelect
+                    {/*<InputSelect
                         title="Catégorie"
                         description="Choisire une catégorie"
                         input={{
@@ -33,13 +34,23 @@ export default function edit() {
                             defaultValue: { name: "a" },
                         }}
                         options={[{ name: "a" }, { name: "b" }]}
-                    />
+                    /> */}
 
                     <InputText
                         title="Nom"
                         description="Nom de la catégorie"
                         input={{
                             name: "categorie_name",
+                            defaultValue: "x",
+                            placeholder: "p",
+                        }}
+                    />
+
+                    <InputText
+                        title="Slug"
+                        description="Slug de la catégorie"
+                        input={{
+                            name: "categorie_slug",
                             defaultValue: "x",
                             placeholder: "p",
                         }}
@@ -60,3 +71,6 @@ export default function edit() {
         </AdminscreenWrapper>
     );
 }
+
+EditCartegorieScreen.auth = { adminOnly: true };
+export default EditCartegorieScreen

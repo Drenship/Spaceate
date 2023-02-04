@@ -1,4 +1,26 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+//mongoose.set('strictQuery', false)
+
+interface IProduct extends Document {
+    name: string;
+    description: string;
+    category: string;
+    subCategory: string;
+    main_image: string;
+    images: string[];
+    price: number;
+    price_in: string;
+    advancePrice: {
+        initialCost: number;
+        tva: number;
+        marge: number;
+    };
+    rating: number;
+    numReviews: number;
+    countInStock: number;
+    isFeatured: boolean;
+}
 
 const productSchema = new mongoose.Schema(
     {
@@ -17,12 +39,13 @@ const productSchema = new mongoose.Schema(
             required: true
         },
         category: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Categorie',
             required: true
         },
         subCategory: {
-            type: String,
-            default: null,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'SubCategorie',
             required: true
         },
         main_image: {
@@ -39,7 +62,7 @@ const productSchema = new mongoose.Schema(
         price_in: {
             type: String,
             required: true,
-            default: "kg" | "unité"
+            default: "kg" || "unité"
         },
         advancePrice: {
             initialCost: {
@@ -59,7 +82,8 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0,
-            default: 0
+            max: 5,
+            default: 0,
         },
         numReviews: {
             type: Number,
@@ -82,6 +106,13 @@ const productSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+productSchema.index({
+    slug: 1,
+    name: 1,
+    category: 1,
+    subCategory: 1,
+});
 
 productSchema.pre('validate', function () {
     console.log('this gets printed first');
@@ -113,5 +144,4 @@ productSchema.post('find', function (result) {
     console.log('find() took ' + (Date.now() - findstart) + ' milliseconds');
 });
 
-const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
-export default Product;
+export default mongoose.model<IProduct>("Product", productSchema)

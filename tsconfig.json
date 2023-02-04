@@ -53,7 +53,7 @@
     "pages/api/auth/[...nexthauth].jhs",
     "pages/auth/signin.ts",
     "hooks/useAuth.js",
-    "atoms/cartState.js",
+    "atoms/cartState.tsx",
     "pages/cart.tsx",
     "pages/api/checkout_sessions/checkout_sessions.js",
     "pages/api/admin/products/index.js",

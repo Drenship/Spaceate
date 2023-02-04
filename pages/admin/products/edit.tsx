@@ -23,4 +23,6 @@ const AdminEditProduct: NextPage = () => {
     );
 }
 
+
+AdminEditProduct.auth = { adminOnly: true };
 export default AdminEditProduct
