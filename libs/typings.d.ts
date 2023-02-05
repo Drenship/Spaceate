@@ -11,7 +11,7 @@ export interface TypeSubCategorie {
 }
 
 export interface TypeCategorie {
-    //_id: string
+    _id: string
     name: string;
     slug: string;
     subCategorie: SubCategorie[];

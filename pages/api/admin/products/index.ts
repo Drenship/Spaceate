@@ -1,8 +1,9 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import Product from '@libs/models/Product';
 import db from '@libs/database/dbConnect';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
     if (!session || !session.user.isAdmin) {
         return res.status(401).send('admin signin required');
@@ -17,7 +18,7 @@ const handler = async (req, res) => {
     }
 };
 
-const postHandler = async (req, res) => {
+const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     await db.connect();
     const newProduct = new Product({
         name: 'sample name',
@@ -37,7 +38,7 @@ const postHandler = async (req, res) => {
     res.send({ message: 'Product created successfully', product });
 };
 
-const getHandler = async (req, res) => {
+const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     await db.connect();
     const products = await Product.find({});
     await db.disconnect();

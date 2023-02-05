@@ -52,7 +52,7 @@ export default function CartItemCard({ product }) {
         })
 
         pushNotify({
-            title: product.name,
+            title: "",
             subTitle: "L'article a été retiré avec succès",
             icon: "CART",
             duration: 5

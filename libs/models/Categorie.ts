@@ -1,13 +1,13 @@
 import mongoose, { Document } from "mongoose";
 
 interface ISubCategory extends Document {
-    name: string;
-    slug: string;
+    name: String;
+    slug: String;
 }
 
 interface ICategory extends Document {
-    name: string;
-    slug: string;
+    name: String;
+    slug: String;
     subCategorie: ISubCategory[]
 }
 
@@ -24,9 +24,6 @@ const subCategorieSchema = new mongoose.Schema({
     },
 });
 
-const SubCategorie = mongoose.model<ISubCategory>('SubCategorie', subCategorieSchema);
-
-
 const categorieSchema = new mongoose.Schema(
     {
         name: {
@@ -39,11 +36,11 @@ const categorieSchema = new mongoose.Schema(
             unique: true,
             trim: true
         },
-        subCategorie: [SubCategorie],
+        subCategorie: [subCategorieSchema],
     },
     {
         timestamps: true,
     }
 );
 
-export default mongoose.model<ICategory>("Categorie", categorieSchema);
+export default  mongoose.models.Categorie || mongoose.model<ICategory>("Categorie", categorieSchema);
