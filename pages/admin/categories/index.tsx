@@ -13,6 +13,7 @@ type Props = {
 
 const AdminEditCartegorieScreen: NextPage<Props> = ({ categories }) => {
     const [checkAll, setcheckAll] = useState(false);
+    const [allCategories, setRemoveCategorie] = useState(categories);
 
     console.log(categories)
 
@@ -86,7 +87,7 @@ const AdminEditCartegorieScreen: NextPage<Props> = ({ categories }) => {
                     </thead>
                     <tbody>
                         {
-                            categories.map((categorie, key) => <TableCategorieLine key={key} categorie={categorie} checkAll={checkAll} />)
+                            allCategories.map((categorie, key) => <TableCategorieLine key={key} categorie={categorie} checkAll={checkAll} setRemoveCategorie={setRemoveCategorie} />)
                         }
                     </tbody>
                 </table>

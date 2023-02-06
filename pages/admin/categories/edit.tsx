@@ -34,7 +34,7 @@ const EditCartegorieScreen: NextPage<Props> = ({ slug, categorie }) => {
             if (slug === null) {
                 const response = await fetchPostJSON("/api/admin/categories", formDataObject)
                 
-                if(response?._id) {
+                if(response._id) {
                     setTimeout(()=> {
                         router.push('/admin/categories')
                     }, 3000)

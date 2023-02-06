@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next/types'
 
 type Data = TypeCommentaire[]
 
+
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     const commentaires = [
         {

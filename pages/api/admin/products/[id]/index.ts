@@ -1,11 +1,16 @@
+import type { NextApiRequest, NextApiResponse } from 'next/types'
 import { getSession } from 'next-auth/react';
 import Product from '@libs/models/Product';
 import db from '@libs/database/dbConnect';
 
-const handler = async (req, res) => {
+type ErrorMessage = {
+    message: string
+}
+
+const handler = async (req: NextApiRequest, res: NextApiResponse<ErrorMessage>) => {
     const session = await getSession({ req });
     if (!session || (session && !session.user.isAdmin)) {
-        return res.status(401).send('signin required');
+        return res.status(401).send({ message: 'signin required'});
     }
 
     const { user } = session;
@@ -20,14 +25,14 @@ const handler = async (req, res) => {
     }
 };
 
-const getHandler = async (req, res) => {
+const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     await db.connect();
     const product = await Product.findById(req.query.id);
     await db.disconnect();
     res.send(product);
 };
 
-const putHandler = async (req, res) => {
+const putHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     await db.connect();
     const product = await Product.findById(req.query.id);
     if (product) {
@@ -48,7 +53,7 @@ const putHandler = async (req, res) => {
     }
 };
 
-const deleteHandler = async (req, res) => {
+const deleteHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     await db.connect();
     const product = await Product.findById(req.query.id);
     if (product) {

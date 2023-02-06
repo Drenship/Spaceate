@@ -3,8 +3,9 @@ import Order from '@libs/models/Order';
 import Product from '@libs/models/Product';
 import User from '@libs/models/User';
 import db from '@libs/database/dbConnect';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
     
     if (!session || (session && !session.user.isAdmin)) {

@@ -1,8 +1,9 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useEscapeListener } from '@libs/hooks';
 import Link from 'next/link';
+import { fetchDeleteJSON } from '@libs/utils/api-helpers';
 
-export default function TableCategorieLine({ categorie, checkAll }) {
+export default function TableCategorieLine({ categorie, checkAll, setRemoveCategorie }) {
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);
@@ -30,6 +31,12 @@ export default function TableCategorieLine({ categorie, checkAll }) {
         return checkAll
     }, [checkAll, checked]);
 
+    const deleteHandler = async () => {
+        const result = await fetchDeleteJSON(`/api/admin/categories/${categorie._id}`)
+        if (result.success === true) {
+            setRemoveCategorie(categories => categories.filter(c => c._id !== categorie._id))
+        }
+    }
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
@@ -45,7 +52,7 @@ export default function TableCategorieLine({ categorie, checkAll }) {
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{categorie.name}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{categorie.slug}</td>
-            <td className="pr-6 text-center whitespace-no-wrap">{categorie.subCategorie.length}</td>
+            <td className="pr-6 text-sm whitespace-no-wrap">{categorie.subCategorie.length}</td>
 
             <td className="relative pr-8">
                 <div className={`absolute left-0 z-10 w-32 mt-8 -ml-12 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
@@ -53,7 +60,7 @@ export default function TableCategorieLine({ categorie, checkAll }) {
                         <Link href={`/admin/categories/edit?slug=${categorie.slug}`}>
                             <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Modifier</li>
                         </Link>
-                        <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Delete</li>
+                        <li onClick={deleteHandler} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Delete</li>
                     </ul>
                 </div>
                 <button className="text-gray-500 border border-transparent rounded cursor-pointer focus:outline-none" ref={seeMenuRef}>
