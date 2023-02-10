@@ -36,7 +36,7 @@ const categorieSchema = new mongoose.Schema(
             unique: true,
             trim: true
         },
-        subCategorie: [subCategorieSchema],
+        subCategories: [subCategorieSchema],
     },
     {
         timestamps: true,

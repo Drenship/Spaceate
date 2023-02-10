@@ -15,42 +15,48 @@ type CreateCategorieProps = {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<TypeCategorie | TypeCategorie[] | ErrorMessage | CreateCategorieProps>) => {
     authSessionMiddleware({ authOnly: true, adminOnly: true })(req, res, () => {
-        if (req.method === 'GET') {
-            return getHandler(req, res);
-        } else if (req.method === 'POST') {
-            return postHandler(req, res);
-        } if (req.method === 'DELETE') {
-            return deleteHandler(req, res);
-        } else {
-            return res.status(400).send({ message: 'Method not allowed' });
+        switch (req.method) {
+            case 'POST':
+                return handlePostRequest(req, res);
+            case 'DELETE':
+                return handleDeleteRequest(req, res);
+            default:
+                return res.status(400).send({ message: 'Method not allowed' });
         }
     })
 }
 
 // create new Categorie
-const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const categorieData = req.body
 
-    const categorieData = req.body
+        if (categorieData.name.length < 1) return res.status(400).send({ message: 'Name empty' });
+        if (categorieData.slug.length < 1) return res.status(400).send({ message: 'Slug empty' });
 
-    if (categorieData.name.length < 1) return res.status(400).send({ message: 'Name empty' });
-    if (categorieData.slug.length < 1) return res.status(400).send({ message: 'Slug empty' });
+        await db.connect();
+        const newCategorie = new Categorie({
+            name: categorieData.name,
+            slug: categorieData.slug
+        });
 
-    await db.connect();
-    const newCategorie = new Categorie({
-        name: categorieData.name,
-        slug: categorieData.slug
-    });
-
-    const categorie = await newCategorie.save();
-    await db.disconnect();
-    res.send({ message: 'categorie created successfully', categorie });
+        const categorie = await newCategorie.save();
+        await db.disconnect();
+        res.send({ message: 'categorie created successfully', data: categorie });
+    } catch (error) {
+        res.status(500).send({ message: 'An error has occurred' });
+    }
 };
 
-const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await db.connect();
-    const categories = await Categorie.find();
-    await db.disconnect();
-    res.send(categories);
+const handleDeleteRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        await db.connect();
+        const categories = await Categorie.find();
+        await db.disconnect();
+        res.send(categories);
+    } catch (error) {
+        res.status(500).send({ message: 'An error has occurred' });
+    }
 };
 
 export default handler;

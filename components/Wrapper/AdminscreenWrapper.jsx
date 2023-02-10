@@ -47,11 +47,11 @@ export default function AdminscreenWrapper({ title, children }) {
                         <NavLinkItem href="/admin/orders" title="Commandes">
                             <HiArchive />
                         </NavLinkItem>
-                        <NavLinkItem href="/admin/users" title="Utilisateurs">
-                            <HiUsers />
-                        </NavLinkItem>
                         <NavLinkItem href="/admin/subscription" title="Abonnement">
                             <HiGift />
+                        </NavLinkItem>
+                        <NavLinkItem href="/admin/users" title="Utilisateurs">
+                            <HiUsers />
                         </NavLinkItem>
                         <NavLinkItem href="/admin/analityx" title="Statistique">
                             <HiChartBar />

@@ -8,9 +8,10 @@ type Props = {
         defaultValue: string,
         placeholder: string
     }
+    onChange: (e: React.BaseSyntheticEvent) => void
 }
 
-export default function InputText({ title, description, input }: Props) {
+export default function InputText({ title, description, input, onChange }: Props) {
     const { name, defaultValue, placeholder } = input;
 
     return (
@@ -21,6 +22,7 @@ export default function InputText({ title, description, input }: Props) {
                 name={name}
                 defaultValue={defaultValue}
                 placeholder={placeholder}
+                onChange={onChange}
             />
             {description && <p className="mt-3 text-xs leading-[15px] text-gray-600">{description}</p>}
         </div>

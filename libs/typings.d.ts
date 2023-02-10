@@ -6,15 +6,17 @@ export interface TypeUser {
 }
 
 
-export interface TypeSubCategorie {
+export interface TypeSubCategories {
+    _id: string;
     name: string;
+    slug: string;
 }
 
 export interface TypeCategorie {
     _id: string
     name: string;
     slug: string;
-    subCategorie: SubCategorie[];
+    subCategories: TypeSubCategories[];
     createdAt: Date;
     updatedAt: Date;
 }

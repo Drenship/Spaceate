@@ -32,9 +32,16 @@ export default function TableCategorieLine({ categorie, checkAll, setRemoveCateg
     }, [checkAll, checked]);
 
     const deleteHandler = async () => {
-        const result = await fetchDeleteJSON(`/api/admin/categories/${categorie._id}`)
-        if (result.success === true) {
-            setRemoveCategorie(categories => categories.filter(c => c._id !== categorie._id))
+
+        if (confirm("Confirmer la suppression de : " + categorie.name) != true) return;
+        
+        try {
+            const result = await fetchDeleteJSON(`/api/admin/categories/${categorie._id}`)
+            if (result.success === true) {
+                setRemoveCategorie(categories => categories.filter(c => c._id !== categorie._id))
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 
@@ -52,7 +59,7 @@ export default function TableCategorieLine({ categorie, checkAll, setRemoveCateg
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{categorie.name}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{categorie.slug}</td>
-            <td className="pr-6 text-sm whitespace-no-wrap">{categorie.subCategorie.length}</td>
+            <td className="pr-6 text-sm whitespace-no-wrap">{categorie?.subCategories?.length || "0"}</td>
 
             <td className="relative pr-8">
                 <div className={`absolute left-0 z-10 w-32 mt-8 -ml-12 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>

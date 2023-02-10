@@ -1,5 +1,5 @@
 import { NextPage } from 'next/types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link'
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 import Categorie from '@libs/models/Categorie';
@@ -15,7 +15,9 @@ const AdminEditCartegorieScreen: NextPage<Props> = ({ categories }) => {
     const [checkAll, setcheckAll] = useState(false);
     const [allCategories, setRemoveCategorie] = useState(categories);
 
-    console.log(categories)
+    useEffect(() => {
+        console.log(categories)
+    }, []);
 
     return (
         <AdminscreenWrapper title="Categorie">
