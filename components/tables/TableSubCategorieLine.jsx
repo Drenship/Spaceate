@@ -76,7 +76,7 @@ export default function TableSubCategorieLine({ checkAll, parentCategorie, subCa
             <td className="pl-8 pr-6 text-sm leading-4 tracking-normal text-left text-gray-800 whitespace-no-wrap">
                 <input
                     type="checkbox"
-                    value={checkboxChecked}
+                    checked={checkboxChecked}
                     className="relative w-5 h-5 bg-white border border-gray-400 rounded outline-none cursor-pointer"
                     onClick={() => setChecked(prev => !prev)}
                 />

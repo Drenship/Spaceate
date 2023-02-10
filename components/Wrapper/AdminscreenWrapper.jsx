@@ -29,11 +29,8 @@ export default function AdminscreenWrapper({ title, children }) {
             <Navbar />
 
             <main className="flex w-full h-full mt-16">
-
                 <div className='w-[280px] h-[calc(100vh-64px)] border-r shadow-lg sticky top-16 bg-gray-100'>
                     <div className='w-full overflow-x-hidden overflow-y-auto'>
-
-                        
                         <NavLinkItem href="/admin" title="Dashboard">
                             <HiTemplate />
                         </NavLinkItem>
@@ -43,7 +40,6 @@ export default function AdminscreenWrapper({ title, children }) {
                         <NavLinkItem href="/admin/categories" title="Catégories">
                             <HiClipboardList />
                         </NavLinkItem>
-
                         <NavLinkItem href="/admin/orders" title="Commandes">
                             <HiArchive />
                         </NavLinkItem>
@@ -56,15 +52,12 @@ export default function AdminscreenWrapper({ title, children }) {
                         <NavLinkItem href="/admin/analityx" title="Statistique">
                             <HiChartBar />
                         </NavLinkItem>
-
-
                     </div>
                 </div>
 
                 <div className='flex flex-col justify-start flex-1 w-full p-8'>
                     {children}
                 </div>
-
             </main>
         </div>
     )

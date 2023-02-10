@@ -2,7 +2,9 @@ export interface TypeUser {
     _id: string
     name: string
     email: string
-    isAdmin: string
+    isAdmin: boolean
+    ordersHistory: TypeOrder[]
+    createdAt: Date
 }
 
 
