@@ -121,7 +121,7 @@ function AdminUsersScreen({ initialUsers }: Props) {
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Admin</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Nom</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Email</th>
-                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Nbr Commande:</th>
+                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-center text-gray-600">Nbr Commande</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Date</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">
                                 <div className="w-2 h-2 bg-indigo-400 rounded-full opacity-0" />

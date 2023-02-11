@@ -1,27 +1,14 @@
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { useEscapeListener } from '@libs/hooks';
-import React, { useRef, useState } from 'react';
 
 interface OptionType {
+    _id?: string,
     name: string
 }
 
 type PropsOption = {
     option: OptionType,
     setUpdate: (value: OptionType) => void
-}
-
-function Option({ option, setUpdate }: PropsOption) {
-    const { name } = option;
-
-    console.log(option)
-
-    return (
-        <button className='w-full' onClick={() => setUpdate(option)}>
-            <p className="w-full p-3 text-sm leading-none text-left text-gray-600 cursor-pointer hover:bg-indigo-100 hover:font-medium hover:text-indigo-700 hover:rounded">
-                {name}
-            </p>
-        </button>
-    )
 }
 
 type PropsInput = {
@@ -32,9 +19,25 @@ type PropsInput = {
         defaultValue: OptionType,
     },
     options: OptionType[]
+    setChange: (value: OptionType) => void
 }
 
-export default function InputSelect({ title, description, input, options }: PropsInput) {
+function Option({ option, setUpdate }: PropsOption) {
+    const { name } = option;
+
+    return (
+        <button className='w-full' onClick={(e) => {
+            e.preventDefault();
+            setUpdate(option)
+        }}>
+            <p className="w-full p-3 text-sm leading-none text-left text-gray-600 cursor-pointer hover:bg-indigo-100 hover:font-medium hover:text-indigo-700 hover:rounded">
+                {name}
+            </p>
+        </button>
+    )
+}
+
+export default function InputSelect({ title, description, input, options, setChange }: PropsInput) {
 
     const { name, defaultValue } = input;
 
@@ -43,19 +46,24 @@ export default function InputSelect({ title, description, input, options }: Prop
     const [inputValue, setInputValue] = useState<OptionType>(defaultValue);
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
+    useEffect(() => { setInputValue(defaultValue) }, [defaultValue]);
+    useEffect(() => { setChange(inputValue) }, [inputValue]);
 
     return (
         <div>
-            <p className="text-base font-medium leading-none text-gray-800">{ title }</p>
+            <p className="text-base font-medium leading-none text-gray-800">{title}</p>
 
             <div className="relative top-1">
                 <div className="relative w-full mt-2 border border-gray-300 rounded outline-none dropdown-one">
                     <button
                         ref={seeMenuRef}
                         className="relative flex items-center justify-between w-full px-5 py-4 "
-                        onClick={() => setSeeMenu(prev => !prev)}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setSeeMenu(prev => !prev)
+                        }}
                     >
-                        <span className="pr-4 text-sm font-medium text-gray-600">{ inputValue.name }</span>
+                        <span className="pr-4 text-sm font-medium text-gray-600">{inputValue.name}</span>
                         <svg
                             className="absolute z-10 cursor-pointer right-5"
                             width={10}
@@ -80,7 +88,7 @@ export default function InputSelect({ title, description, input, options }: Prop
                         type="hidden"
                         className='hidden'
                         name={name}
-                        defaultValue={inputValue.name}
+                        value={inputValue._id || inputValue.name}
                     />
                 </div>
             </div>

@@ -1,13 +1,48 @@
 import React, { useEffect, useState } from 'react';
 
-type Props = {
+type InputNumberDefault = {
     min: number,
     max: number,
     defaultValue: number,
     setUpdate: (value: number) => void
 }
 
-export default function InputNumber({ min, max, defaultValue, setUpdate }: Props) {
+type InputNumber = {
+    title: string,
+    description: string,
+    input: {
+        name: string,
+        placeholder: string
+        defaultValue: number | '',
+        min: number | '',
+        max: number | '',
+    }
+    onChange: (e: React.BaseSyntheticEvent) => void
+}
+
+
+export function InputNumber({ title, description, input, onChange }: InputNumber) {
+    const { name, defaultValue, min, max, placeholder } = input;
+
+    return (
+        <div>
+            <p className="text-base font-medium leading-none text-gray-800">{title}</p>
+            <input
+                className="w-full p-3 mt-4 border border-gray-300 rounded outline-none focus:bg-gray-50"
+                type="number"
+                name={name}
+                defaultValue={defaultValue}
+                min={min}
+                max={max}
+                placeholder={placeholder}
+                onChange={onChange}
+            />
+            {description && <p className="mt-3 text-xs leading-[15px] text-gray-600">{description}</p>}
+        </div>
+    );
+}
+
+export default function InputNumberDefault({ min, max, defaultValue, setUpdate }: Props) {
     const [count, setCount] = useState<number>(defaultValue || min);
 
     const addCount = () => {

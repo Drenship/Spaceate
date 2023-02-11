@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useEscapeListener } from '@libs/hooks';
 
-export default function TableProductLine({ product, checkAll }) {
+export default function TableProductLine({ product, checkAll, updateMainProducts }) {
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);
@@ -66,7 +66,6 @@ export default function TableProductLine({ product, checkAll }) {
                     <ul className="py-1 bg-white rounded shadow ">
                         <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Edit</li>
                         <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Delete</li>
-                        <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Duplicate</li>
                     </ul>
                 </div>
                 <button className="text-gray-500 border border-transparent rounded cursor-pointer focus:outline-none" ref={seeMenuRef}>

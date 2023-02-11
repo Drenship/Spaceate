@@ -72,7 +72,7 @@ export default function TableUserLine({ checkAll, user, updateMainUsers }) {
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
                 {user.email}
             </td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
+            <td className="pr-6 text-sm leading-4 tracking-normal text-center text-gray-800 whitespace-no-wrap">
                 {user.ordersHistory.length}
             </td>
 

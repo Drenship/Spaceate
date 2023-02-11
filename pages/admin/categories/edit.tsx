@@ -1,7 +1,6 @@
 import { NextPage } from 'next/types';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router'
 
 import { TypeCategorie } from '@libs/typings';
 import db from '@libs/database/dbConnect';
@@ -20,7 +19,7 @@ type Props = {
 }
 
 const EditCartegorieScreen: NextPage<Props> = ({ slug, initialCategorie }) => {
-    const router = useRouter()
+
     const { pushNotify } = useNotifys();
 
     const [categorie, setCategorie] = useState(initialCategorie);

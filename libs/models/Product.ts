@@ -4,9 +4,10 @@ import mongoose, { Document } from "mongoose";
 
 interface IProduct extends Document {
     name: string;
+    slug: string;
     description: string;
-    category: string;
-    subCategory: string;
+    categorie: string;
+    subCategorie: string;
     main_image: string;
     images: string[];
     price: number;
@@ -18,15 +19,18 @@ interface IProduct extends Document {
     };
     rating: number;
     numReviews: number;
+    reviews: [];
     countInStock: number;
     isFeatured: boolean;
+    isPublished: boolean;
 }
 
 const productSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: true
+            required: true,
+            trim: true
         },
         slug: {
             type: String,
@@ -34,18 +38,19 @@ const productSchema = new mongoose.Schema(
             unique: true,
             trim: true
         },
-        description: {
-            type: String,
-            required: true
-        },
-        category: {
+        categorie: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Categorie',
             required: true
         },
-        subCategory: {
+        subCategorie: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'SubCategorie',
+            subRef: 'Categorie.subCategories',
+            required: true
+        },
+        description: {
+            type: String,
+            required: true
         },
         main_image: {
             type: String,
@@ -61,7 +66,7 @@ const productSchema = new mongoose.Schema(
         price_in: {
             type: String,
             required: true,
-            default: "kg" || "unité"
+            default: "kg"
         },
         advancePrice: {
             initialCost: {
@@ -79,17 +84,16 @@ const productSchema = new mongoose.Schema(
         },
         rating: {
             type: Number,
-            required: true,
             min: 0,
             max: 5,
             default: 0,
         },
         numReviews: {
             type: Number,
-            required: true,
             min: 0,
             default: 0
         },
+        reviews: [],
         countInStock: {
             type: Number,
             required: true,
@@ -100,15 +104,21 @@ const productSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        isPublished: {
+            type: Boolean,
+            default: false
+        },
     },
     {
         timestamps: true,
     }
 );
 
+
 productSchema.index({
     slug: 1,
     name: 1,
+    price: 1,
     category: 1,
     subCategory: 1,
 });
@@ -143,4 +153,4 @@ productSchema.post('find', function (result) {
     console.log('find() took ' + (Date.now() - findstart) + ' milliseconds');
 });
 
-export default mongoose.model<IProduct>("Product", productSchema)
+export default mongoose.models.Product || mongoose.model<IProduct>("Product", productSchema)

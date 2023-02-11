@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 
 export function useInterval(callback, delay) {
     const savedCallback = useRef();
+    let id = null;
     // Remember the latest callback.
     useEffect(() => {
         savedCallback.current = callback;
@@ -13,8 +14,12 @@ export function useInterval(callback, delay) {
                 savedCallback.current();
             }
         }
-        if (delay !== null) {
-            const id = setInterval(tick, delay);
+        if (delay > 0) {
+            id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }
+        if (delay === 0 && id !== null) {
+            id = null
             return () => clearInterval(id);
         }
     }, [delay]);
@@ -24,7 +29,7 @@ export function useInterval(callback, delay) {
  * 
  * @param {function} callback
  * @param {number} delay 
- * @param {condition} restart Condition pour annuler et redémarrer de 0 le Timeout
+ * @param {boolean} restart Condition pour annuler et redémarrer de 0 le Timeout
  */
 export function useTimeout(callback, delay, restart) {
     const savedCallback = useRef();
@@ -34,12 +39,14 @@ export function useTimeout(callback, delay, restart) {
     });
     // Set up the timeout.
     useEffect(() => {
+        if (restart === false) return;
+
         function tick() {
             if (typeof savedCallback?.current === "function") {
                 savedCallback.current();
             }
         }
-        if (delay !== null) {
+        if (delay !== 0) {
             const id = setTimeout(tick, delay);
             return () => clearTimeout(id);
         }

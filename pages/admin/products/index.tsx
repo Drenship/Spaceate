@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
+
+import db from '@libs/database/dbConnect';
+import Product from '@libs/models/Product';
+import { TypeProduct } from '@libs/typings';
+
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 import TableProductLine from '@components/tables/TableProductLine';
+import Link from 'next/link';
 
-function AdminProductsScreen() {
+type Props = {
+    initialProducts: TypeProduct[]
+}
+
+function AdminProductsScreen({ initialProducts }: Props) {
 
     const [checkAll, setcheckAll] = useState(false);
+    const [products, setProducts] = useState(initialProducts);
+
+    console.log(products)
 
     return (
         <AdminscreenWrapper title="Products">
@@ -53,7 +66,7 @@ function AdminProductsScreen() {
                         </a>
                     </div>
                 </div>
-                
+
                 <div className="flex flex-col items-start justify-end w-full lg:w-2/3 lg:flex-row lg:items-center">
                     <div className="flex items-center py-3 border-gray-300 lg:border-l lg:border-r lg:py-0 lg:px-6">
                         <p className="text-base text-gray-600" id="page-view">
@@ -87,14 +100,16 @@ function AdminProductsScreen() {
                         </div>
                     </div>
                     <div className="flex items-center lg:ml-6">
-                        <button className="flex items-center h-8 px-5 text-sm text-indigo-700 transition duration-150 ease-in-out bg-gray-200 border border-transparent rounded focus:outline-none focus:border-gray-800 focus:shadow-outline-gray hover:bg-gray-300">Download All</button>
-                        <div className="flex items-center justify-center w-8 h-8 ml-4 text-white transition duration-150 ease-in-out bg-indigo-700 border border-transparent rounded cursor-pointer focus:outline-none focus:border-gray-800 focus:shadow-outline-gray hover:bg-indigo-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-plus" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <line x1={12} y1={5} x2={12} y2={19} />
-                                <line x1={5} y1={12} x2={19} y2={12} />
-                            </svg>
-                        </div>
+                        <Link href="/admin/products/edit">
+                            <button className="flex items-center justify-center px-3 py-2 ml-4 text-white transition duration-150 ease-in-out bg-indigo-700 border border-transparent rounded cursor-pointer button-click-effect focus:outline-none hover:bg-indigo-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-plus" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" />
+                                    <line x1={12} y1={5} x2={12} y2={19} />
+                                    <line x1={5} y1={12} x2={19} y2={12} />
+                                </svg>
+                                <span className='text-normal'>Ajouter un produit</span>
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -132,12 +147,34 @@ function AdminProductsScreen() {
                             <td className="pr-8 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">More</td>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        {
+                            products.map((product, key) => <TableProductLine
+                                key={key}
+                                product={product}
+                                checkAll={checkAll}
+                                updateMainProducts={setProducts}
+                            />)
+                        }
+                    </tbody>
                 </table>
             </div>
 
         </AdminscreenWrapper>
     );
+}
+
+export const getServerSideProps = async () => {
+
+    await db.connect();
+    const products = await Product.find().lean();
+    await db.disconnect();
+
+    return {
+        props: {
+            initialProducts: products.map(db.convertDocToObj),
+        },
+    }
 }
 
 AdminProductsScreen.auth = { adminOnly: true };

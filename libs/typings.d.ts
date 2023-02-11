@@ -27,12 +27,13 @@ export interface TypeProduct {
     //_id: string
     slug: string
     name: string
-    categorie_products_id: string
+    categorie: string
+    subCategorie: string
     description: string
     main_image: string
     images: string[]
     price: number
-    count_in_stock: number
+    countInStock: number
     price_in: string
     rating: number
     reviews: number
