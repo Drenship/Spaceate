@@ -41,7 +41,7 @@ export default function InputFiles({ multiple } : Props = defaultProps) {
                 type='file'
                 accept='image/*'
                 multiple={multiple}
-                name='preview-location'
+                name='image'
                 className="w-full h-32 p-5 mt-5 border-2 border-dashed rounded-lg"
                 onChange={(e) => _ShowMiniature(e)}
             />

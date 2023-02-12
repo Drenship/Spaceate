@@ -6,4 +6,29 @@
     .button-click-effect {
         @apply transition duration-200 ease-out hover:shadow-lg active:scale-95;
     }
+
+    .sidebar {
+        visibility: hidden;
+        display: block !important;
+        width: 0px !important;
+        @apply -translate-x-[280px]
+    }
+
+    .sidebar-open .sidebar {
+        visibility: visible;
+        display: block !important;
+        width: 280px !important;
+        @apply fixed lg:relative lg:top-0 top-16 duration-500 translate-x-0
+    }
+
+    @media (min-width: 1024px) {
+        .sidebar {
+            width: 280px !important;
+            display: block !important;
+            visibility: visible;
+            @apply translate-x-0
+        }
+    }
+
+
 }

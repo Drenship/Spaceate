@@ -63,10 +63,19 @@ function Navbar() {
         signOut({ callbackUrl: '/auth/login' });
     };
 
+    const handleToggleSidebar = () => {
+        document.body.classList.toggle('sidebar-open');
+    };
+
+    const ref = useRef(null)
+
+    useEscapeListener(ref, () => document.body.classList.remove('sidebar-open'))
+
     return (
         <nav className="fixed top-0 z-50 justify-between h-16 space-x-0.5 shadow-lg md:space-x-4 navbar bg-base-100 md:px-8">
             <div className='flex-none'>
-                <button className="btn btn-square btn-ghost lg:hidden">
+
+                <button ref={ref} className="btn btn-square btn-ghost lg:hidden" onClick={handleToggleSidebar}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
 

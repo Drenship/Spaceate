@@ -1,10 +1,10 @@
 export interface TypeUser {
-    _id: string
-    name: string
-    email: string
-    isAdmin: boolean
-    ordersHistory: TypeOrder[]
-    createdAt: Date
+    _id: string;
+    name: string;
+    email: string;
+    isAdmin: boolean;
+    ordersHistory: TypeOrder[];
+    createdAt: Date;
 }
 
 
@@ -15,7 +15,7 @@ export interface TypeSubCategories {
 }
 
 export interface TypeCategorie {
-    _id: string
+    _id: string;
     name: string;
     slug: string;
     subCategories: TypeSubCategories[];
@@ -24,19 +24,26 @@ export interface TypeCategorie {
 }
 
 export interface TypeProduct {
-    //_id: string
-    slug: string
-    name: string
-    categorie: string
-    subCategorie: string
-    description: string
-    main_image: string
-    images: string[]
-    price: number
-    countInStock: number
-    price_in: string
-    rating: number
-    reviews: number
+    _id: string;
+    slug: string;
+    name: string;
+    categorie: string;
+    subCategorie: string;
+    description: string;
+    main_image: string;
+    images: string[];
+    price: number;
+    countInStock: number;
+    price_in: string;
+    rating: number;
+    reviews: number;
+    advancePrice: {
+        initialCost: number
+        tva: number
+        marge: number
+    };
+    isFeatured: boolean;
+    isPublished: boolean;
 }
 
 export interface TypeCartItem extends TypeProduct {
@@ -44,7 +51,7 @@ export interface TypeCartItem extends TypeProduct {
 }
 
 export interface TypeCommentaire {
-    //_id: string
+    _id: string
     img: string
     name: string
     rating: string

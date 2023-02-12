@@ -13,6 +13,7 @@ import InputSelect from '@components/ui-ux/inputs/InputSelect';
 import InputFiles from '@components/ui-ux/inputs/InputFiles';
 import InputTextarea from '@components/ui-ux/inputs/InputTextarea';
 import { InputNumber } from '@components/ui-ux/inputs/InputNumber';
+import InputCheckbox from '@components/ui-ux/inputs/InputCheckbox';
 
 type Props = {
     slug: string | null
@@ -33,6 +34,10 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
             for (const [key, value] of data.entries()) {
                 formDataObject[key] = value;
             }
+
+            formDataObject.isFeatured = formDataObject.isFeatured === "on" ? true : false
+            formDataObject.isPublished = formDataObject.isPublished === "on" ? true : false
+
             console.log(formDataObject)
         } catch (error) {
             console.log(error)
@@ -42,16 +47,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
 
     //main_image: string;
     //images: string[];
-
-    //price_in: string;
-    //advancePrice: {
-    //    initialCost: number;
-    //    tva: number;
-    //    marge: number;
-    //};
-
-    //isFeatured: boolean;
-    //isPublished: boolean;
 
     return (
         <AdminscreenWrapper title={`${product ? product?.name + ' - ' : ""} Edit product`}>
@@ -124,7 +119,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             title="Prix"
                             description="Prix du produit"
                             input={{
-                                name: "slug",
+                                name: "price",
                                 defaultValue: product?.price || "",
                                 min: "",
                                 max: "",
@@ -141,12 +136,12 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 defaultValue: { name: 'Kg' },
                             }}
                             options={[{ name: 'g' }, { name: 'Kg' }, { name: 'Unité' }]}
-                            setChange={() => {}}
+                            setChange={() => { }}
                         />
 
                         <InputNumber
-                            title="Quantité du stock"
-                            description="Quantité du produit"
+                            title="Quantité en stock"
+                            description="Quantité du produit disponible"
                             input={{
                                 name: "countInStock",
                                 defaultValue: product?.countInStock || "",
@@ -157,6 +152,64 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             onChange={() => { }}
                         />
 
+                        <InputNumber
+                            title="Prix d'achat du produit"
+                            description="Prix d'achat"
+                            input={{
+                                name: "initialCost",
+                                defaultValue: product?.advancePrice?.initialCost || "",
+                                min: "",
+                                max: "",
+                                placeholder: "entrer le prix d'achat ...",
+                            }}
+                            onChange={() => { }}
+                        />
+
+                        <InputSelect
+                            title="Tva produit"
+                            description="5,5% pour l'alimentaire"
+                            input={{
+                                name: 'tva',
+                                defaultValue: { name: '5,5' },
+                            }}
+                            options={[{ name: '0' }, { name: '5,5' }, { name: '10' }, { name: '20' }]}
+                            setChange={() => { }}
+                        />
+
+                        <InputNumber
+                            title="Marge du produit"
+                            description="Marge sur le produit"
+                            input={{
+                                name: "marge",
+                                defaultValue: product?.advancePrice?.marge || "",
+                                min: "",
+                                max: "",
+                                placeholder: "entrer la marge ...",
+                            }}
+                            onChange={() => { }}
+                        />
+
+                        <div className='space-y-5 col-span-full'>
+                            <InputCheckbox
+                                title="Mise en avant du produit"
+                                description="Cochez cette case pour mettre en avant le produit sur la page d'accueil ou sur d'autres sections de votre site web pour une meilleure visibilité."
+                                input={{
+                                    name: "isFeatured",
+                                    checked: product?.isFeatured || false,
+                                }}
+                                onChange={() => { }}
+                            />
+
+                            <InputCheckbox
+                                title="Publication du produit"
+                                description="Cochez cette case pour publier le produit sur votre site web. Assurez-vous d'avoir terminé toutes les modifications et de l'avoir vérifié avant de le publier. Une fois publié, votre produit sera visible pour tous les utilisateurs."
+                                input={{
+                                    name: "isPublished",
+                                    checked: product?.isPublished || false,
+                                }}
+                                onChange={() => { }}
+                            />
+                        </div>
                     </div>
                 </div>
                 <hr className="h-[1px] bg-gray-100 my-14" />
