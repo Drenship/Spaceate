@@ -44,10 +44,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
         }
     }
 
-
-    //main_image: string;
-    //images: string[];
-
     return (
         <AdminscreenWrapper title={`${product ? product?.name + ' - ' : ""} Edit product`}>
             <form onSubmit={handleSubmitProduct}>
@@ -55,29 +51,62 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                     <p className="text-xl font-semibold leading-tight text-gray-800">Produit Details: {slug && <span className='italic font-bold underline uppercase text-sky-600'>{slug}</span>}</p>
 
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7">
-                        <InputFiles multiple={false} />
+                        <div className='grid w-full grid-cols-1 col-span-full lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7'>
 
-                        <InputText
-                            title="Nom"
-                            description="Nom du produit"
-                            input={{
-                                name: "name",
-                                defaultValue: product?.name || "",
-                                placeholder: "entrer un nom ...",
-                            }}
-                            onChange={() => { }}
-                        />
+                            <InputFiles
+                                multiple={false}
+                                input={{
+                                    name: "main_image",
+                                }}
+                            />
 
-                        <InputText
-                            title="Slug"
-                            description="Slug du produit"
-                            input={{
-                                name: "slug",
-                                defaultValue: product?.slug || "",
-                                placeholder: "entrer un slug ...",
-                            }}
-                            onChange={() => { }}
-                        />
+                            <div className='space-y-5'>
+                                <InputText
+                                    title="Nom"
+                                    description="Nom du produit"
+                                    input={{
+                                        name: "name",
+                                        defaultValue: product?.name || "",
+                                        placeholder: "entrer un nom ...",
+                                    }}
+                                    onChange={() => { }}
+                                />
+
+                                <InputText
+                                    title="Slug"
+                                    description="Slug du produit"
+                                    input={{
+                                        name: "slug",
+                                        defaultValue: product?.slug || "",
+                                        placeholder: "entrer un slug ...",
+                                    }}
+                                    onChange={() => { }}
+                                />
+
+                                <InputSelect
+                                    title="Catégorie"
+                                    description="Choisire une catégorie"
+                                    input={{
+                                        name: 'categorie',
+                                        defaultValue: categories[0],
+                                    }}
+                                    options={categories}
+                                    setChange={(c: any) => setCurrentCategorie(c)}
+                                />
+        
+                                <InputSelect
+                                    title="Sous catégorie"
+                                    description="Choisire une sous catégorie"
+                                    input={{
+                                        name: 'subCategorie',
+                                        defaultValue: currentCategorie.subCategories[0],
+                                    }}
+                                    options={currentCategorie.subCategories}
+                                    setChange={() => { }}
+                                />
+                            </div>
+
+                        </div>
 
                         <InputTextarea
                             title="Description"
@@ -90,27 +119,14 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             onChange={() => { }}
                         />
 
-                        <InputSelect
-                            title="Catégorie"
-                            description="Choisire une catégorie"
-                            input={{
-                                name: 'categorie',
-                                defaultValue: categories[0],
-                            }}
-                            options={categories}
-                            setChange={(c: any) => setCurrentCategorie(c)}
-                        />
-
-                        <InputSelect
-                            title="Sous catégorie"
-                            description="Choisire une sous catégorie"
-                            input={{
-                                name: 'subCategorie',
-                                defaultValue: currentCategorie.subCategories[0],
-                            }}
-                            options={currentCategorie.subCategories}
-                            setChange={() => { }}
-                        />
+                        <div className='col-span-full'>
+                            <InputFiles
+                                multiple={true}
+                                input={{
+                                    name: "images",
+                                }}
+                            />
+                        </div>
                     </div>
 
                     <p className="block mt-10 text-xl font-semibold leading-tight text-gray-800">Prix et stock</p>

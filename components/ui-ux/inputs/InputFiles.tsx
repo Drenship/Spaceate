@@ -1,20 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { generateUUID } from '@libs/utils';
 
 type Props = {
     multiple: boolean
+    input: {
+        name: string,
+    }
 }
 
 const defaultProps: Props = {
-    multiple: true
+    multiple: true,
+    input: {
+        name: 'image',
+    }
 };
 
-export default function InputFiles({ multiple } : Props = defaultProps) {
+export default function InputFiles({ multiple, input }: Props = defaultProps) {
+
+    const { name } = input;
 
     const [files, setReturnFiles] = useState<any>([]);
+    const uuid = useMemo(generateUUID, []);
 
     const _ShowMiniature = (e: React.ChangeEvent<HTMLInputElement | any>) => {
         if (!e.currentTarget.files[0]) return;
-        if(multiple === true) {
+        if (multiple === true) {
             setReturnFiles([...files, ...e.target.files]);
         } else {
             setReturnFiles([...e.target.files]);
@@ -24,24 +34,24 @@ export default function InputFiles({ multiple } : Props = defaultProps) {
     useEffect(() => {
         console.log(files.length);
         if (files.length === 0) return;
-        document.getElementById("show")!.innerHTML = "";
+        document.getElementById(uuid)!.innerHTML = "";
         for (let index = 0; index < files.length; index++) {
             const reader = new FileReader();
             reader.onload = function (e: any) {
-                document.getElementById("show")!.innerHTML += `<img class="rounded-lg" alt="" src="${e.target.result}"/>`;
+                document.getElementById(uuid)!.innerHTML += `<img class="rounded-lg" alt="" src="${e.target.result}"/>`;
             };
             reader.readAsDataURL(files[index]);
         }
     }, [files]);
 
     return (
-        <div className='flex flex-col space-y-5 lg:flex-row lg:space-x-5 col-span-full'>
-            <div id='show' className="grid grid-cols-2 gap-5"></div>
+        <div className='flex flex-col w-full'>
+            <div id={uuid} className="grid self-center w-full grid-cols-2 gap-5"></div>
             <input
                 type='file'
                 accept='image/*'
                 multiple={multiple}
-                name='image'
+                name={name}
                 className="w-full h-32 p-5 mt-5 border-2 border-dashed rounded-lg"
                 onChange={(e) => _ShowMiniature(e)}
             />
