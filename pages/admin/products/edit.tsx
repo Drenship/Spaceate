@@ -50,7 +50,13 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
             }
             console.log(formDataObject)
 
-            const { data } = await axios.post(url, formData);
+            const { data } = await axios.post(url, formData, {
+                headers: {
+                    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+                    signature: signature,
+                    timestamp: timestamp
+                }
+            });
 
             setMainImage(data.secure_url);
 
