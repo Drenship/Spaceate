@@ -5,24 +5,26 @@ type Props = {
     multiple: boolean
     input: {
         name: string,
-    }
+    },
+    onChange: (e: React.BaseSyntheticEvent) => void
 }
 
 const defaultProps: Props = {
     multiple: true,
     input: {
         name: 'image',
-    }
+    },
+    onChange: () => {}
 };
 
-export default function InputFiles({ multiple, input }: Props = defaultProps) {
+export default function InputFiles({ multiple, input, onChange }: Props = defaultProps) {
 
     const { name } = input;
 
     const [files, setReturnFiles] = useState<any>([]);
     const uuid = useMemo(generateUUID, []);
 
-    const _ShowMiniature = (e: React.ChangeEvent<HTMLInputElement | any>) => {
+    const _ShowMiniature = (e: React.BaseSyntheticEvent) => {
         if (!e.currentTarget.files[0]) return;
         if (multiple === true) {
             setReturnFiles([...files, ...e.target.files]);
@@ -53,7 +55,10 @@ export default function InputFiles({ multiple, input }: Props = defaultProps) {
                 multiple={multiple}
                 name={name}
                 className="w-full h-32 p-5 mt-5 border-2 border-dashed rounded-lg"
-                onChange={(e) => _ShowMiniature(e)}
+                onChange={(e) =>{ 
+                    _ShowMiniature(e);
+                    onChange(e)
+                }}
             />
         </div>
     );

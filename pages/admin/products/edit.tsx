@@ -14,6 +14,8 @@ import InputFiles from '@components/ui-ux/inputs/InputFiles';
 import InputTextarea from '@components/ui-ux/inputs/InputTextarea';
 import { InputNumber } from '@components/ui-ux/inputs/InputNumber';
 import InputCheckbox from '@components/ui-ux/inputs/InputCheckbox';
+import axios from 'axios';
+import PrintObject from '@components/PrintObject';
 
 type Props = {
     slug: string | null
@@ -25,6 +27,38 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
 
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(categories[0]);
+    const [mainImage, setMainImage] = useState<string | null | any>(null);
+
+    const uploadHandler = async (e: React.BaseSyntheticEvent) => {
+        e.preventDefault()
+        const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`;
+        try {
+            const {
+                data: { signature, timestamp },
+            } = await axios('/api/admin/cloudinary-sign');
+
+            const file = e.target.files[0];
+            const formData: any = new FormData();
+            formData.append('file', file);
+            formData.append('signature', signature);
+            formData.append('timestamp', timestamp);
+            formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
+
+            const formDataObject: any = {};
+            for (const [key, value] of formData.entries()) {
+                formDataObject[key] = value;
+            }
+            console.log(formDataObject)
+
+            const { data } = await axios.post(url, formData);
+
+            setMainImage(data.secure_url);
+
+            console.log(data)
+        } catch (error) {
+            setMainImage(error)
+        }
+    };
 
     const handleSubmitProduct = async (e: React.BaseSyntheticEvent) => {
         e.preventDefault();
@@ -50,6 +84,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                 <div className="mt-10 px-7">
                     <p className="text-xl font-semibold leading-tight text-gray-800">Produit Details: {slug && <span className='italic font-bold underline uppercase text-sky-600'>{slug}</span>}</p>
 
+                    <PrintObject title="uploader" content={mainImage} />
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7">
                         <div className='grid w-full grid-cols-1 col-span-full lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7'>
 
@@ -58,6 +93,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 input={{
                                     name: "main_image",
                                 }}
+                                onChange={uploadHandler}
                             />
 
                             <div className='space-y-5'>
@@ -93,7 +129,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                     options={categories}
                                     setChange={(c: any) => setCurrentCategorie(c)}
                                 />
-        
+
                                 <InputSelect
                                     title="Sous catégorie"
                                     description="Choisire une sous catégorie"
@@ -125,6 +161,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 input={{
                                     name: "images",
                                 }}
+                                onChange={() => { }}
                             />
                         </div>
                     </div>
