@@ -31,7 +31,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
 
     const uploadHandler = async (e: React.BaseSyntheticEvent) => {
         e.preventDefault()
-        const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`;
+        const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
         try {
             const {
                 data: { signature, timestamp },
