@@ -6,15 +6,15 @@ type Props = {
     input: {
         name: string,
     },
-    onChange: (e: React.BaseSyntheticEvent) => void
+    onChange: (formData: FormData) => void;
 }
 
 const defaultProps: Props = {
     multiple: true,
     input: {
-        name: 'image',
+        name: 'files',
     },
-    onChange: () => {}
+    onChange: (formData: FormData) => {}
 };
 
 export default function InputFiles({ multiple, input, onChange }: Props = defaultProps) {
@@ -46,6 +46,22 @@ export default function InputFiles({ multiple, input, onChange }: Props = defaul
         }
     }, [files]);
 
+    const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!event.target.files?.length) {
+            return;
+        }
+
+        _ShowMiniature(event);
+
+        const formData = new FormData();
+
+        Array.from(event.target.files).forEach((file) => {
+            formData.append(event.target.name, file);
+        });
+
+        onChange(formData);
+    };
+
     return (
         <div className='flex flex-col w-full'>
             <div id={uuid} className="grid self-center w-full grid-cols-2 gap-5"></div>
@@ -55,10 +71,7 @@ export default function InputFiles({ multiple, input, onChange }: Props = defaul
                 multiple={multiple}
                 name={name}
                 className="w-full h-32 p-5 mt-5 border-2 border-dashed rounded-lg"
-                onChange={(e) =>{ 
-                    _ShowMiniature(e);
-                    onChange(e)
-                }}
+                onChange={onChangeHandler}
             />
         </div>
     );

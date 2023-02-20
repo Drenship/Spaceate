@@ -19,15 +19,14 @@ export const authSessionMiddleware = (authVerifyNeed: Props) => {
             return res.status(401).send('signin required to admin');
         }
 
-        if(session) {
+        if (session) {
             const { user } = session;
-
-            if(session.user){
-                if(!req.body) {
+            if (session.user) {
+                if (!req.body) {
                     req.body = {}
                 }
                 req.body.user = user
-            } 
+            }
         }
 
         next()

@@ -84,3 +84,22 @@ export async function fetchDeleteJSON(url: string, data?: {}) {
     throw err;
   }
 }
+
+export async function filesUploader(url: string, data: data) {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+        'Content-Type': 'multipart/form-data'
+      },
+      body: JSON.stringify(data || {}),
+    });
+    return await response.json();
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+    throw err;
+  }
+}

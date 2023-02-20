@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { NextPage } from 'next/types';
+import axios, { AxiosResponse } from 'axios';
 import Link from 'next/link';
-
-import { TypeCategorie, TypeProduct } from '@libs/typings';
+import { FileInfo, TypeCategorie, TypeProduct } from '@libs/typings';
 import Product from '@libs/models/Product';
 import db from '@libs/database/dbConnect';
 import Categorie from '@libs/models/Categorie';
@@ -14,7 +14,6 @@ import InputFiles from '@components/ui-ux/inputs/InputFiles';
 import InputTextarea from '@components/ui-ux/inputs/InputTextarea';
 import { InputNumber } from '@components/ui-ux/inputs/InputNumber';
 import InputCheckbox from '@components/ui-ux/inputs/InputCheckbox';
-import axios from 'axios';
 import PrintObject from '@components/PrintObject';
 
 type Props = {
@@ -29,39 +28,22 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(categories[0]);
     const [mainImage, setMainImage] = useState<string | null | any>(null);
 
-    const uploadHandler = async (e: React.BaseSyntheticEvent) => {
-        e.preventDefault()
-        const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+    const onChangeUploadHandler = async (formData: FormData): Promise<void> => {
         try {
-            const {
-                data: { signature, timestamp },
-            } = await axios('/api/admin/cloudinary-sign');
+            const config = {
+                headers: { 'content-type': 'multipart/form-data' },
+                onUploadProgress: (event: ProgressEvent) => {
+                    console.log(`Current progress:`, Math.round((event.loaded * 100) / event.total));
+                },
+            };
 
-            const file = e.target.files[0];
-            const formData: any = new FormData();
-            formData.append('file', file);
-            formData.append('signature', signature);
-            formData.append('timestamp', timestamp);
-            formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
+            const { data: { files } } = await axios.post('/api/admin/uploader', formData, config);
 
-            const formDataObject: any = {};
-            for (const [key, value] of formData.entries()) {
-                formDataObject[key] = value;
-            }
-            console.log(formDataObject)
+            console.log('response', files);
+            setMainImage(files)
 
-            const { data } = await axios.post(url, formData, {
-                headers: {
-                    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-                    signature: signature,
-                    timestamp: timestamp
-                }
-            });
-
-            setMainImage(data.secure_url);
-
-            console.log(data)
-        } catch (error) {
+        } catch (error: any) {
+            console.log(error);
             setMainImage(error)
         }
     };
@@ -99,7 +81,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 input={{
                                     name: "main_image",
                                 }}
-                                onChange={uploadHandler}
+                                onChange={onChangeUploadHandler}
                             />
 
                             <div className='space-y-5'>
@@ -167,7 +149,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 input={{
                                     name: "images",
                                 }}
-                                onChange={() => { }}
+                                onChange={onChangeUploadHandler}
                             />
                         </div>
                     </div>

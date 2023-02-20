@@ -93,3 +93,11 @@ export interface TypeOrder {
     paidAt?: Date
     deliveredAt?: Date
 }
+
+interface FileInfo {
+    name: string;
+    size: number;
+    url: string;
+    mimetype: any,
+    uploadedAt: Date;
+}
