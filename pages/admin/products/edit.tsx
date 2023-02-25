@@ -67,9 +67,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                 formDataObject[key] = value;
             }
 
-            if (mainImage) {
-                formDataObject.main_image = mainImage[0].url
-            }
+
+            formDataObject.main_image = mainImage ? mainImage[0].url : ""
 
             formDataObject.images = []
             if (images) {
