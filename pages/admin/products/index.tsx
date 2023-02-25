@@ -167,7 +167,7 @@ function AdminProductsScreen({ initialProducts }: Props) {
 export const getServerSideProps = async () => {
 
     await db.connect();
-    const products = await Product.find().lean();
+    const products = await Product.find().populate("categorie").lean();
     await db.disconnect();
 
     return {
