@@ -1,7 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import Categorie from "./Categorie";
 
-//mongoose.set('strictQuery', false)
+mongoose.set('strictQuery', true)
 
 interface IProduct extends Document {
     name: string;
@@ -118,7 +118,6 @@ const productSchema = new mongoose.Schema(
         },
     },
     {
-        strict: true,
         timestamps: true,
     }
 );
