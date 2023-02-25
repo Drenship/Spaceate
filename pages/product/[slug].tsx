@@ -190,10 +190,6 @@ export const getServerSideProps = async ({ query }: any) => {
     let product = await Product.findOne({ slug }).populate("categorie").lean();
     await db.disconnect()
 
-
-    //let subCategorieId = product.subCategorie;
-    //product.subCategorie = 
-
     return {
         props: {
             initalProduct: JSON.parse(JSON.stringify(product)),

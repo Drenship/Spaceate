@@ -118,10 +118,11 @@ const productSchema = new mongoose.Schema(
         },
     },
     {
-        strict: false,
+        strict: true,
         timestamps: true,
     }
 );
+
 
 
 productSchema.index({
