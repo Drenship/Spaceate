@@ -165,15 +165,23 @@ function AdminProductsScreen({ initialProducts }: Props) {
 }
 
 export const getServerSideProps = async () => {
+    try {
 
-    await db.connect();
-    const products = await Product.find().populate("categorie").lean();
-    await db.disconnect();
+        await db.connect();
+        const products = await Product.find().populate("categorie").lean();
+        await db.disconnect();
 
-    return {
-        props: {
-            initialProducts: JSON.parse(JSON.stringify(products)),
-        },
+        return {
+            props: {
+                initialProducts: JSON.parse(JSON.stringify(products)),
+            },
+        }
+    } catch (error) {
+        return {
+            props: {
+                initialProducts: []
+            },
+        }
     }
 }
 

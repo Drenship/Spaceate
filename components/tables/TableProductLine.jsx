@@ -33,6 +33,8 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
+    console.log(product)
+
     return (
         <tr className="h-24 border-b border-gray-300">
             <td className="pl-8 pr-6 text-sm leading-4 tracking-normal text-left text-gray-800 whitespace-no-wrap">
