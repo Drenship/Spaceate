@@ -1,8 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import BlurImage from '@components/ui-ux/BlurImage';
+import { TypeProduct } from '@libs/typings';
 
-export default function SearchResultItem({ product }) {
+type Props = {
+    product: TypeProduct 
+}
+
+export default function SearchResultItem({ product }: Props) {
     if(!product) return;
 
     return (

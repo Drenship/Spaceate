@@ -6,13 +6,14 @@ type Props = {
     input: {
         name: string,
         defaultValue: string,
+        forceValue?: string,
         placeholder: string
     }
     onChange: (e: React.BaseSyntheticEvent) => void
 }
 
 export default function InputText({ title, description, input, onChange }: Props) {
-    const { name, defaultValue, placeholder } = input;
+    const { name, defaultValue, forceValue, placeholder } = input;
 
     return (
         <div>
@@ -21,6 +22,7 @@ export default function InputText({ title, description, input, onChange }: Props
                 className="w-full p-3 mt-4 border border-gray-300 rounded outline-none focus:bg-gray-50"
                 name={name}
                 defaultValue={defaultValue}
+                value={forceValue}
                 placeholder={placeholder}
                 onChange={onChange}
             />
@@ -28,3 +30,7 @@ export default function InputText({ title, description, input, onChange }: Props
         </div>
     );
 }
+
+InputText.defaultProps = {
+    forceValue: '',
+};

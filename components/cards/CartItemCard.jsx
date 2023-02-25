@@ -6,6 +6,7 @@ import { setCartState, CART_ADD_ITEM, CART_REMOVE_ITEM } from "@atoms/setStates/
 import { useNotifys } from '@libs/hooks/notify';
 import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import BlurImage from '@components/ui-ux/BlurImage'
+import { replaceURL } from '@libs/utils';
 
 export default function CartItemCard({ product }) {
 
@@ -68,7 +69,7 @@ export default function CartItemCard({ product }) {
                     <Link href={`/product/${product.slug}`}>
                         <div className='h-[100px] rounded-lg aspect-square object-cover relative overflow-hidden'>
                             <BlurImage
-                                src={product.main_image}
+                                src={replaceURL(product.main_image)}
                             />
                         </div>
                     </Link>

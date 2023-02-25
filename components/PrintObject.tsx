@@ -1,6 +1,11 @@
 import React from 'react';
 
-const PrintObject = ({ title, content }) => {
+type Props = {
+  title: string;
+  content: any
+}
+
+const PrintObject = ({ title, content }: Props) => {
   const formattedContent = JSON.stringify(content, null, 2);
   return (
     <div className="text-left mockup-code">
@@ -9,5 +14,10 @@ const PrintObject = ({ title, content }) => {
     </div>
   )
 };
+
+PrintObject.defaultProps = {
+  title: "Object details",
+  content: {}
+}
 
 export default PrintObject;

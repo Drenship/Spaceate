@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
 import { useRouter } from 'next/dist/client/router';
 import { CART_ADD_ITEM, setCartState } from '@atoms/setStates/setCartState';
+import { replaceURL } from '@libs/utils';
 
 export default function BestsellerCard({ product }) {
     
@@ -26,12 +27,12 @@ export default function BestsellerCard({ product }) {
     }
 
     return (
-        <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center p-2 bg-white shadow-md">
+        <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center overflow-hidden bg-white rounded-md shadow-md button-click-effect">
             <div className="relative">
-                <img className="object-cover aspect-[3/2]" src={product.main_image} alt="watch" />
+                <img className="object-cover aspect-[3/2]" src={replaceURL(product.main_image)} alt="watch" />
 
                 <button
-                    className="top-4 right-4 absolute p-3.5 text-gray-600 hover:text-gray-500 flex justify-center items-center bg-white rounded-full"
+                    className="top-3 right-3 absolute p-3.5 shadow-md text-gray-600 hover:text-gray-500 flex justify-center items-center bg-white rounded-full button-click-effect"
                     onClick={addItemsToCart}
                 >
                     <svg className="fill-stroke" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,7 +46,7 @@ export default function BestsellerCard({ product }) {
                         <path d="M6.25 8.75V9.375C6.25 10.3696 6.64509 11.3234 7.34835 12.0267C8.05161 12.7299 9.00544 13.125 10 13.125C10.9946 13.125 11.9484 12.7299 12.6517 12.0267C13.3549 11.3234 13.75 10.3696 13.75 9.375V8.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </button>
-                <div className="flex justify-between mt-4">
+                <div className="flex justify-between px-2 py-4">
                     <div>
                         <p className="text-lg font-medium leading-none text-gray-800">{product.name}</p>
                     </div>

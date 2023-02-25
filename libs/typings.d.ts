@@ -19,16 +19,14 @@ export interface TypeCategorie {
     name: string;
     slug: string;
     subCategories: TypeSubCategories[];
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 export interface TypeProduct {
     _id: string;
     slug: string;
     name: string;
-    categorie: string;
-    subCategorie: string;
+    categorie: TypeCategorie;
+    subCategorie: string | TypeSubCategories;
     description: string;
     main_image: string;
     images: string[];
@@ -41,6 +39,9 @@ export interface TypeProduct {
         initialCost: number
         tva: number
         marge: number
+    };
+    stats: {
+        totalSelled: number
     };
     isFeatured: boolean;
     isPublished: boolean;

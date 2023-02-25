@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NextPage } from 'next/types';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import Link from 'next/link';
-import { FileInfo, TypeCategorie, TypeProduct } from '@libs/typings';
-import Product from '@libs/models/Product';
+
+import { TypeCategorie, TypeProduct, FileInfo } from '@libs/typings';
 import db from '@libs/database/dbConnect';
+import Product from '@libs/models/Product';
 import Categorie from '@libs/models/Categorie';
+import { textToSLug } from '@libs/utils';
 
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 import InputText from '@components/ui-ux/inputs/InputText';
@@ -14,7 +16,10 @@ import InputFiles from '@components/ui-ux/inputs/InputFiles';
 import InputTextarea from '@components/ui-ux/inputs/InputTextarea';
 import { InputNumber } from '@components/ui-ux/inputs/InputNumber';
 import InputCheckbox from '@components/ui-ux/inputs/InputCheckbox';
+
 import PrintObject from '@components/PrintObject';
+import { useNotifys } from '@libs/hooks/notify';
+import { fetchPostJSON } from '@libs/utils/api-helpers';
 
 type Props = {
     slug: string | null
@@ -26,25 +31,30 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
 
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(categories[0]);
-    const [mainImage, setMainImage] = useState<string | null | any>(null);
+    const [mainImage, setMainImage] = useState<FileInfo[] | null>(null);
+    const [images, setImages] = useState<FileInfo[] | null>(null);
 
-    const onChangeUploadHandler = async (formData: FormData): Promise<void> => {
+    const [formReadyToSend, setformReadyToSend] = useState<any>(null);
+
+    const { pushNotify } = useNotifys();
+
+    const onChangeUploadHandler = async (formData: FormData, callback: any) => {
         try {
-            const config = {
+            const config: any = {
                 headers: { 'content-type': 'multipart/form-data' },
                 onUploadProgress: (event: ProgressEvent) => {
                     console.log(`Current progress:`, Math.round((event.loaded * 100) / event.total));
                 },
             };
 
-            const { data: { files } } = await axios.post('/api/admin/uploader', formData, config);
+            const response = await axios.post('/api/admin/uploader', formData, config);
+            const { data: { files } } = response;
 
             console.log('response', files);
-            setMainImage(files)
-
-        } catch (error: any) {
+            callback(files);
+        } catch (error) {
             console.log(error);
-            setMainImage(error)
+            throw new Error('Error uploading file');
         }
     };
 
@@ -57,14 +67,50 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                 formDataObject[key] = value;
             }
 
+            if (mainImage) {
+                formDataObject.main_image = mainImage[0].url
+            }
+
+            formDataObject.images = []
+            if (images) {
+                let imagesForm: string[] = []
+                images.forEach((i: FileInfo) => imagesForm.push(i.url))
+                formDataObject.images = imagesForm
+            }
+
+            formDataObject.marge = Number(formDataObject.marge)
             formDataObject.isFeatured = formDataObject.isFeatured === "on" ? true : false
             formDataObject.isPublished = formDataObject.isPublished === "on" ? true : false
 
-            console.log(formDataObject)
+            const response = await fetchPostJSON("/api/admin/products", formDataObject)
+
+            if (response?.data) {
+                setProduct(response.data)
+            }
+
+            pushNotify({
+                title: "",
+                subTitle: response?.message || "Une erreur s'est produite.",
+                icon: "NOTIFICATION",
+                duration: 3
+            })
+
+
+            setformReadyToSend(formDataObject)
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            throw new Error('Error sending form');
         }
     }
+
+    const [newName, setNewName] = useState<string | null>(null);
+    const automatiqueSlug = useMemo(() => {
+        const text = newName || product?.name || ""
+        const slug = textToSLug(text)
+        console.log(slug)
+        return slug
+    }, [newName, product]);
+
 
     return (
         <AdminscreenWrapper title={`${product ? product?.name + ' - ' : ""} Edit product`}>
@@ -72,7 +118,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                 <div className="mt-10 px-7">
                     <p className="text-xl font-semibold leading-tight text-gray-800">Produit Details: {slug && <span className='italic font-bold underline uppercase text-sky-600'>{slug}</span>}</p>
 
-                    <PrintObject title="uploader" content={mainImage} />
+                    <PrintObject title="uploader" content={formReadyToSend} />
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7">
                         <div className='grid w-full grid-cols-1 col-span-full lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7'>
 
@@ -81,7 +127,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 input={{
                                     name: "main_image",
                                 }}
-                                onChange={onChangeUploadHandler}
+                                onChange={(formData: FormData) => onChangeUploadHandler(formData, setMainImage)}
                             />
 
                             <div className='space-y-5'>
@@ -93,7 +139,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                         defaultValue: product?.name || "",
                                         placeholder: "entrer un nom ...",
                                     }}
-                                    onChange={() => { }}
+                                    onChange={(e: React.BaseSyntheticEvent) => setNewName(e.target.value)}
                                 />
 
                                 <InputText
@@ -101,7 +147,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                     description="Slug du produit"
                                     input={{
                                         name: "slug",
-                                        defaultValue: product?.slug || "",
+                                        defaultValue: automatiqueSlug || "",
+                                        forceValue: automatiqueSlug,
                                         placeholder: "entrer un slug ...",
                                     }}
                                     onChange={() => { }}
@@ -149,7 +196,13 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 input={{
                                     name: "images",
                                 }}
-                                onChange={onChangeUploadHandler}
+                                onChange={(formData: FormData) => onChangeUploadHandler(formData, (next: FileInfo[]) => {
+                                    if(images !== null) {
+                                        setImages([...images, ...next])
+                                    } else {
+                                        setImages(next)
+                                    }
+                                })}
                             />
                         </div>
                     </div>
@@ -161,8 +214,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             description="Prix du produit"
                             input={{
                                 name: "price",
-                                defaultValue: product?.price || "",
-                                min: "",
+                                defaultValue: product?.price || 0,
+                                min: 0,
                                 max: "",
                                 placeholder: "entrer un prix ...",
                             }}
@@ -185,8 +238,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             description="Quantité du produit disponible"
                             input={{
                                 name: "countInStock",
-                                defaultValue: product?.countInStock || "",
-                                min: "",
+                                defaultValue: product?.countInStock || 0,
+                                min: 0,
                                 max: "",
                                 placeholder: "entrer votre stock ...",
                             }}
@@ -198,8 +251,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             description="Prix d'achat"
                             input={{
                                 name: "initialCost",
-                                defaultValue: product?.advancePrice?.initialCost || "",
-                                min: "",
+                                defaultValue: product?.advancePrice?.initialCost || 0,
+                                min: 0,
                                 max: "",
                                 placeholder: "entrer le prix d'achat ...",
                             }}
@@ -211,9 +264,9 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             description="5,5% pour l'alimentaire"
                             input={{
                                 name: 'tva',
-                                defaultValue: { name: '5,5' },
+                                defaultValue: { name: '5.5' },
                             }}
-                            options={[{ name: '0' }, { name: '5,5' }, { name: '10' }, { name: '20' }]}
+                            options={[{ name: '0' }, { name: '5.5' }, { name: '10' }, { name: '20' }]}
                             setChange={() => { }}
                         />
 
@@ -222,8 +275,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             description="Marge sur le produit"
                             input={{
                                 name: "marge",
-                                defaultValue: product?.advancePrice?.marge || "",
-                                min: "",
+                                defaultValue: product?.advancePrice?.marge || 0,
+                                min: 0,
                                 max: "",
                                 placeholder: "entrer la marge ...",
                             }}

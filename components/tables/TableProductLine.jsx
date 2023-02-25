@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useEscapeListener } from '@libs/hooks';
+import Link from 'next/link';
 
 export default function TableProductLine({ product, checkAll, updateMainProducts }) {
 
@@ -12,7 +13,7 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
     });
 
     const checkboxChecked = useMemo(() => {
-        if(prevCheck.checked !== checked) {
+        if (prevCheck.checked !== checked) {
             setPrevCheck({
                 checkAll: checkAll,
                 checked: checked
@@ -52,18 +53,21 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
                     </svg>
                 </div>
             </td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">#MC10023</td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">Toyota Motors</td>
-            <td className="pr-6 whitespace-no-wrap">324</td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">10</td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">2,500€</td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">02.03.20</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.name}</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.slug}</td>
+            <td className="pr-6 whitespace-no-wrap">{product.countInStock}</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product?.stats?.totalSelled || 0}</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.price}€</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.createdAt}</td>
             <td className="pr-6">
                 <div className="w-2 h-2 bg-indigo-400 rounded-full" />
             </td>
             <td className="relative pr-8">
-                <div className={`absolute left-0 z-10 w-32 mt-8 -ml-12 shadow-md dropdown-content ${ !seeMenu && 'hidden' }`}>
+                <div className={`absolute left-0 z-10 w-32 mt-8 -ml-12 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
                     <ul className="py-1 bg-white rounded shadow ">
+                        <Link href={`/product/${product.slug}`}>
+                            <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire</li>
+                        </Link>
                         <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Edit</li>
                         <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Delete</li>
                     </ul>

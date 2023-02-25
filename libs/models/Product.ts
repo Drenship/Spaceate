@@ -1,4 +1,5 @@
 import mongoose, { Document } from "mongoose";
+import Categorie from "./Categorie";
 
 //mongoose.set('strictQuery', false)
 
@@ -100,6 +101,13 @@ const productSchema = new mongoose.Schema(
             min: 0,
             default: 0
         },
+        stats: {
+            totalSelled: {
+                type: Number,
+                min: 0,
+                default: 0
+            },
+        },
         isFeatured: {
             type: Boolean,
             default: false
@@ -110,6 +118,7 @@ const productSchema = new mongoose.Schema(
         },
     },
     {
+        strict: false,
         timestamps: true,
     }
 );
@@ -123,6 +132,7 @@ productSchema.index({
     subCategory: 1,
 });
 
+// test
 productSchema.pre('validate', function () {
     console.log('this gets printed first');
 });
@@ -139,17 +149,26 @@ productSchema.post('save', function () {
     console.log('this gets printed fourth');
 });
 
+
+
+// Working functions
+
 let findstart = 0;
 productSchema.pre('find', function () {
-    console.log(this instanceof mongoose.Query); // true
+    //console.log(this instanceof mongoose.Query); // true
     findstart = Date.now();
 });
 
-productSchema.post('find', function (result) {
-    console.log(this instanceof mongoose.Query); // true
-    // prints returned documents
-    console.log('find() returned ' + JSON.stringify(result));
-    // prints number of milliseconds the query took
+productSchema.post('find', async function (result) {
+    // Populate the categorie field
+     const categorie = await Categorie.findById(result.categorie);
+    if (categorie) {
+        result.categorie = categorie
+        result.subCategorie = categorie.subCategorie.filter(c => c._id === result.subCategorie);
+    } else {
+        throw new Error(`Could not find Categorie with id ${result.categorie}`);
+    } 
+    
     console.log('find() took ' + (Date.now() - findstart) + ' milliseconds');
 });
 

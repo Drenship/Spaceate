@@ -15,20 +15,36 @@ import Rating from "@components/ui-ux/Rating"
 import database from "@devasset/database.json"
 import { NextPage } from 'next/types';
 import { TypeCartItem, TypeProduct, TypeCommentaire } from '@libs/typings';
+import db from '@libs/database/dbConnect';
+import Product from '@libs/models/Product';
+import { replaceURL } from '@libs/utils';
 
 type Props = {
-    product: TypeProduct
+    initalProduct: TypeProduct
     sameProducts: TypeProduct[]
 }
 
-const Product: NextPage<Props> = ({ product, sameProducts }) => {
+const ProductPage: NextPage<Props> = ({ initalProduct, sameProducts }) => {
     const router = useRouter()
+    const [product, setProduct] = useState<TypeProduct>(initalProduct);
     const [quantity, setQuantity] = useState(1);
-
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
+    useEffect(() => {
+        if (typeof product.subCategorie === "object") return;
+        let x = {
+            subCategorie: {
+                _id: initalProduct.subCategorie,
+                name: '',
+                slug: ''
+            }
+        }
+        x.subCategorie = [...initalProduct.categorie.subCategories].filter(sc => sc._id === initalProduct.subCategorie)[0]
+        setProduct(prev => Object.assign(prev, x))
+    }, [])
+
     const addItemsToCart = () => {
-        let newProductCart:TypeCartItem = { 
+        let newProductCart: TypeCartItem = {
             ...product,
             quantity: quantity
         }
@@ -62,6 +78,7 @@ const Product: NextPage<Props> = ({ product, sameProducts }) => {
         getCommentaires()
     }, [router.query]);
 
+
     return (
         <BasescreenWrapper title={product.name} footer={true}>
             <div className='flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100 '>
@@ -69,7 +86,7 @@ const Product: NextPage<Props> = ({ product, sameProducts }) => {
                 <div className='flex flex-row md:block md:space-x-0 space-x-4 md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 md:p-9 lg:p-12 h-full md:sticky top-16 bg-gray-100'>
                     <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square max-w-[30vw]'>
                         <BlurImage
-                            src={product.main_image}
+                            src={replaceURL(product.main_image)}
                         />
                     </div>
                     <div className='grid w-full grid-cols-2 gap-4 md:mt-4 xl:grid-cols-4'>
@@ -77,7 +94,7 @@ const Product: NextPage<Props> = ({ product, sameProducts }) => {
                             product.images?.map((img, key) => <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                                 <BlurImage
                                     key={key}
-                                    src={img}
+                                    src={replaceURL(img)}
                                 />
                             </div>)
                         }
@@ -89,8 +106,8 @@ const Product: NextPage<Props> = ({ product, sameProducts }) => {
 
                     { /* Product info */}
                     <section>
+                        <p>{product?.categorie?.name} &gt; {product.subCategorie.name}</p>
                         <h1 className='text-3xl font-bold uppercase'>{product.name}</h1>
-
                         <div className='flex items-center justify-start mt-5 space-x-2'>
                             <Rating rating={product.rating === 0 ? 5 : product.rating} />
                             <p className='space-x-1'>
@@ -111,7 +128,7 @@ const Product: NextPage<Props> = ({ product, sameProducts }) => {
                             <p>Sélectionnez la quantité :</p>
                             <InputNumber
                                 min={1}
-                                max={product.count_in_stock}
+                                max={product.countInStock}
                                 defaultValue={1}
                                 setUpdate={setQuantity}
                             />
@@ -126,7 +143,7 @@ const Product: NextPage<Props> = ({ product, sameProducts }) => {
                     { /* Product associate */}
                     <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
                         <h2 className='text-xl font-bold uppercase'>Produits similaire</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 justify-items-between gap-x-6 gap-y-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-between gap-x-6 gap-y-5">
                             {
                                 [...sameProducts, ...sameProducts]?.map((data, key) => <BestsellerCard product={data} key={key} />)
                             }
@@ -167,14 +184,22 @@ const Product: NextPage<Props> = ({ product, sameProducts }) => {
 
 export const getServerSideProps = async ({ query }: any) => {
 
-    const product = database.products.filter(p => p.slug === query.slug)[0]
+    const slug = query.slug || null;
+
+    await db.connect();
+    let product = await Product.findOne({ slug }).populate("categorie").lean();
+    await db.disconnect()
+
+
+    //let subCategorieId = product.subCategorie;
+    //product.subCategorie = 
 
     return {
         props: {
-            product,
+            initalProduct: JSON.parse(JSON.stringify(product)),
             sameProducts: database.products
         },
     }
 }
 
-export default Product
+export default ProductPage

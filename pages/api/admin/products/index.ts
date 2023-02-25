@@ -18,24 +18,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
+        const productData = req.body
+
         await db.connect();
         const newProduct = new Product({
-            name: 'sample name',
-            slug: 'sample-name-' + Math.random(),
-            image: '/images/shirt1.jpg',
-            price: 0,
-            category: 'sample category',
-            brand: 'sample brand',
-            countInStock: 0,
-            description: 'sample description',
-            rating: 0,
-            numReviews: 0,
+            name:  productData.name,
+            slug:  productData.slug,
+            main_image: productData.main_image,
+            images: productData.images,
+            description: productData.description,
+            
+            categorie: productData.categorie,
+            subCategorie: productData.subCategorie,
+
+            price: productData.price,
+            price_in: productData.price_in,
+            countInStock: productData.countInStock,
+            advancePrice: {
+                initialCost: productData.initialCost,
+                tva: productData.tva,
+                marge: productData.marge,
+            },
+
+            isFeatured: productData.isFeatured,
+            isPublished: productData.isPublished
         });
 
         const product = await newProduct.save();
+        console.log(product)
         await db.disconnect();
         res.send({ message: 'Product created successfully', data: product });
     } catch (error) {
+        console.log(error)
         res.status(500).send({ message: 'An error has occurred' });
     }
 };

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react'
+
 export interface IProps {
     acceptedFileTypes?: string;
     allowMultipleFiles?: boolean;

@@ -172,7 +172,7 @@ export const getServerSideProps = async () => {
 
     return {
         props: {
-            initialProducts: products.map(db.convertDocToObj),
+            initialProducts: JSON.parse(JSON.stringify(products)),
         },
     }
 }

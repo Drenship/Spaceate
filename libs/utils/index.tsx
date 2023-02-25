@@ -9,3 +9,11 @@ export function generateUUID() {
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 }
+
+export function textToSLug(text: string) {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+}
+
+export function replaceURL(url: string) {
+    return url.startsWith("/") ? url : `/${url}`;
+}

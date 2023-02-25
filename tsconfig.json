@@ -61,9 +61,9 @@
     "pages/admin/index.jsx",
     "components/Wrapper/BasescreenWrapper.jsx",
     "components/tables/TableProductLine.jsx",
-    "components/PrintObject.jsx",
-    "components/footer.jsx"
-  ],
+    "components/PrintObject.tsx",
+    "components/footer.tsx"
+, "components/navbar.jsx"  ],
   "exclude": [
     "node_modules"
   ]
