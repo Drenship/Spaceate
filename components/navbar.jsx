@@ -11,6 +11,7 @@ import SearchResultItem from '@components/cards/SearchResultItem';
 //import { useVideoSearch } from '@libs/hooks/useSearch'
 
 import database from "@devasset/database.json"
+import { replaceURL } from '@libs/utils';
 
 function Navbar() {
     const router = useRouter()
@@ -142,7 +143,7 @@ function Navbar() {
                                 {
                                     cartItem.length > 0 && [...cartItem].slice(0, 4).map((p, k) => <div key={k} className="avatar">
                                         <div className="w-12">
-                                            <img src={p.main_image} alt={`panier spaceate - ${p.name}`} />
+                                            <img src={replaceURL(p.main_image)} alt={`panier spaceate - ${p.name}`} />
                                         </div>
                                     </div>)
                                 }

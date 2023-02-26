@@ -1,7 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import Categorie from "./Categorie";
 
-mongoose.set('strictQuery', true)
+mongoose.set('strictQuery', false)
 
 interface IProduct extends Document {
     name: string;
@@ -118,6 +118,7 @@ const productSchema = new mongoose.Schema(
         },
     },
     {
+        strict: false,
         timestamps: true,
     }
 );
@@ -128,10 +129,10 @@ productSchema.index({
     slug: 1,
     name: 1,
     price: 1,
-    category: 1,
-    subCategory: 1,
+    categorie: 1,
+    subCategorie: 1,
 });
-
+/*
 // test
 productSchema.pre('validate', function () {
     console.log('this gets printed first');
@@ -148,28 +149,80 @@ productSchema.pre('save', function () {
 productSchema.post('save', function () {
     console.log('this gets printed fourth');
 });
-
+ */
 
 
 // Working functions
+/*
+productSchema.pre('save', function (this: IProduct & mongoose.Document<any, any, IProduct>, next) {
+    const product = this;
+    // On ne peut pas faire de l'async/await ici car la fonction doit être synchrone
+    // On doit donc utiliser le callback next() à la place de l'await
+    if (product.isModified('name')) {
+        product.slug = slugify(product.name, { lower: true });
+    }
+
+    if (product.isModified('categorie') || product.isModified('subCategorie')) {
+        const categorie = Categorie.findById(product.categorie);
+
+        if (categorie) {
+            const subCategorie = categorie.subCategorie.find(
+                (subCategorie) => subCategorie._id.toString() === product.subCategorie.toString()
+            );
+
+            if (subCategorie) {
+                next();
+            } else {
+                throw new Error(`SubCategorie with id ${product.subCategorie} not found in Categorie with id ${product.categorie}`);
+            }
+        } else {
+            throw new Error(`Categorie with id ${product.categorie} not found`);
+        }
+    } else {
+        next();
+    }
+});
+*/
+
 
 let findstart = 0;
 productSchema.pre('find', function () {
-    //console.log(this instanceof mongoose.Query); // true
+    console.log(this instanceof mongoose.Query); // true
     findstart = Date.now();
 });
 
 productSchema.post('find', async function (result) {
     // Populate the categorie field
-     const categorie = await Categorie.findById(result.categorie);
+    const categorie = await Categorie.findById(result.categorie);
+
     if (categorie) {
         result.categorie = categorie
         result.subCategorie = categorie.subCategorie.filter(c => c._id === result.subCategorie);
     } else {
-        throw new Error(`Could not find Categorie with id ${result.categorie}`);
-    } 
-    
+        console.log(`Could not find Categorie with id ${result.categorie}`)
+    }
+
     console.log('find() took ' + (Date.now() - findstart) + ' milliseconds');
 });
+/*
+productSchema.post('find', async function (results) {
+    for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+
+        // Populate the categorie field
+        const productWithCategorie = await this.findById(result._id).populate('categorie');
+
+        if (productWithCategorie && productWithCategorie.categorie) {
+            result.categorie = productWithCategorie.categorie;
+            result.subCategorie = productWithCategorie.categorie.subCategorie.filter(c => c._id === result.subCategorie);
+        } else {
+            console.log(`Could not find Categorie with id ${result.categorie}`);
+            //throw new Error(`Could not find Categorie with id ${result.categorie}`);
+        }
+    }
+
+    console.log('find() took ' + (Date.now() - findstart) + ' milliseconds');
+});
+*/
 
 export default mongoose.models.Product || mongoose.model<IProduct>("Product", productSchema)

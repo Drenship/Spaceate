@@ -17,3 +17,9 @@ export function textToSLug(text: string) {
 export function replaceURL(url: string) {
     return url.startsWith("/") ? url : `/${url}`;
 }
+
+export function UTCStringToDate(utcString: string) {
+    const date = new Date(utcString);
+    const dateForma = navigator.language || 'fr-FR'
+    return  date.toLocaleDateString(dateForma);
+};

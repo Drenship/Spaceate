@@ -13,16 +13,18 @@ type InputNumber = {
     input: {
         name: string,
         placeholder: string
-        defaultValue: number | '',
-        min: number | '',
+        defaultValue: number | 0,
+        min: number | 0,
         max: number | '',
+        step?: number
     }
     onChange: (e: React.BaseSyntheticEvent) => void
 }
 
 
-export function InputNumber({ title, description, input, onChange }: InputNumber) {
-    const { name, defaultValue, min, max, placeholder } = input;
+
+export const InputNumber: React.FC<InputNumber> = ({ title, description, input, onChange }) => {
+    const { name, defaultValue, min, max, step, placeholder } = input;
 
     return (
         <div>
@@ -34,6 +36,7 @@ export function InputNumber({ title, description, input, onChange }: InputNumber
                 defaultValue={defaultValue}
                 min={min}
                 max={max}
+                step={step}
                 placeholder={placeholder}
                 onChange={onChange}
             />
@@ -42,7 +45,7 @@ export function InputNumber({ title, description, input, onChange }: InputNumber
     );
 }
 
-export default function InputNumberDefault({ min, max, defaultValue, setUpdate }: Props) {
+export default function InputNumberDefault({ min, max, defaultValue, setUpdate }: InputNumberDefault) {
     const [count, setCount] = useState<number>(defaultValue || min);
 
     const addCount = () => {

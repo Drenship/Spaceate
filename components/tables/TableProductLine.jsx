@@ -1,6 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useEscapeListener } from '@libs/hooks';
 import Link from 'next/link';
+import BlurImage from '@components/ui-ux/BlurImage';
+import { replaceURL, UTCStringToDate } from '@libs/utils';
 
 export default function TableProductLine({ product, checkAll, updateMainProducts }) {
 
@@ -46,13 +48,12 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
                 />
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap ">
-                <div className="relative w-10 text-gray-600">
-                    <div className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 mr-2 -mt-1 text-xs text-white bg-indigo-700 rounded-full">3</div>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-file" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" />
-                        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                    </svg>
+                <div className="relative text-gray-600 max-w-20">
+                    <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
+                        <BlurImage
+                            src={replaceURL(product.main_image)}
+                        />
+                    </div>
                 </div>
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.name}</td>
@@ -60,7 +61,7 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
             <td className="pr-6 whitespace-no-wrap">{product.countInStock}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product?.stats?.totalSelled || 0}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.price}€</td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.createdAt}</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(product.createdAt)}</td>
             <td className="pr-6">
                 <div className="w-2 h-2 bg-indigo-400 rounded-full" />
             </td>

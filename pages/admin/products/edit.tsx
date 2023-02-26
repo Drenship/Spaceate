@@ -23,18 +23,21 @@ import { fetchPostJSON } from '@libs/utils/api-helpers';
 
 type Props = {
     slug: string | null
+    productFind: boolean,
     categories: TypeCategorie[]
     initialProduct: TypeProduct
 }
 
-const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories }) => {
+const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, categories }) => {
+
+    console.log({ slug, productFind, initialProduct, categories })
 
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
-    const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(categories[0]);
+    const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
     const [mainImage, setMainImage] = useState<FileInfo[] | null>(null);
     const [images, setImages] = useState<FileInfo[] | null>(null);
 
-    const [formReadyToSend, setformReadyToSend] = useState<any>(null);
+    const [formReadyToSend, setformReadyToSend] = useState<any>(initialProduct);
 
     const { pushNotify } = useNotifys();
 
@@ -196,7 +199,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                     name: "images",
                                 }}
                                 onChange={(formData: FormData) => onChangeUploadHandler(formData, (next: FileInfo[]) => {
-                                    if(images !== null) {
+                                    if (images !== null) {
                                         setImages([...images, ...next])
                                     } else {
                                         setImages(next)
@@ -216,6 +219,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 defaultValue: product?.price || 0,
                                 min: 0,
                                 max: "",
+                                step: 0.01,
                                 placeholder: "entrer un prix ...",
                             }}
                             onChange={() => { }}
@@ -226,7 +230,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             description="Prix (g, kg, unité)"
                             input={{
                                 name: 'price_in',
-                                defaultValue: { name: 'Kg' },
+                                defaultValue: { name: product?.price_in || 'Kg' },
                             }}
                             options={[{ name: 'g' }, { name: 'Kg' }, { name: 'Unité' }]}
                             setChange={() => { }}
@@ -240,6 +244,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 defaultValue: product?.countInStock || 0,
                                 min: 0,
                                 max: "",
+                                step: 1,
                                 placeholder: "entrer votre stock ...",
                             }}
                             onChange={() => { }}
@@ -253,6 +258,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 defaultValue: product?.advancePrice?.initialCost || 0,
                                 min: 0,
                                 max: "",
+                                step: 0.01,
                                 placeholder: "entrer le prix d'achat ...",
                             }}
                             onChange={() => { }}
@@ -263,7 +269,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                             description="5,5% pour l'alimentaire"
                             input={{
                                 name: 'tva',
-                                defaultValue: { name: '5.5' },
+                                defaultValue: { name: product?.advancePrice?.marge.toString() || '5.5' },
                             }}
                             options={[{ name: '0' }, { name: '5.5' }, { name: '10' }, { name: '20' }]}
                             setChange={() => { }}
@@ -277,6 +283,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, initialProduct, categories })
                                 defaultValue: product?.advancePrice?.marge || 0,
                                 min: 0,
                                 max: "",
+                                step: 0.01,
                                 placeholder: "entrer la marge ...",
                             }}
                             onChange={() => { }}
@@ -330,19 +337,31 @@ export const getServerSideProps = async ({ query }: any) => {
     const slug = query.slug || null;
     let product = null
 
-    await db.connect();
-    const categories = await Categorie.find().lean();
-    if (slug) {
-        product = await Product.findOne({ slug }).lean();
-    }
-    await db.disconnect()
+    try {
+        await db.connect();
+        const categories = await Categorie.find().lean();
+        if (slug) {
+            product = await Product.findOne({ slug }).populate('categorie').lean();
+        }
+        await db.disconnect()
 
-    return {
-        props: {
-            slug: slug,
-            categories: db.convertDocToObj(categories),
-            initialCategorie: product ? db.convertDocToObj(product) : null,
-        },
+        return {
+            props: {
+                slug: slug,
+                productFind: product ? true : false,
+                categories: db.convertDocToObj(categories),
+                initialProduct: JSON.parse(JSON.stringify(product)),
+            },
+        }
+
+    } catch (error) {
+        return {
+            props: {
+                slug: slug,
+                categories: [],
+                initalProduct: {},
+            },
+        }
     }
 }
 
