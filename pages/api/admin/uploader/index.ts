@@ -8,6 +8,7 @@ import { FileInfo } from '@libs/typings';
 import { generateUUID } from '@libs/utils';
 
 const upload = multer({
+    limits: { fileSize: 20000000 }, // 20MB in bytes
     storage: multer.diskStorage({
         destination: './public/uploads',
         filename: (req, file, cb) => {
