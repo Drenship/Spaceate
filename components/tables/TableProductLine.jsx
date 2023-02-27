@@ -1,10 +1,16 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { useEscapeListener } from '@libs/hooks';
 import Link from 'next/link';
-import BlurImage from '@components/ui-ux/BlurImage';
+
+import { useEscapeListener } from '@libs/hooks';
 import { replaceURL, UTCStringToDate } from '@libs/utils';
+import { useNotifys } from '@libs/hooks/notify';
+import { fetchDeleteJSON } from '@libs/utils/api-helpers';
+
+import BlurImage from '@components/ui-ux/BlurImage';
 
 export default function TableProductLine({ product, checkAll, updateMainProducts }) {
+
+    const { pushNotify } = useNotifys();
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);
@@ -32,10 +38,42 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
         return checkAll
     }, [checkAll, checked]);
 
+    const deleteHandler = async () => {
+
+        if (confirm("Confirmer la suppression de : " + product.name) != true) return;
+
+        try {
+            const result = await fetchDeleteJSON(`/api/admin/products/${product._id}`)
+            console.log(result)
+            if (result?.success === true) {
+                updateMainProducts(products => products.filter(c => c._id !== product._id))
+
+                pushNotify({
+                    title: "",
+                    subTitle: result?.message || "Une erreur s'est produite.",
+                    icon: "NOTIFICATION",
+                    duration: 3
+                })
+            } else {
+                pushNotify({
+                    title: "",
+                    subTitle: result?.message || "Une erreur s'est produite.",
+                    icon: "ERROR",
+                    duration: 3
+                })
+            }
+        } catch (err) {
+            pushNotify({
+                title: "",
+                subTitle: err?.message || "Une erreur s'est produite.",
+                icon: "ERROR",
+                duration: 3
+            })
+        }
+    }
+
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
-
-    console.log(product)
 
     return (
         <tr className="h-24 border-b border-gray-300">
@@ -48,15 +86,19 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
                 />
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap ">
-                <div className="relative text-gray-600 max-w-20">
-                    <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
-                        <BlurImage
-                            src={replaceURL(product.main_image)}
-                        />
+                <Link href={`/product/${product.slug}`}>
+                    <div className="relative text-gray-600 max-w-20">
+                        <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
+                            <BlurImage
+                                src={replaceURL(product.main_image)}
+                            />
+                        </div>
                     </div>
-                </div>
+                </Link>
             </td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.name}</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
+                <Link href={`/product/${product.slug}`}>{product.name}</Link>
+            </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.slug}</td>
             <td className="pr-6 whitespace-no-wrap">{product.countInStock}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product?.stats?.totalSelled || 0}</td>
@@ -71,8 +113,10 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
                         <Link href={`/product/${product.slug}`}>
                             <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire</li>
                         </Link>
-                        <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Edit</li>
-                        <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Delete</li>
+                        <Link href={`/admin/products/edit?slug=${product.slug}`}>
+                            <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Edit</li>
+                        </Link>
+                        <li onClick={deleteHandler} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Delete</li>
                     </ul>
                 </div>
                 <button className="text-gray-500 border border-transparent rounded cursor-pointer focus:outline-none" ref={seeMenuRef}>

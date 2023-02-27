@@ -4,6 +4,7 @@ import { Router, useRouter } from 'next/router';
 import ProgressBar from "@badrap/bar-of-progress";
 import { RecoilRoot, RecoilEnv } from 'recoil';
 import { NotifyContextProvider } from '@libs/hooks/notify';
+import { Analytics } from '@vercel/analytics/react';
 import '../styles/globals.css'
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
@@ -34,6 +35,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
               <Component {...pageProps} />
             )
           }
+          <Analytics />
         </NotifyContextProvider>
       </RecoilRoot>
     </SessionProvider>

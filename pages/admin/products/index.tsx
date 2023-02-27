@@ -13,11 +13,9 @@ type Props = {
 }
 
 function AdminProductsScreen({ initialProducts }: Props) {
-    
-    console.log(initialProducts)
+
     const [checkAll, setcheckAll] = useState(false);
     const [products, setProducts] = useState<TypeProduct[]>(initialProducts);
-
 
     return (
         <AdminscreenWrapper title="Products">
@@ -165,27 +163,33 @@ function AdminProductsScreen({ initialProducts }: Props) {
 }
 
 export const getServerSideProps = async () => {
-    //try {
-
+    try {
         await db.connect();
-        const products = await Product.find().populate('categorie').lean();
+        const products = await Product.find({}, {
+            _id: 1,
+            main_image: 1, 
+            name: 1, 
+            slug: 1, 
+            price: 1, 
+            countInStock: 1, 
+            stats: 1, 
+            isPublished: 1,
+            createdAt: 1
+        }).lean();
         await db.disconnect();
-
-        console.log(products)
 
         return {
             props: {
                 initialProducts: JSON.parse(JSON.stringify(products)),
             },
         }
-    /*} catch (error) {
-        console.log(error)
+    } catch (error) {
         return {
             props: {
                 initialProducts: []
             },
         }
-    }*/
+    }
 }
 
 AdminProductsScreen.auth = { adminOnly: true };

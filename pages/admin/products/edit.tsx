@@ -19,7 +19,7 @@ import InputCheckbox from '@components/ui-ux/inputs/InputCheckbox';
 
 import PrintObject from '@components/PrintObject';
 import { useNotifys } from '@libs/hooks/notify';
-import { fetchPostJSON } from '@libs/utils/api-helpers';
+import { fetchPostJSON, fetchPutJSON } from '@libs/utils/api-helpers';
 
 type Props = {
     slug: string | null
@@ -30,14 +30,10 @@ type Props = {
 
 const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, categories }) => {
 
-    console.log({ slug, productFind, initialProduct, categories })
-
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
-    const [mainImage, setMainImage] = useState<FileInfo[] | null>(null);
-    const [images, setImages] = useState<FileInfo[] | null>(null);
-
-    const [formReadyToSend, setformReadyToSend] = useState<any>(initialProduct);
+    const [mainImage, setMainImage] = useState<FileInfo[] | string | null>(productFind ? initialProduct.main_image : null);
+    const [images, setImages] = useState<FileInfo[] | string[] | null>(productFind ? initialProduct.images : null);
 
     const { pushNotify } = useNotifys();
 
@@ -71,12 +67,12 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
             }
 
 
-            formDataObject.main_image = mainImage ? mainImage[0].url : ""
+            formDataObject.main_image = mainImage[0]?.url ? mainImage[0].url : mainImage ? mainImage : ""
 
             formDataObject.images = []
             if (images) {
                 let imagesForm: string[] = []
-                images.forEach((i: FileInfo) => imagesForm.push(i.url))
+                images.forEach((i: FileInfo) => imagesForm.push(i?.url ? i.url : i))
                 formDataObject.images = imagesForm
             }
 
@@ -84,21 +80,41 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
             formDataObject.isFeatured = formDataObject.isFeatured === "on" ? true : false
             formDataObject.isPublished = formDataObject.isPublished === "on" ? true : false
 
-            const response = await fetchPostJSON("/api/admin/products", formDataObject)
+            if(productFind === true) {
+                console.log(formDataObject)
+                // edit product
+                const response = await fetchPutJSON(`/api/admin/products/${product._id}`, formDataObject)
 
-            if (response?.data) {
-                setProduct(response.data)
+                console.log(response)
+
+                if (response?.data) {
+                    setProduct(response.data)
+                }
+    
+                pushNotify({
+                    title: "",
+                    subTitle: response?.message || "Une erreur s'est produite.",
+                    icon: "NOTIFICATION",
+                    duration: 3
+                })
+
+            } else {
+                // create product
+                const response = await fetchPostJSON("/api/admin/products", formDataObject)
+    
+                if (response?.data) {
+                    setProduct(response.data)
+                }
+    
+                pushNotify({
+                    title: "",
+                    subTitle: response?.message || "Une erreur s'est produite.",
+                    icon: "NOTIFICATION",
+                    duration: 3
+                })
             }
 
-            pushNotify({
-                title: "",
-                subTitle: response?.message || "Une erreur s'est produite.",
-                icon: "NOTIFICATION",
-                duration: 3
-            })
 
-
-            setformReadyToSend(formDataObject)
         } catch (error) {
             console.log(error);
             throw new Error('Error sending form');
@@ -118,9 +134,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
         <AdminscreenWrapper title={`${product ? product?.name + ' - ' : ""} Edit product`}>
             <form onSubmit={handleSubmitProduct}>
                 <div className="mt-10 px-7">
-                    <p className="text-xl font-semibold leading-tight text-gray-800">Produit Details: {slug && <span className='italic font-bold underline uppercase text-sky-600'>{slug}</span>}</p>
-
-                    <PrintObject title="uploader" content={formReadyToSend} />
+                    <p className="text-xl font-semibold leading-tight text-gray-800">Produit Details: {slug && <span className='underline uppercase'>{slug}</span>}</p>
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7">
                         <div className='grid w-full grid-cols-1 col-span-full lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7'>
 
@@ -128,6 +142,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 multiple={false}
                                 input={{
                                     name: "main_image",
+                                    values: [product?.main_image],
+                                    imageClass: "col-span-full mx-auto max-w-[350px] object-cover rounded-lg aspect-square"
                                 }}
                                 onChange={(formData: FormData) => onChangeUploadHandler(formData, setMainImage)}
                             />
@@ -197,6 +213,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 multiple={true}
                                 input={{
                                     name: "images",
+                                    values: product?.images || [],
+                                    imageClass: "mx-auto max-w-[280px] object-cover rounded-lg aspect-square"
                                 }}
                                 onChange={(formData: FormData) => onChangeUploadHandler(formData, (next: FileInfo[]) => {
                                     if (images !== null) {

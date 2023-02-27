@@ -1,6 +1,7 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { fetchDeleteJSON } from '@libs/utils/api-helpers';
 import { useEscapeListener } from '@libs/hooks';
+import { UTCStringToDate } from '@libs/utils';
 
 export default function TableUserLine({ checkAll, user, updateMainUsers }) {
 
@@ -77,7 +78,7 @@ export default function TableUserLine({ checkAll, user, updateMainUsers }) {
             </td>
 
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
-                {user.createdAt}
+                {UTCStringToDate(user.createdAt)}
             </td>
 
             <td className="relative pr-8 text-right">

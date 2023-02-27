@@ -63,7 +63,7 @@ export default function CartItemCard({ product }) {
     return (
         <div className='w-full'>
 
-            <div className='bg-[#fff] max-w-[800px] mx-auto mt-4 py-2 px-6 flex gap-6 items-center justify-between rounded-lg shadow-lg'>
+            <div className='bg-[#fff] mx-auto max-w-[800px] mt-4 py-2 px-6 flex gap-6 items-center justify-between rounded-lg shadow-lg'>
 
                 <div className='flex items-start justify-start space-x-5'>
                     <Link href={`/product/${product.slug}`}>
@@ -92,7 +92,7 @@ export default function CartItemCard({ product }) {
                             <div>
                                 <InputNumber
                                     min={1}
-                                    max={product.count_in_stock}
+                                    max={product.countInStock}
                                     defaultValue={quantity}
                                     setUpdate={setQuantity}
                                 />

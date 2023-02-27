@@ -46,7 +46,7 @@ export const InputNumber: React.FC<InputNumber> = ({ title, description, input, 
 }
 
 export default function InputNumberDefault({ min, max, defaultValue, setUpdate }: InputNumberDefault) {
-    const [count, setCount] = useState<number>(defaultValue || min);
+    const [count, setCount] = useState<number>(Number(defaultValue) || Number(min));
 
     const addCount = () => {
         if (max > count) {

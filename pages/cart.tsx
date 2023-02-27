@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import type { NextPage } from 'next/types'
 import dynamic from 'next/dynamic';
 import { TypeCartItem } from '@libs/typings'
@@ -10,11 +10,19 @@ import { getStripe } from "@libs/utils/stripe-helpers";
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CartItemCard from '@components/cards/CartItemCard';
+import axios from 'axios';
+import { CART_UPDATE_ITEM, setCartState } from '@atoms/setStates/setCartState';
 
+
+interface Update {
+    product: TypeCartItem
+    text: string
+}
 const Cart: NextPage = () => {
 
     const [loading, setLoading] = useState(false)
-    const [cartItems] = useRecoilState<TypeCartItem[]>(cartState)
+    const [priceChange, setPriceChange] = useState<Update[]>([])
+    const [cartItems, setCartItem] = useRecoilState<TypeCartItem[]>(cartState)
 
     const shipping = 9.99;
 
@@ -39,9 +47,9 @@ const Cart: NextPage = () => {
         }
         // Redirect to checkout
         const stripe = await getStripe();
-        if(stripe !== null) {
+        if (stripe !== null) {
             const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
-    
+
             // If `redirectToCheckout` fails due to a browser or network
             // error, display the localized error message to your customer
             // using `error.message`.
@@ -51,6 +59,42 @@ const Cart: NextPage = () => {
         setLoading(false);
     };
 
+    const checkUpdateCart = async () => {
+        const ids: string[] = []
+        const oldCartData = cartItems;
+        cartItems.forEach(item => ids.push(item._id))
+
+        if (ids.length === 0) return;
+
+        const { data: { data } } = await axios.post('/api/product/checkUpdate', { ids: ids })
+
+        data.forEach((item: any) => {
+            setCartState({
+                action: CART_UPDATE_ITEM,
+                product: item,
+                cartItem: cartItems,
+                setCartItem: setCartItem
+            })
+
+            const findItem: TypeCartItem = oldCartData.filter(i => i.slug === item.slug)[0]
+
+            if (findItem && findItem.price !== item.price) {
+                setPriceChange(prev => {
+                    if (prev.findIndex(e => e.product.slug === item.slug) !== -1) {
+                        return [...prev]
+                    };
+                    return [...prev, {
+                        product: findItem,
+                        text: `Le prix des ${findItem.name} passe de ${findItem.price}€ à ${item.price}€`
+                    }]
+                })
+            }
+        })
+    }
+
+    useEffect(() => { checkUpdateCart() }, []);
+
+
     return (
         <BasescreenWrapper title="Panier" footer={true}>
             <div className='container max-w-[1280px] mx-auto h-full min-h-[calc(100vh-64px)] flex'>
@@ -58,6 +102,17 @@ const Cart: NextPage = () => {
 
                     { /* panier list items */}
                     <div className='md:flex-grow w-full md:h-full md:min-w-[70%] overflow-x-hidden'>
+                        {
+                            priceChange.length > 0 && (
+                                <div className='w-full px-6'>
+                                    <div className='w-full mx-auto mt-5 p-5 space-y-2 border border-yellow-600 rounded-lg bg-yellow-600/20 max-w-[800px]'>
+                                        {
+                                            priceChange.map((update, key) => <p key={key} className="text-red-600">{update.text}</p>)
+                                        }
+                                    </div>
+                                </div>
+                            )
+                        }
                         <div className='w-full'>
                             {
                                 cartItems.length <= 0
