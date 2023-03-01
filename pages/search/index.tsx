@@ -166,7 +166,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                                 categorie !== 'all' ||
                                 rating !== 'all' ||
                                 price !== 'all' ? (
-                                <button onClick={() => router.push('/search')}>
+                                <button onClick={() => router.push('/search?query=')}>
                                     <XCircleIcon className="w-5 h-5" />
                                 </button>
                             ) : null}
