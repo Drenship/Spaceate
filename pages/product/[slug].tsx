@@ -209,15 +209,16 @@ export const getServerSideProps = async ({ query }: any) => {
 
         if (slug) {
             await db.connect();
-            product = await Product.findOne({ slug }).populate("categorie").lean();
+            product = await Product.findOne({ slug: slug, isPublished: true, }).populate("categorie").lean();
             const find = product ? true : false
             if (find) {
                 sameProducts = await Product.find({
                     _id: { $ne: product._id },
+                    isPublished: true,
 
                     $or: [
-                        { categorie: product.categorie._id },
-                        { subCategorie: product.subCategorie },
+                        { categorie: product.categorie._id, isPublished: true },
+                        { subCategorie: product.subCategorie, isPublished: true, },
                     ]
                 }, {
                     _id: 1,

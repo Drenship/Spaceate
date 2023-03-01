@@ -282,6 +282,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
         const categories = await Categorie.find().lean();
         const productDocs = await Product.find(
             {
+                isPublished: true,
                 ...queryFilter,
                 ...categorieFilter,
                 ...priceFilter,
@@ -303,6 +304,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
             .lean();
 
         const countProducts = await Product.countDocuments({
+            isPublished: true,
             ...queryFilter,
             ...categorieFilter,
             ...priceFilter,
