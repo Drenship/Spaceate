@@ -105,7 +105,14 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.price}€</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(product.createdAt)}</td>
             <td className="pr-6">
-                <div className="w-2 h-2 bg-indigo-400 rounded-full" />
+                {
+                    product.isPublished ? (
+                        <div className="w-2 h-2 bg-green-600 rounded-full" />
+                    ) : (
+                        <div className="w-2 h-2 bg-red-600 rounded-full" />
+                    )
+                }
+                
             </td>
             <td className="relative pr-8">
                 <div className={`absolute left-0 z-10 w-32 mt-8 -ml-12 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
