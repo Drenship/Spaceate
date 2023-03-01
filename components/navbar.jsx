@@ -10,10 +10,10 @@ import { useTimeout, useEscapeListener } from '@libs/hooks/index'
 import SearchResultItem from '@components/cards/SearchResultItem';
 //import { useVideoSearch } from '@libs/hooks/useSearch'
 
-import database from "@devasset/database.json"
-import { replaceURL } from '@libs/utils';
+import { querySecurMongoDB, replaceURL } from '@libs/utils';
+import { fetchPostJSON } from '@libs/utils/api-helpers';
 
-function Navbar() {
+function Navbar({ placeholderSearch }) {
     const router = useRouter()
     const { status, data: session } = useSession();
     const [cartItem, setCartItem] = useRecoilState(cartState)
@@ -27,17 +27,17 @@ function Navbar() {
 
     const searchRequest = async () => {
         if (!query || query.length === 0) {
-            setSearchResult(database.products)
+            setSearchResult([])
             return;
         };
-        // replace filteredItems to mongodb request
-        const filteredItems = database.products.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
-        setSearchResult(filteredItems)
+
+        const { data } = await fetchPostJSON('/api/product/search', { query: query })
+        setSearchResult(data)
     }
 
     const handleRedirectSearch = () => {
         if (!query || query.length === 0) return;
-        router.push(`/search/${query}`)
+        router.push(`/search?query=${query}`)
     }
 
     // searchbar => call fetch reasult, add delay for saving request
@@ -64,6 +64,7 @@ function Navbar() {
         signOut({ callbackUrl: '/auth/login' });
     };
 
+    // SIDEBAR
     const handleToggleSidebar = () => {
         document.body.classList.toggle('sidebar-open');
     };
@@ -90,9 +91,15 @@ function Navbar() {
                     type="text"
                     placeholder='Search'
                     className='w-full bg-transparent outline-none'
+                    defaultValue={placeholderSearch || ""}
                     onKeyUp={(e) => {
-                        setQuery(e.currentTarget.value.trim());
                         setSearchBarFocus(true);
+                        const [value, allow] = querySecurMongoDB(e.currentTarget.value.trim());
+
+                        if(allow){
+                            setQuery(value);
+                        } 
+
                         if (e.key === "Enter") {
                             handleRedirectSearch()
                         }

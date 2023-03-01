@@ -26,16 +26,16 @@ const Home: NextPage<Props> = ({ products }) => {
 
   const services = [
     {
-      title: "Fruits et légumes",
+      title: "Légumes",
       src: "https://www.finedininglovers.fr/sites/g/files/xknfdk1291/files/styles/article_1200_800_fallback/public/2021-03/fruits%20l%C3%A9gumes%20avril.jpg?itok=dXANY9eR"
+    },
+    {
+      title: "Fruits",
+      src: "https://t3.ftcdn.net/jpg/05/52/09/76/360_F_552097663_QLhLtZgGzmHqKtW0fBBxLAc3cnn8n53g.jpg"
     },
     {
       title: "Fleurs",
       src: "https://img.freepik.com/photos-premium/fleurs-lumineuses-fantastiques-nuit-beau-fond-floral-ai-generative_788189-2607.jpg?w=2000"
-    },
-    {
-      title: "X ?",
-      src: "https://www.justgeek.fr/wp-content/uploads/2022/12/exemple-image-midjourney.webp"
     }
   ]
 

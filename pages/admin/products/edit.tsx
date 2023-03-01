@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { NextPage } from 'next/types';
 import axios from 'axios';
 import Link from 'next/link';
@@ -32,6 +32,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
 
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
+    const [currentSubCategorie, setCurrentSubCategorie] = useState<TypeCategorie>();
     const [mainImage, setMainImage] = useState<FileInfo[] | string | null>(productFind ? initialProduct.main_image : null);
     const [images, setImages] = useState<FileInfo[] | string[] | null>(productFind ? initialProduct.images : null);
 
@@ -85,8 +86,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                 // edit product
                 const response = await fetchPutJSON(`/api/admin/products/${product._id}`, formDataObject)
 
-                console.log(response)
-
                 if (response?.data) {
                     setProduct(response.data)
                 }
@@ -129,6 +128,21 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
         return slug
     }, [newName, product]);
 
+
+    useEffect(() => {
+        if (!productFind) return;
+        if (typeof initialProduct.subCategorie === "object") return;
+        let x = {
+            subCategorie: {
+                _id: initialProduct.subCategorie,
+                name: '',
+                slug: ''
+            }
+        }
+        x.subCategorie = [...initialProduct.categorie.subCategories].filter(sc => sc._id === initialProduct.subCategorie)[0]
+        setCurrentSubCategorie(x.subCategorie)
+        setProduct(prev => Object.assign(prev, x))
+    }, [initialProduct])
 
     return (
         <AdminscreenWrapper title={`${product ? product?.name + ' - ' : ""} Edit product`}>
@@ -177,7 +191,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                     description="Choisire une catégorie"
                                     input={{
                                         name: 'categorie',
-                                        defaultValue: categories[0],
+                                        defaultValue: currentCategorie || categories[0],
                                     }}
                                     options={categories}
                                     setChange={(c: any) => setCurrentCategorie(c)}
@@ -188,10 +202,10 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                     description="Choisire une sous catégorie"
                                     input={{
                                         name: 'subCategorie',
-                                        defaultValue: currentCategorie.subCategories[0],
+                                        defaultValue: currentSubCategorie || currentCategorie.subCategories[0],
                                     }}
                                     options={currentCategorie.subCategories}
-                                    setChange={() => { }}
+                                    setChange={() => {}}
                                 />
                             </div>
 

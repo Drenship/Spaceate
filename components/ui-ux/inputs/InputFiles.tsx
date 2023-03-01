@@ -21,6 +21,22 @@ const defaultProps: Props = {
     onChange: (formData: FormData) => {}
 };
 
+type SIProps = {
+    image: string
+    imageClass: string
+    setRemove: (x: any) => void
+}
+
+const ShowImage = ({ image, imageClass, setRemove }: SIProps) => {
+    const removeHandler = () => {
+        setRemove(prev => prev.filter(c => c !== image))
+    }
+
+    return (
+        <img className={`rounded-lg cursor-pointer ${imageClass}`} alt="" src={replaceURL(image)} onDoubleClick={removeHandler}/>
+    )
+}
+
 export default function InputFiles({ multiple, input, onChange }: Props = defaultProps) {
 
     const { name, values, imageClass } = input;
@@ -75,7 +91,7 @@ export default function InputFiles({ multiple, input, onChange }: Props = defaul
         <div className='flex flex-col w-full'>
             <div id={uuid} className="grid self-center w-full grid-cols-5 gap-5">
                 {
-                    urls?.map((data, key) =><img key={key} className={`rounded-lg ${imageClass}`} alt="" src={replaceURL(data)}/>)
+                    urls?.map((data, key) =><ShowImage key={key} imageClass={imageClass} image={data} setRemove={setUrls}/>)
                 }
             </div>
             <input

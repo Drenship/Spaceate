@@ -26,7 +26,7 @@ export interface TypeProduct {
     slug: string;
     name: string;
     categorie: TypeCategorie;
-    subCategorie: string | TypeSubCategories;
+    subCategorie: TypeSubCategories | string;
     description: string;
     main_image: string;
     images: string[];

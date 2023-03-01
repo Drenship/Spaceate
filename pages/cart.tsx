@@ -92,6 +92,7 @@ const Cart: NextPage = () => {
         })
     }
 
+    // PB double rendu de checkUpdateCart
     useEffect(() => { checkUpdateCart() }, []);
 
 
@@ -105,7 +106,7 @@ const Cart: NextPage = () => {
                         {
                             priceChange.length > 0 && (
                                 <div className='w-full px-6'>
-                                    <div className='w-full mx-auto mt-5 p-5 space-y-2 border border-yellow-600 rounded-lg bg-yellow-600/20 max-w-[800px]'>
+                                    <div className='w-full mx-auto mt-5 p-5 space-y-2 border border-yellow-600 rounded-lg bg-yellow-600/20 max-w-[800px] shadow-lg'>
                                         {
                                             priceChange.map((update, key) => <p key={key} className="text-red-600">{update.text}</p>)
                                         }
@@ -156,8 +157,6 @@ const Cart: NextPage = () => {
 
                 </div>
             </div>
-
-
         </BasescreenWrapper>
     )
 }

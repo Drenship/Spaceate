@@ -17,6 +17,7 @@ type PropsInput = {
     input: {
         name: string,
         defaultValue: OptionType,
+        value?: OptionType
     },
     options: OptionType[]
     setChange: (value: OptionType) => void
@@ -39,14 +40,14 @@ function Option({ option, setUpdate }: PropsOption) {
 
 export default function InputSelect({ title, description, input, options, setChange }: PropsInput) {
 
-    const { name, defaultValue } = input;
+    const { name, defaultValue, value  } = input;
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);
-    const [inputValue, setInputValue] = useState<OptionType>(defaultValue);
+    const [inputValue, setInputValue] = useState<OptionType>(value || defaultValue);
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
-    useEffect(() => { setInputValue(defaultValue) }, [defaultValue]);
+    useEffect(() => { setInputValue(value || defaultValue) }, [defaultValue, value]);
     useEffect(() => { setChange(inputValue) }, [inputValue]);
 
     return (
@@ -75,7 +76,7 @@ export default function InputSelect({ title, description, input, options, setCha
                             <path d="M0.5 0.75L5 5.25L9.5 0.75" stroke="#4B5563" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </button>
-                    <div className={`absolute right-0 z-20 w-full px-1 py-2 bg-white border-t border-gray-200 rounded shadow top-12 ${!seeMenu && 'hidden'}`}>
+                    <div className={`absolute right-0 z-20 w-full px-1 py-2 bg-white border-t border-gray-200 rounded shadow-lg top-12 overflow-y-auto max-h-[300px] ${!seeMenu && 'hidden'}`}>
                         {
                             options.map((opt, key) => <Option
                                 option={opt}
@@ -88,7 +89,7 @@ export default function InputSelect({ title, description, input, options, setCha
                         type="hidden"
                         className='hidden'
                         name={name}
-                        value={inputValue._id || inputValue.name}
+                        value={value ? value._id || value.name : inputValue._id || inputValue.name}
                     />
                 </div>
             </div>

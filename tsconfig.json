@@ -45,7 +45,7 @@
     "pages/order/pay.tsx",
     "pages/order/index.jsx",
     "pages/product/[slug].tsx",
-    "pages/search/[search].tsx",
+    "pages/search/index.tsx",
     "pages/index.tsx",
     "pages/_app.tsx",
     "pages/auth/recovery.tsx",

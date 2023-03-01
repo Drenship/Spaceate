@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Navbar from "@components/navbar"
 import Footer from "@components/footer"
 
-export default function BasescreenWrapper({ title, footer, children }) {
+export default function BasescreenWrapper({ title, placeholderSearch, footer, children }) {
 
     const titleHead = title ? `${title} - Spaceate` : "Spaceate"
 
@@ -16,7 +16,7 @@ export default function BasescreenWrapper({ title, footer, children }) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Navbar />
+            <Navbar placeholderSearch={placeholderSearch} />
 
             <main className="flex flex-col items-center justify-start flex-1 w-full mt-16">
                 {children}

@@ -17,18 +17,18 @@ import { NextPage } from 'next/types';
 import { TypeCartItem, TypeProduct, TypeCommentaire } from '@libs/typings';
 import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
-import { replaceURL } from '@libs/utils';
+import { replaceURL, teinteDeLimage } from '@libs/utils';
 import Link from 'next/link';
 
 type Props = {
     productFind: boolean
-    initalProduct: TypeProduct
+    initialProduct: TypeProduct
     sameProducts: TypeProduct[]
 }
 
-const ProductPage: NextPage<Props> = ({ productFind, initalProduct, sameProducts }) => {
+const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProducts }) => {
     const router = useRouter()
-    const [product, setProduct] = useState<TypeProduct>(initalProduct);
+    const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [commentaires, setCommentaires] = useState<TypeCommentaire[]>([]);
     const [quantity, setQuantity] = useState(1);
     const [cartItem, setCartItem] = useRecoilState(cartState)
@@ -50,8 +50,9 @@ const ProductPage: NextPage<Props> = ({ productFind, initalProduct, sameProducts
     }
 
     const getCommentaires = async () => {
+        console.log('> getCommentaires')
         try {
-            const searchResults = await fetch('/api/commentaires')
+            const searchResults = await fetch(`/api/product/${product._id}/commentaires`)
                 .then((res) => res.json())
                 .catch((err) => [])
             setCommentaires(prev => [...prev, ...searchResults])
@@ -60,24 +61,32 @@ const ProductPage: NextPage<Props> = ({ productFind, initalProduct, sameProducts
         }
     }
 
+    // update change product
+    useEffect(() => {
+        setProduct(initialProduct);
+        setQuantity(1);
+        setCommentaires([]);
+        teinteDeLimage(replaceURL(initialProduct.main_image)).then((RGBcolor) => {
+            setColor(RGBcolor)
+        })
+    }, [router.query]);
+
     useEffect(() => {
         if (!productFind) return;
-        if (typeof product.subCategorie === "object") return;
+        if (typeof initialProduct.subCategorie === "object") return;
         let x = {
             subCategorie: {
-                _id: initalProduct.subCategorie,
+                _id: initialProduct.subCategorie,
                 name: '',
                 slug: ''
             }
         }
-        x.subCategorie = [...initalProduct.categorie.subCategories].filter(sc => sc._id === initalProduct.subCategorie)[0]
+        x.subCategorie = [...initialProduct.categorie.subCategories].filter(sc => sc._id === initialProduct.subCategorie)[0]
         setProduct(prev => Object.assign(prev, x))
-    }, [])
+    }, [router.query])
 
-    useEffect(() => {
-        setCommentaires([]);
-        getCommentaires()
-    }, [router.query]);
+    const [color, setColor] = useState<string>("");
+
 
     if (productFind === false) {
         return (
@@ -92,7 +101,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initalProduct, sameProducts
                 <div className='flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100 '>
                     { /* left */}
                     <div className='flex flex-row md:block md:space-x-0 space-x-4 md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 md:p-9 lg:p-12 h-full md:sticky top-16 bg-gray-100'>
-                        <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square max-w-[30vw]'>
+                        <div style={{ boxShadow: `0px 0px 20px 5px ${color}` }} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square max-w-[30vw]'>
                             <BlurImage
                                 src={replaceURL(product.main_image)}
                             />
@@ -151,9 +160,9 @@ const ProductPage: NextPage<Props> = ({ productFind, initalProduct, sameProducts
                         { /* Product associate */}
                         <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
                             <h2 className='text-xl font-bold uppercase'>Produits similaire</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-between gap-x-6 gap-y-5">
+                            <div className="grid grid-cols-1 mt-5 sm:grid-cols-2 lg:grid-cols-3 justify-items-between gap-x-6 gap-y-5">
                                 {
-                                    [...sameProducts, ...sameProducts]?.map((data, key) => <BestsellerCard product={data} key={key} />)
+                                    sameProducts?.map((data, key) => <BestsellerCard product={data} key={key} />)
                                 }
                             </div>
                         </section>
@@ -196,18 +205,40 @@ export const getServerSideProps = async ({ query }: any) => {
     try {
         const slug = query.slug || null;
         let product = {}
+        let sameProducts = []
 
         if (slug) {
             await db.connect();
             product = await Product.findOne({ slug }).populate("categorie").lean();
+            const find = product ? true : false
+            if (find) {
+                sameProducts = await Product.find({
+                    _id: { $ne: product._id },
+
+                    $or: [
+                        { categorie: product.categorie._id },
+                        { subCategorie: product.subCategorie },
+                    ]
+                }, {
+                    _id: 1,
+                    main_image: 1,
+                    name: 1,
+                    slug: 1,
+                    price: 1,
+                    price_in: 1,
+                    rating: 1
+                })
+                console.log(sameProducts)
+            }
             await db.disconnect()
         }
+
 
         return {
             props: {
                 productFind: product ? true : false,
-                initalProduct: JSON.parse(JSON.stringify(product)) || {},
-                sameProducts: database.products || []
+                initialProduct: JSON.parse(JSON.stringify(product)) || {},
+                sameProducts: JSON.parse(JSON.stringify(sameProducts)) || []
             },
         }
 
@@ -215,7 +246,7 @@ export const getServerSideProps = async ({ query }: any) => {
         return {
             props: {
                 productFind: false,
-                initalProduct: {},
+                initialProduct: {},
                 sameProducts: []
             },
         }
