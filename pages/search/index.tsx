@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { NextPage } from 'next/types'
 import { useRouter } from 'next/router'
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
@@ -10,24 +10,27 @@ import Categorie from '@libs/models/Categorie';
 import { querySecurMongoDB } from '@libs/utils';
 import { TypeCategorie, TypeProduct } from '@libs/typings';
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 3;
 const ratings = [1, 2, 3, 4, 5];
 const prices = [
     {
         name: 'moins de 1€',
         value: '0-1',
     }, {
-        name: '1€ à 50€',
-        value: '1-50',
+        name: '1€ à 10€',
+        value: '1-10',
     },
     {
-        name: '51€ à 200€',
-        value: '51-200',
+        name: '10€ à 20€',
+        value: '10.01-20',
     },
     {
-        name: '201€ à 1000€',
-        value: '201-1000',
-    },
+        name: '20€ à 50',
+        value: '20.01-50',
+    }, {
+        name: '50€ et plus',
+        value: '50.01',
+    }
 ];
 
 interface FilterSearchParams {
@@ -50,7 +53,7 @@ type Props = {
     products: TypeProduct[],
     countProducts: number,
     categories: TypeCategorie[],
-    pages: number | any
+    pages: number
 }
 
 const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categories, pages }) => {
@@ -91,6 +94,8 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
         });
     };
 
+    const paginations: number[] = useMemo(() => [...Array(pages).keys()], [pages]);
+
     const categorieHandler = (e: React.BaseSyntheticEvent) => filterSearch({ categorie: e.target.value });
 
     const pageHandler = (page: number) => filterSearch({ page });
@@ -105,7 +110,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
     return (
         <BasescreenWrapper placeholderSearch={searchQuery} title={searchQuery} footer={false}>
             <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100">
-                    { /* filtre options left */}
+                { /* filtre options left */}
                 <div className='flex flex-row md:block md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:px-6 h-full md:sticky top-16 bg-gray-100'>
                     <div className="my-3">
                         <h2>Categories</h2>
@@ -158,9 +163,9 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                         <div className="flex items-center">
                             {products.length === 0 ? 'No' : countProducts} Résultats
                             {query !== 'all' && query !== '' && ' : ' + query}
-                            {categorie !== 'all' && ' : ' + categorie}
-                            {price !== 'all' && ' : Price ' + price}
-                            {rating !== 'all' && ' : Rating ' + rating + ' & up'}
+                            {categorie !== 'all' && ', ' + categories.filter(sc => sc._id === categorie)[0].name}
+                            {price !== 'all' && ', Prix ' + price}
+                            {rating !== 'all' && ', étoile ' + rating + ' et plus'}
                             &nbsp;
                             {(query !== 'all' && query !== '') ||
                                 categorie !== 'all' ||
@@ -194,8 +199,8 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                             ))}
                         </div>
                         <ul className="flex">
-                            {products.length > 0 &&
-                                [...Array(pages).keys()].map((pageNumber) => (
+                            {pages > 1 &&
+                                paginations.map((pageNumber) => (
                                     <li key={pageNumber}>
                                         <button
                                             className={`default-button m-2 ${page == pageNumber + 1 ? 'font-bold' : ''
@@ -277,39 +282,33 @@ export async function getServerSideProps({ query }: QuerySearch) {
                             ? { createdAt: -1 }
                             : { _id: -1 };
     try {
-
         await db.connect();
+
+        const productSearchFullQuery = {
+            isPublished: true,
+            ...queryFilter,
+            ...categorieFilter,
+            ...priceFilter,
+            ...ratingFilter,
+        };
         const categories = await Categorie.find().lean();
-        const productDocs = await Product.find(
-            {
-                isPublished: true,
-                ...queryFilter,
-                ...categorieFilter,
-                ...priceFilter,
-                ...ratingFilter,
-            }, {
+        const productDocs = await Product.find(productSearchFullQuery, {
             _id: 1,
             main_image: 1,
             name: 1,
             slug: 1,
             price: 1,
             price_in: 1,
-            rating: 1
-        }
-        )
+            rating: 1,
+            numReviews: 1
+        })
             .sort(order)
             .skip(pageSize * (page - 1))
             .limit(pageSize)
             .populate("categorie")
             .lean();
 
-        const countProducts = await Product.countDocuments({
-            isPublished: true,
-            ...queryFilter,
-            ...categorieFilter,
-            ...priceFilter,
-            ...ratingFilter,
-        });
+        const countProducts = await Product.countDocuments(productSearchFullQuery);
 
         await db.disconnect();
 
@@ -317,8 +316,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
             props: {
                 searchQuery: searchQuery,
                 products: JSON.parse(JSON.stringify(productDocs)),
-                countProducts,
-                page,
+                countProducts: countProducts,
                 pages: Math.ceil(countProducts / pageSize),
                 categories: categories.map(db.convertDocToObj),
             },
@@ -329,9 +327,8 @@ export async function getServerSideProps({ query }: QuerySearch) {
             props: {
                 searchQuery: searchQuery,
                 products: [],
-                countProducts: 1,
-                page: 1,
-                pages: 1,
+                countProducts: 0,
+                pages: 0,
                 categories: [],
             },
         };
