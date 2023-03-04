@@ -5,6 +5,11 @@ module.exports = {
     ignoreBuildErrors: process.env.NODE_ENV === 'production',
   },
   images: {
-    domains: ['rb.gy', 'pbs.twimg.com'],
-  },
+    domains: [
+      'rb.gy', 'pbs.twimg.com',
+
+
+      'acadienouvelle-6143.kxcdn.com'
+    ],
+  }
 }

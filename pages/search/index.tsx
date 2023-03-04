@@ -36,6 +36,7 @@ const prices = [
 interface FilterSearchParams {
     page?: number;
     categorie?: string;
+    subCategorie?: string;
     sort?: string;
     min?: number | null;
     max?: number | null;
@@ -62,6 +63,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
     const {
         query = 'all',
         categorie = 'all',
+        subCategorie = 'all',
         price = 'all',
         rating = 'all',
         sort = 'featured',
@@ -71,6 +73,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
     const filterSearch = ({
         page,
         categorie,
+        subCategorie,
         sort,
         min = null,
         max = null,
@@ -83,6 +86,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
         if (searchQuery) query.searchQuery = searchQuery;
         if (sort) query.sort = sort;
         if (categorie) query.categorie = categorie;
+        if (subCategorie) query.subCategorie = subCategorie;
         if (price) query.price = price;
         if (rating) query.rating = rating;
         if (min) query.min ? query.min : query.min === 0 ? 0 : min;
@@ -94,9 +98,19 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
         });
     };
 
+    const [getSubCategories, currentSubCategorie] = useMemo(() => {
+        if (categorie === 'all') return [[], null]
+        const subCategories = [...categories].filter(c => c._id === categorie)[0].subCategories
+        const currentSubCategorie = subCategories.filter(sc => sc._id === subCategorie)[0]
+
+        return subCategories.length > 0 ? [subCategories, currentSubCategorie] : [[], null]
+    }, [categorie, subCategorie]);
+
     const paginations: number[] = useMemo(() => [...Array(pages).keys()], [pages]);
 
-    const categorieHandler = (e: React.BaseSyntheticEvent) => filterSearch({ categorie: e.target.value });
+    const categorieHandler = (e: React.BaseSyntheticEvent) => filterSearch({ categorie: e.target.value, subCategorie: 'all' });
+
+    const subCategorieHandler = (e: React.BaseSyntheticEvent) => filterSearch({ subCategorie: e.target.value });
 
     const pageHandler = (page: number) => filterSearch({ page });
 
@@ -106,20 +120,18 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
     const ratingHandler = (e: React.BaseSyntheticEvent) => filterSearch({ rating: e.target.value });
 
-
     return (
         <BasescreenWrapper placeholderSearch={searchQuery} title={searchQuery} footer={false}>
             <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100">
                 { /* filtre options left */}
                 <div className='flex flex-row md:block md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:px-6 h-full md:sticky top-16 bg-gray-100'>
-                    <div className="my-3">
-                        <h2>Categories</h2>
+                    <div className="p-2 mb-3 bg-white rounded-lg">
                         <select
-                            className="w-full"
+                            className="w-full outline-none"
                             value={categorie}
                             onChange={categorieHandler}
                         >
-                            <option value="all">Tous</option>
+                            <option value="all">Tous les categories</option>
                             {categories &&
                                 categories.map((categorie, key) => (
                                     <option key={key} value={categorie._id}>
@@ -129,10 +141,29 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                         </select>
                     </div>
 
-                    <div className="mb-3">
-                        <h2>Prix</h2>
-                        <select className="w-full" value={price} onChange={priceHandler}>
-                            <option value="all">Tous</option>
+                    {
+                        categorie && categorie !== 'all' && (
+                            <div className="p-2 mb-3 bg-white rounded-lg">
+                                <select
+                                    className="w-full outline-none"
+                                    value={subCategorie}
+                                    onChange={subCategorieHandler}
+                                >
+                                    <option value="all">Tous les sous categories</option>
+                                    {getSubCategories &&
+                                        getSubCategories.map((categorie, key) => (
+                                            <option key={key} value={categorie._id}>
+                                                {categorie.name}
+                                            </option>
+                                        ))}
+                                </select>
+                            </div>
+                        )
+                    }
+
+                    <div className="p-2 mb-3 bg-white rounded-lg">
+                        <select className="w-full outline-none" value={price} onChange={priceHandler}>
+                            <option value="all">Tous les prix</option>
                             {prices &&
                                 prices.map((price) => (
                                     <option key={price.value} value={price.value}>
@@ -142,10 +173,9 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                         </select>
                     </div>
 
-                    <div className="mb-3">
-                        <h2>Notes</h2>
-                        <select className="w-full" value={rating} onChange={ratingHandler}>
-                            <option value="all">Tous</option>
+                    <div className="p-2 mb-3 bg-white rounded-lg">
+                        <select className="w-full outline-none" value={rating} onChange={ratingHandler}>
+                            <option value="all">Tous les notes</option>
                             {ratings &&
                                 ratings.map((rating) => (
                                     <option key={rating} value={rating}>
@@ -164,17 +194,18 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                             {products.length === 0 ? 'No' : countProducts} Résultats
                             {query !== 'all' && query !== '' && ' : ' + query}
                             {categorie !== 'all' && ', ' + categories.filter(sc => sc._id === categorie)[0].name}
+                            {subCategorie !== 'all' && currentSubCategorie !== null && ', ' + currentSubCategorie.name}
                             {price !== 'all' && ', Prix ' + price}
                             {rating !== 'all' && ', étoile ' + rating + ' et plus'}
                             &nbsp;
-                            {(query !== 'all' && query !== '') ||
-                                categorie !== 'all' ||
-                                rating !== 'all' ||
-                                price !== 'all' ? (
-                                <button onClick={() => router.push('/search?query=')}>
-                                    <XCircleIcon className="w-5 h-5" />
-                                </button>
-                            ) : null}
+
+                            {
+                                [categorie, subCategorie, price, rating].find(x => x !== 'all') && (
+                                    <button onClick={() => router.push('/search?query=' + query)}>
+                                        <XCircleIcon className="w-5 h-5" />
+                                    </button>
+                                )
+                            }
                         </div>
                         <div>
                             Filtre par{' '}
@@ -190,7 +221,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
                     { /* Content body result */}
                     <div>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             {products.map((product, key) => (
                                 <BestsellerCard
                                     key={key}
@@ -224,6 +255,7 @@ type QuerySearch = {
         pageSize: number
         page: number
         categorie: string
+        subCategorie: string
         price: string
         rating: string
         sort: string
@@ -236,6 +268,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
     const pageSize = query.pageSize || PAGE_SIZE;
     const page = query.page || 1;
     const categorie = query.categorie || '';
+    const subCategorie = query.subCategorie || '';
     const price = query.price || '';
     const rating = query.rating || '';
     const sort = query.sort || '';
@@ -251,6 +284,8 @@ export async function getServerSideProps({ query }: QuerySearch) {
             }
             : {};
     const categorieFilter = categorie && categorie !== 'all' ? { categorie } : {};
+    const subcategorieFilter = subCategorie && subCategorie !== 'all' ? { subCategorie } : {};
+
     const ratingFilter =
         rating && rating !== 'all'
             ? {
@@ -288,6 +323,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
             isPublished: true,
             ...queryFilter,
             ...categorieFilter,
+            ...subcategorieFilter,
             ...priceFilter,
             ...ratingFilter,
         };
@@ -323,6 +359,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
         };
 
     } catch (error) {
+        await db.disconnect();
         return {
             props: {
                 searchQuery: searchQuery,

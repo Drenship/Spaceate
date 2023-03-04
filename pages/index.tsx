@@ -27,15 +27,18 @@ const Home: NextPage<Props> = ({ products }) => {
   const services = [
     {
       title: "Légumes",
-      src: "https://www.finedininglovers.fr/sites/g/files/xknfdk1291/files/styles/article_1200_800_fallback/public/2021-03/fruits%20l%C3%A9gumes%20avril.jpg?itok=dXANY9eR"
+      src: "https://www.finedininglovers.fr/sites/g/files/xknfdk1291/files/styles/article_1200_800_fallback/public/2021-03/fruits%20l%C3%A9gumes%20avril.jpg?itok=dXANY9eR",
+      link: "/search?query=&categorie=63e573b93835b8c932531ad3&subCategorie=all"
     },
     {
       title: "Fruits",
-      src: "https://t3.ftcdn.net/jpg/05/52/09/76/360_F_552097663_QLhLtZgGzmHqKtW0fBBxLAc3cnn8n53g.jpg"
+      src: "https://t3.ftcdn.net/jpg/05/52/09/76/360_F_552097663_QLhLtZgGzmHqKtW0fBBxLAc3cnn8n53g.jpg",
+      link: "/search?query=&categorie=63e56ca43835b8c932531a9a&subCategorie=all"
     },
     {
       title: "Fleurs",
-      src: "https://img.freepik.com/photos-premium/fleurs-lumineuses-fantastiques-nuit-beau-fond-floral-ai-generative_788189-2607.jpg?w=2000"
+      src: "https://img.freepik.com/photos-premium/fleurs-lumineuses-fantastiques-nuit-beau-fond-floral-ai-generative_788189-2607.jpg?w=2000",
+      link: "/search?query=&categorie=63fb7f1173b8b3dfdd2f78f3&subCategorie=all"
     }
   ]
 
@@ -45,9 +48,9 @@ const Home: NextPage<Props> = ({ products }) => {
         <div className='relative'>
           <div className='absolute bottom-0 w-full h-full' />
           <div className='absolute bottom-0 z-0 w-full h-32 bg-gradient-to-t from-white to-transparent' />
-          <img src="https://blog.liebherr.com/electromenager/fr/wp-content/uploads/sites/13/2020/10/harvestedfood-min-1-1920x800.png" className='w-screen max-h-[45vh] object-cover' alt="" />
+          <img src="https://blog.liebherr.com/electromenager/fr/wp-content/uploads/sites/13/2020/10/harvestedfood-min-1-1920x800.png" className='w-screen max-h-[100vh] h-full min-h-[50vh] object-cover' alt="" />
         </div>
-        <div className='w-[1400px] mx-auto -mt-10 grid grid-cols-3 gap-x-5 px-4'>
+        <div className='max-w-[1400px] mx-auto -mt-10 grid grid-cols-1 sm:grid-cols-3 gap-x-5 px-4'>
           {
             services.map((data, key) => <ServiceCard service={data} key={key} />)
           }

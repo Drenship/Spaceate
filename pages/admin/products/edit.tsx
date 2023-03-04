@@ -34,6 +34,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
     const [currentSubCategorie, setCurrentSubCategorie] = useState<TypeCategorie>();
     const [mainImage, setMainImage] = useState<FileInfo[] | string | null>(productFind ? initialProduct.main_image : null);
+    const [newMainImageURL, setNewMainImageURL] = useState<string | null>(null);
     const [images, setImages] = useState<FileInfo[] | string[] | null>(productFind ? initialProduct.images : null);
 
     const { pushNotify } = useNotifys();
@@ -68,7 +69,10 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
             }
 
 
-            formDataObject.main_image = mainImage[0]?.url ? mainImage[0].url : mainImage ? mainImage : ""
+            formDataObject.main_image = mainImage && mainImage[0] && mainImage[0]?.url
+                ? mainImage[0].url : mainImage
+                    ? mainImage : newMainImageURL
+                        ? newMainImageURL : ""
 
             formDataObject.images = []
             if (images) {
@@ -81,7 +85,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
             formDataObject.isFeatured = formDataObject.isFeatured === "on" ? true : false
             formDataObject.isPublished = formDataObject.isPublished === "on" ? true : false
 
-            if(productFind === true) {
+            if (productFind === true) {
                 console.log(formDataObject)
                 // edit product
                 const response = await fetchPutJSON(`/api/admin/products/${product._id}`, formDataObject)
@@ -89,7 +93,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                 if (response?.data) {
                     setProduct(response.data)
                 }
-    
+
                 pushNotify({
                     title: "",
                     subTitle: response?.message || "Une erreur s'est produite.",
@@ -100,11 +104,11 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
             } else {
                 // create product
                 const response = await fetchPostJSON("/api/admin/products", formDataObject)
-    
+
                 if (response?.data) {
                     setProduct(response.data)
                 }
-    
+
                 pushNotify({
                     title: "",
                     subTitle: response?.message || "Une erreur s'est produite.",
@@ -151,16 +155,27 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                     <p className="text-xl font-semibold leading-tight text-gray-800">Produit Details: {slug && <span className='underline uppercase'>{slug}</span>}</p>
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7">
                         <div className='grid w-full grid-cols-1 col-span-full lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7'>
-
-                            <InputFiles
-                                multiple={false}
-                                input={{
-                                    name: "main_image",
-                                    values: [product?.main_image],
-                                    imageClass: "col-span-full mx-auto max-w-[350px] object-cover rounded-lg aspect-square"
-                                }}
-                                onChange={(formData: FormData) => onChangeUploadHandler(formData, setMainImage)}
-                            />
+                            <div className='space-y-5'>
+                                <InputFiles
+                                    multiple={false}
+                                    input={{
+                                        name: "main_image",
+                                        values: [product?.main_image],
+                                        imageClass: "col-span-full mx-auto max-w-[350px] object-cover rounded-lg aspect-square"
+                                    }}
+                                    onChange={(formData: FormData) => onChangeUploadHandler(formData, setMainImage)}
+                                />
+                                <InputText
+                                    title="Url de l'image"
+                                    description="Lien de l'image"
+                                    input={{
+                                        name: "mainImageUrl",
+                                        defaultValue: product?.main_image || "",
+                                        placeholder: "entrer une url ...",
+                                    }}
+                                    onChange={(e: React.BaseSyntheticEvent) => setNewMainImageURL(e.target.value)}
+                                />
+                            </div>
 
                             <div className='space-y-5'>
                                 <InputText
@@ -205,7 +220,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                         defaultValue: currentSubCategorie || currentCategorie.subCategories[0],
                                     }}
                                     options={currentCategorie.subCategories}
-                                    setChange={() => {}}
+                                    setChange={() => { }}
                                 />
                             </div>
 

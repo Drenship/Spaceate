@@ -30,7 +30,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             main_image: 1,
             name: 1,
             slug: 1,
-        })
+        }).limit(7)
         await db.disconnect();
         console.log(products)
         res.send({ message: 'Successfully finded', data: products });
