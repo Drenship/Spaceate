@@ -150,7 +150,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                     
                     <div className="p-2 mb-3 bg-white border rounded-lg">
                         <select
-                            className="w-full outline-none"
+                            className="w-full bg-white outline-none"
                             value={categorie}
                             onChange={categorieHandler}
                         >
@@ -168,7 +168,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                         categorie && categorie !== 'all' && (
                             <div className="p-2 mb-3 bg-white border rounded-lg">
                                 <select
-                                    className="w-full outline-none"
+                                    className="w-full bg-white outline-none"
                                     value={subCategorie}
                                     onChange={subCategorieHandler}
                                 >
@@ -185,7 +185,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                     }
 
                     <div className="p-2 mb-3 bg-white border rounded-lg">
-                        <select className="w-full outline-none" value={price} onChange={priceHandler}>
+                        <select className="w-full bg-white outline-none" value={price} onChange={priceHandler}>
                             <option value="all">Tous les prix</option>
                             {prices &&
                                 prices.map((price) => (
@@ -197,7 +197,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                     </div>
 
                     <div className="p-2 mb-3 bg-white border rounded-lg">
-                        <select className="w-full outline-none" value={rating} onChange={ratingHandler}>
+                        <select className="w-full bg-white outline-none" value={rating} onChange={ratingHandler}>
                             <option value="all">Tous les notes</option>
                             {ratings &&
                                 ratings.map((rating) => (
@@ -212,7 +212,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                 { /* Global body */}
                 <div className='flex-grow min-h-full px-5 py-12 bg-white shadow-lg md:px-10 lg:px-20'>
                     { /* filtre option top */}
-                    <div className="flex items-center justify-between pb-2 mb-2 border-b-2">
+                    <div className="flex flex-col items-start justify-between pb-2 mb-2 border-b-2 md:items-center md:flex-row w-ull">
                         <div className="flex items-center">
                             {products.length === 0 ? 'No' : countProducts} Résultats
                             {query !== 'all' && query !== '' && ' : ' + query}
@@ -230,7 +230,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                                 )
                             }
                         </div>
-                        <div>
+                        <div className='mt-3 md:mt-0'>
                             Filtre par{' '}
                             <select value={sort} onChange={sortHandler}>
                                 <option value="featured">Populaires</option>
