@@ -151,7 +151,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
     return (
         <AdminscreenWrapper title={`${product ? product?.name + ' - ' : ""} Edit product`}>
             <form onSubmit={handleSubmitProduct}>
-                <div className="mt-10 px-7">
+                <div className="px-2 mt-10 md:px-7">
                     <p className="text-xl font-semibold leading-tight text-gray-800">Produit Details: {slug && <span className='underline uppercase'>{slug}</span>}</p>
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7">
                         <div className='grid w-full grid-cols-1 col-span-full lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7'>

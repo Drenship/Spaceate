@@ -99,14 +99,14 @@ const Cart: NextPage = () => {
     return (
         <BasescreenWrapper title="Panier" footer={true}>
             <div className='container max-w-[1280px] mx-auto h-full min-h-[calc(100vh-64px)] flex'>
-                <div className='flex-row block w-full min-h-full px-3 md:mx-auto md:flex'>
+                <div className='flex-row block w-full min-h-full md:px-3 md:mx-auto md:flex'>
 
                     { /* panier list items */}
                     <div className='md:flex-grow w-full md:h-full md:min-w-[70%] overflow-x-hidden'>
                         {
                             priceChange.length > 0 && (
                                 <div className='w-full px-6'>
-                                    <div className='w-full mx-auto mt-5 p-5 space-y-2 border border-yellow-600 rounded-lg bg-yellow-600/20 max-w-[800px] shadow-lg'>
+                                    <div className='w-full mx-auto mt-5 p-4 space-y-2 border border-yellow-600 rounded-lg bg-yellow-600/20 max-w-[800px] shadow-lg'>
                                         {
                                             priceChange.map((update, key) => <p key={key} className="text-red-600">{update.text}</p>)
                                         }

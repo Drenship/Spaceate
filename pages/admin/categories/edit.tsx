@@ -107,22 +107,11 @@ const EditCartegorieScreen: NextPage<Props> = ({ slug, initialCategorie }) => {
 
 
             <form onSubmit={handleSubmitCartegorie}>
-                <div className="mt-10 px-7">
+                <div className="px-2 mt-10 md:px-7">
                     <p className="text-xl font-semibold leading-tight text-gray-800">Categorie Details: {slug && <span className='italic font-bold underline uppercase text-sky-600'>{slug}</span>}</p>
 
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7 ">
-                        {/*
-                            <InputSelect
-                                title="Catégorie"
-                                description="Choisire une catégorie"
-                                input={{
-                                    name: 'selected_categorie',
-                                    defaultValue: { name: "a" },
-                                }}
-                                options={[{ name: "a" }, { name: "b" }]}
-                            /> 
-                        */}
-
+     
                         <InputText
                             title="Nom"
                             description="Nom de la catégorie"
