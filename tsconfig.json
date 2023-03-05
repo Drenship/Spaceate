@@ -49,7 +49,7 @@
     "pages/index.tsx",
     "pages/_app.tsx",
     "pages/auth/recovery.tsx",
-    "pages/auth/register.js",
+    "pages/auth/register.tsx",
     "pages/api/auth/[...nexthauth].jhs",
     "pages/auth/signin.ts",
     "hooks/useAuth.js",
