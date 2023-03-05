@@ -10,6 +10,7 @@ import Categorie from '@libs/models/Categorie';
 import { querySecurMongoDB } from '@libs/utils';
 import { TypeCategorie, TypeProduct } from '@libs/typings';
 import { BsSliders } from 'react-icons/bs';
+import { RxEyeClosed } from 'react-icons/rx';
 
 const PAGE_SIZE = 3;
 const ratings = [1, 2, 3, 4, 5];
@@ -60,8 +61,8 @@ type Props = {
 
 const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categories, pages }) => {
     const router = useRouter()
-
-    const [toggleFiltersPannel, setToggleFiltersPannel] = useState("-100vw");
+    const fixeValueFiltersPannel = "-100vw";
+    const [toggleFiltersPannel, setToggleFiltersPannel] = useState<0 | "-100vw">(fixeValueFiltersPannel);
 
     const {
         query = 'all',
@@ -84,6 +85,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
         price,
         rating,
     }: FilterSearchParams) => {
+        setToggleFiltersPannel(fixeValueFiltersPannel)
         const { query }: any = router;
         if (page) query.page = page;
         if (searchQuery) query.searchQuery = searchQuery;
@@ -127,17 +129,26 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
         <BasescreenWrapper placeholderSearch={searchQuery} title={searchQuery} footer={false}>
             <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100">
                 { /* filtre options left */}
-                <button 
-                    className='fixed z-40 flex items-center justify-center w-12 h-12 bg-white border border-l-0 border-black rounded-r-lg top-20 md:hidden'
-                    onClick={() => setToggleFiltersPannel(prev => prev === 0 ? "-100vw" : 0)}
+                <button
+                    className='fixed left-0 z-40 flex items-center justify-center w-12 h-12 bg-white border border-l-0 border-black rounded-r-lg top-20 md:hidden button-click-effect'
+                    onClick={() => setToggleFiltersPannel(prev => prev === 0 ? fixeValueFiltersPannel : 0)}
                 >
                     <BsSliders className='rotate-90' />
                 </button>
-                <div 
-                    className='fixed z-40 h-[calc(100vh-64px)] -left-[100vw] duration-300 transition-all md:relative flexflex-row md:block md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:px-6 sm:h-full md:sticky top-16 bg-gray-100'
-                    style={{left: toggleFiltersPannel}}
+                <div
+                    className='fixed z-40 h-[calc(100vh-64px)] -left-[100vw] duration-300 transition-all flex-row md:block md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:px-6 sm:h-full md:sticky top-16 bg-gray-100'
+                    style={{ left: toggleFiltersPannel }}
                 >
-                    <div className="p-2 mb-3 bg-white rounded-lg">
+                    <div className='flex items-center justify-end mb-3 md:hidden'>
+                        <button 
+                            className='flex items-center justify-center w-12 h-12 bg-white border rounded-lg button-click-effect'
+                            onClick={() => setToggleFiltersPannel(fixeValueFiltersPannel)}
+                        >
+                            <RxEyeClosed />
+                        </button>
+                    </div>
+                    
+                    <div className="p-2 mb-3 bg-white border rounded-lg">
                         <select
                             className="w-full outline-none"
                             value={categorie}
@@ -155,7 +166,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
                     {
                         categorie && categorie !== 'all' && (
-                            <div className="p-2 mb-3 bg-white rounded-lg">
+                            <div className="p-2 mb-3 bg-white border rounded-lg">
                                 <select
                                     className="w-full outline-none"
                                     value={subCategorie}
@@ -173,7 +184,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                         )
                     }
 
-                    <div className="p-2 mb-3 bg-white rounded-lg">
+                    <div className="p-2 mb-3 bg-white border rounded-lg">
                         <select className="w-full outline-none" value={price} onChange={priceHandler}>
                             <option value="all">Tous les prix</option>
                             {prices &&
@@ -185,7 +196,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                         </select>
                     </div>
 
-                    <div className="p-2 mb-3 bg-white rounded-lg">
+                    <div className="p-2 mb-3 bg-white border rounded-lg">
                         <select className="w-full outline-none" value={rating} onChange={ratingHandler}>
                             <option value="all">Tous les notes</option>
                             {ratings &&
