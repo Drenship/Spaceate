@@ -139,9 +139,10 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                     className='fixed z-40 h-[calc(100vh-64px)] -left-[100vw] duration-300 transition-all flex-row md:block md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:px-6 sm:h-full md:sticky top-16 bg-gray-100'
                     style={{ left: toggleFiltersPannel }}
                 >
-                    <div className='flex items-center justify-between mb-3 md:hidden'>
+                    <div className='flex items-center justify-between mb-3 space-x-3 md:hidden'>
+                        <h1 className='flex items-center w-full h-12 px-3 uppercase bg-white border rounded-lg font-500'>Fitres</h1>
                         <button 
-                            className='flex items-center justify-center w-12 h-12 bg-white border rounded-lg button-click-effect'
+                            className='flex items-center justify-center flex-shrink-0 w-12 h-12 bg-white border rounded-lg button-click-effect'
                             onClick={() => setToggleFiltersPannel(fixeValueFiltersPannel)}
                         >
                             <RxEyeClosed />
@@ -232,12 +233,12 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                         </div>
                         <div className='mt-3 md:mt-0'>
                             Filtre par{' '}
-                            <select value={sort} onChange={sortHandler}>
-                                <option className='bg-transparent' value="featured">Populaires</option>
-                                <option className='bg-transparent' value="lowest">Prix croissant</option>
-                                <option className='bg-transparent' value="highest">Prix décroissant</option>
-                                <option className='bg-transparent' value="toprated">Avis des clients</option>
-                                <option className='bg-transparent' value="newest">Les plus récents</option>
+                            <select className='bg-white' value={sort} onChange={sortHandler}>
+                                <option value="featured">Populaires</option>
+                                <option value="lowest">Prix croissant</option>
+                                <option value="highest">Prix décroissant</option>
+                                <option value="toprated">Avis des clients</option>
+                                <option value="newest">Les plus récents</option>
                             </select>
                         </div>
                     </div>
