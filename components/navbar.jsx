@@ -88,7 +88,7 @@ function Navbar({ placeholderSearch }) {
 
             <div ref={searchBarMenuRef} className='relative border border[#f3f6fd] bg-[#f3f6fd] rounded-full shadow-lg w-full max-w-[480px] h-10 flex justify-between items-center px-3'>
                 <input
-                    type="text"
+                    type="search"
                     placeholder='Search'
                     className='w-full bg-transparent outline-none'
                     defaultValue={placeholderSearch || ""}

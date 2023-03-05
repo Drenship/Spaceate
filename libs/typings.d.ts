@@ -34,7 +34,8 @@ export interface TypeProduct {
     countInStock: number;
     price_in: string;
     rating: number;
-    reviews: number;
+    numReviews: number;
+    reviews: TypeCommentaire[]
     advancePrice: {
         initialCost: number
         tva: number

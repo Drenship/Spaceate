@@ -128,8 +128,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                             <div className='flex items-center justify-start mt-5 space-x-2'>
                                 <Rating rating={product.rating === 0 ? 5 : product.rating} />
                                 <p className='space-x-1'>
-                                    <span>{product.reviews}</span>
-                                    <span>{product.reviews <= 1 ? "commentaire" : "commentaires"}</span>
+                                    <span>{product.numReviews}</span>
+                                    <span>{product.numReviews <= 1 ? "commentaire" : "commentaires"}</span>
                                 </p>
                             </div>
 
@@ -204,8 +204,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 export const getServerSideProps = async ({ query }: any) => {
     try {
         const slug = query.slug || null;
-        let product = {}
-        let sameProducts = []
+        let product: any = {}
+        let sameProducts: any = []
 
         if (slug) {
             await db.connect();

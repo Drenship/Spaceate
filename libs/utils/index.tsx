@@ -89,7 +89,6 @@ export async function teinteDeLimage(urlImage: string): Promise<string> {
     } catch (error) {
         return "";
     }
-
 }
 
 export function querySecurMongoDB(str: string): [string, boolean] {
