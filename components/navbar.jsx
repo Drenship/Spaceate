@@ -12,6 +12,7 @@ import SearchResultItem from '@components/cards/SearchResultItem';
 
 import { querySecurMongoDB, replaceURL } from '@libs/utils';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
+import { BsPersonPlusFill } from 'react-icons/bs';
 
 function Navbar({ placeholderSearch }) {
     const router = useRouter()
@@ -194,7 +195,9 @@ function Navbar({ placeholderSearch }) {
                             </ul>
                         </div>
                     ) : (
-                        <Link href="/auth/login" className='px-4 py-2 text-sm font-bold uppercase border border-black rounded lg:block button-click-effect'>Se connecter</Link>
+                        <Link href="/auth/register" className='p-2 text-sm font-bold uppercase border border-black rounded lg:block button-click-effect'>
+                            <BsPersonPlusFill className="w-5 h-5" />
+                        </Link>
                     )
                 }
             </div>
