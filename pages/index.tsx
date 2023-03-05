@@ -46,6 +46,12 @@ const Home: NextPage<Props> = ({ products }) => {
     <BasescreenWrapper title="Accueil" footer={true}>
       <div>
         <div className='relative'>
+          <div className='absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-white/20'>
+            <div className="max-w-[780px] w-full bg-black p-4 rounded-lg text-white">
+              <h1 className='text-2xl font-semibold'>Des fruits et légumes locaux livrés directement chez vous</h1>
+              <p className='mt-3 font-semibold'>Mangez frais, mangez sain ! Nous livrons directement chez vous des produits frais de qualité supérieure. Commandez en ligne et profitez d'une alimentation saine et savoureuse. Essayez-nous dès aujourd'hui !</p>
+            </div>
+          </div>
           <div className='absolute bottom-0 w-full h-full' />
           <div className='absolute bottom-0 z-0 w-full h-32 bg-gradient-to-t from-white to-transparent' />
           <img src="https://blog.liebherr.com/electromenager/fr/wp-content/uploads/sites/13/2020/10/harvestedfood-min-1-1920x800.png" className='w-screen max-h-[100vh] h-full min-h-[50vh] object-cover' alt="" />

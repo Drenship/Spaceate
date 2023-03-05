@@ -227,9 +227,9 @@ export const getServerSideProps = async ({ query }: any) => {
                     slug: 1,
                     price: 1,
                     price_in: 1,
-                    rating: 1
+                    rating: 1,
+                    numReviews: 1
                 })
-                console.log(sameProducts)
             }
             await db.disconnect()
         }

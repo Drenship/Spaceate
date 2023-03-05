@@ -29,7 +29,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             slug: 1,
             price: 1,
             price_in: 1,
-            rating: 1
+            rating: 1,
+            numReviews: 1
         })
         await db.disconnect();
         console.log(products)

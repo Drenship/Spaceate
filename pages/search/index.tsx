@@ -11,8 +11,9 @@ import { querySecurMongoDB } from '@libs/utils';
 import { TypeCategorie, TypeProduct } from '@libs/typings';
 import { BsSliders } from 'react-icons/bs';
 import { RxEyeClosed } from 'react-icons/rx';
+import Pagination from '@components/ui-ux/Pagination';
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 1;
 const ratings = [1, 2, 3, 4, 5];
 const prices = [
     {
@@ -111,8 +112,6 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
         return subCategories.length > 0 ? [subCategories, currentSubCategorie] : [[], null]
     }, [categorie, subCategorie]);
 
-    const paginations: number[] = useMemo(() => [...Array(pages).keys()], [pages]);
-
     const categorieHandler = (e: React.BaseSyntheticEvent) => filterSearch({ categorie: e.target.value, subCategorie: 'all' });
 
     const subCategorieHandler = (e: React.BaseSyntheticEvent) => filterSearch({ subCategorie: e.target.value });
@@ -140,7 +139,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                     style={{ left: toggleFiltersPannel }}
                 >
                     <div className='flex items-center justify-between mb-3 space-x-3 md:hidden'>
-                        <h1 className='flex items-center w-full h-12 px-3 uppercase bg-white border rounded-lg font-500'>Fitres</h1>
+                        <h1 className='flex items-center w-full h-12 px-3 uppercase bg-white border rounded-lg font-500'>Filtres</h1>
                         <button 
                             className='flex items-center justify-center flex-shrink-0 w-12 h-12 bg-white border rounded-lg button-click-effect'
                             onClick={() => setToggleFiltersPannel(fixeValueFiltersPannel)}
@@ -245,7 +244,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
                     { /* Content body result */}
                     <div>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {products.map((product, key) => (
                                 <BestsellerCard
                                     key={key}
@@ -253,20 +252,11 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                                 />
                             ))}
                         </div>
-                        <ul className="flex">
-                            {pages > 1 &&
-                                paginations.map((pageNumber) => (
-                                    <li key={pageNumber}>
-                                        <button
-                                            className={`default-button m-2 ${page == pageNumber + 1 ? 'font-bold' : ''
-                                                } `}
-                                            onClick={() => pageHandler(pageNumber + 1)}
-                                        >
-                                            {pageNumber + 1}
-                                        </button>
-                                    </li>
-                                ))}
-                        </ul>
+                        <Pagination 
+                            current={page}
+                            pages={pages}
+                            pageHandler={(x) => pageHandler(x)}  
+                        />
                     </div>
                 </div>
             </div>
@@ -276,7 +266,6 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
 type QuerySearch = {
     query: {
-        pageSize: number
         page: number
         categorie: string
         subCategorie: string
@@ -289,14 +278,14 @@ type QuerySearch = {
 
 export async function getServerSideProps({ query }: QuerySearch) {
 
-    const pageSize = query.pageSize || PAGE_SIZE;
-    const page = query.page || 1;
+    const pageSize = PAGE_SIZE;
+    const page = query.page >= 1 ? query.page : 1;
     const categorie = query.categorie || '';
     const subCategorie = query.subCategorie || '';
     const price = query.price || '';
     const rating = query.rating || '';
     const sort = query.sort || '';
-    const [searchQuery, allow] = querySecurMongoDB(query.query) || '';
+    const [searchQuery] = querySecurMongoDB(query.query) || '';
 
     const queryFilter =
         searchQuery && searchQuery !== 'all'
@@ -365,7 +354,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
             .sort(order)
             .skip(pageSize * (page - 1))
             .limit(pageSize)
-            .populate("categorie")
+            //.populate("categorie")
             .lean();
 
         const countProducts = await Product.countDocuments(productSearchFullQuery);

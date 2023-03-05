@@ -95,7 +95,7 @@ export function querySecurMongoDB(str: string): [string, boolean] {
     const regex = /^[a-zA-Z0-9_*]+$/;
     const strUpdate = str.replace(/[^a-zA-Z0-9] /g, '').replace(/[$]/g, '')
 
-    if (!regex.test(strUpdate)) {
+    if (regex.test(strUpdate)) {
         console.log(strUpdate, "La chaîne de caractères contient des caractères spéciaux qui ne sont pas autorisés pour MongoDB");
         return [strUpdate, false];
     }

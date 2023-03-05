@@ -5,9 +5,10 @@ import { cartState } from "@atoms/cartState"
 import { useRouter } from 'next/dist/client/router';
 import { CART_ADD_ITEM, setCartState } from '@atoms/setStates/setCartState';
 import { replaceURL } from '@libs/utils';
+import Rating from '@components/ui-ux/Rating';
 
 export default function BestsellerCard({ product }) {
-    
+
     const router = useRouter()
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
@@ -46,12 +47,18 @@ export default function BestsellerCard({ product }) {
                         <path d="M6.25 8.75V9.375C6.25 10.3696 6.64509 11.3234 7.34835 12.0267C8.05161 12.7299 9.00544 13.125 10 13.125C10.9946 13.125 11.9484 12.7299 12.6517 12.0267C13.3549 11.3234 13.75 10.3696 13.75 9.375V8.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </button>
-                <div className="flex justify-between px-2 py-4">
-                    <div>
-                        <p className="text-lg font-medium leading-none text-gray-800">{product.name}</p>
+                <div className='px-2 py-4 space-y-3'>
+                    <div className="flex justify-between">
+                        <div>
+                            <p className="text-lg font-medium leading-none text-gray-800">{product.name}</p>
+                        </div>
+                        <div>
+                            <p className="text-lg leading-none text-right text-gray-600">{product.price}€</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-lg leading-none text-right text-gray-600">{product.price}€</p>
+                    <div className="flex justify-start space-x-1">
+                        <Rating rating={product.rating} /> 
+                        <span>{product.numReviews} avis</span>
                     </div>
                 </div>
             </div>
