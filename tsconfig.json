@@ -59,11 +59,11 @@
     "pages/api/admin/products/index.js",
     "pages/admin/index.js",
     "pages/admin/index.jsx",
-    "components/Wrapper/BasescreenWrapper.jsx",
+    "components/Wrapper/BasescreenWrapper.tsx",
     "components/tables/TableProductLine.jsx",
     "components/PrintObject.tsx",
     "components/footer.tsx"
-, "components/navbar.jsx"  ],
+, "components/navbar.tsx"  ],
   "exclude": [
     "node_modules"
   ]

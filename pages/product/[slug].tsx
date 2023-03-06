@@ -12,7 +12,6 @@ import BlurImage from '@components/ui-ux/BlurImage'
 import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import Rating from "@components/ui-ux/Rating"
 
-import database from "@devasset/database.json"
 import { NextPage } from 'next/types';
 import { TypeCartItem, TypeProduct, TypeCommentaire } from '@libs/typings';
 import db from '@libs/database/dbConnect';

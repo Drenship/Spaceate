@@ -28,9 +28,11 @@ export default function BestsellerCard({ product }) {
     }
 
     return (
-        <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center overflow-hidden bg-white rounded-md shadow-md button-click-effect">
+        <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
             <div className="relative">
-                <img className="object-cover aspect-[3/2]" src={replaceURL(product.main_image)} alt="watch" />
+                <div className='aspect-[3/2]  overflow-hidden'>
+                    <img className="object-cover w-full h-full transition-transform duration-300 scale-100 group-hover:scale-110" src={replaceURL(product.main_image)} alt="watch" />
+                </div>
 
                 <button
                     className="top-3 right-3 absolute p-3.5 shadow-md text-gray-600 hover:text-gray-500 flex justify-center items-center bg-white rounded-full button-click-effect"
@@ -64,4 +66,4 @@ export default function BestsellerCard({ product }) {
             </div>
         </Link>
     );
-}
+} 

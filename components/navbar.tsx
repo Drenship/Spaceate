@@ -13,14 +13,19 @@ import SearchResultItem from '@components/cards/SearchResultItem';
 import { querySecurMongoDB, replaceURL } from '@libs/utils';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
 import { BsPersonPlusFill } from 'react-icons/bs';
+import { TypeCartItem } from '@libs/typings';
+
+interface NavbarProps {
+    placeholderSearch?: string;
+}
  
-function Navbar({ placeholderSearch }) {
+function Navbar({ placeholderSearch }: NavbarProps) {
     const router = useRouter()
     const { status, data: session } = useSession();
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
     const searchBarMenuRef = useRef();
-    const [query, setQuery] = useState(null);
+    const [query, setQuery] = useState<null | string>(null);
     const [searchBarFocus, setSearchBarFocus] = useState(false);
     const [searchResult, setSearchResult] = useState([]);
 
@@ -49,7 +54,7 @@ function Navbar({ placeholderSearch }) {
     // cart details
     const [totalCartValue, totalCountItems] = useMemo(() => {
         let total = 0
-        cartItem.forEach(item => total += (item.price * item.quantity))
+        cartItem.forEach((item: TypeCartItem[]) => total += (item.price * item.quantity))
         const countItems = cartItem.length;
         return [total, countItems]
     }, [cartItem]);
@@ -115,7 +120,7 @@ function Navbar({ placeholderSearch }) {
                 </svg>
 
                 {
-                    searchBarFocus && (
+                    searchBarFocus && searchResult.length > 0 && (
                         <div className='absolute left-0 right-0 -z-[1] w-full bg-[#f3f6fd] rounded-b-lg shadow-lg top-5'>
                             <div className='p-1.5 mt-5 space-y-0.5 overflow-hidden rounded-md flex flex-col'>
                                 {

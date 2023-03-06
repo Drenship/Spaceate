@@ -1,7 +1,11 @@
 import React from 'react';
 import { StarIcon } from "@heroicons/react/solid";
 
-export default function Rating({ rating }) {
+interface RatingProps {
+    rating: number
+}
+
+export default function Rating({ rating }: RatingProps) {
     return (
         <span className='flex'>
             <StarIcon className={`w-5 ${ rating >= 1 || rating === 0 ? 'text-yellow-400' : 'text-gray-600' }`} />

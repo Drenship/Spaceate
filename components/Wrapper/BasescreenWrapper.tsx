@@ -2,8 +2,14 @@ import React from 'react'
 import Head from 'next/head'
 import Navbar from "@components/navbar"
 import Footer from "@components/footer"
+interface Props {
+    title?: string;
+    placeholderSearch?: string;
+    footer?: boolean;
+    children: React.ReactNode;
+}
 
-export default function BasescreenWrapper({ title, placeholderSearch, footer, children }) {
+export default function BasescreenWrapper({ title, placeholderSearch, footer = true, children }: Props) {
 
     const titleHead = title ? `${title} - Spaceate` : "Spaceate"
 
@@ -25,8 +31,6 @@ export default function BasescreenWrapper({ title, placeholderSearch, footer, ch
             {
                 needFooter && <Footer />
             }
-
-
         </div>
     )
 }

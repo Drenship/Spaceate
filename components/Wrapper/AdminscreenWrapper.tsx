@@ -2,20 +2,30 @@ import React from 'react'
 import Head from 'next/head'
 import Navbar from "@components/navbar"
 import Link from 'next/link'
-
 import { HiTemplate, HiArchive, HiCollection, HiClipboardList, HiGift, HiChartBar, HiUsers } from "react-icons/hi";
 
-const NavLinkItem = ({ href, title, children }) => (
+interface NavLinkItemProps {
+    href: string;
+    title: string;
+    children: React.ReactNode;
+}
+
+const NavLinkItem = ({ href, title, children }: NavLinkItemProps) => (
     <Link
         href={href}
         className='flex items-center w-full h-12 p-2 pl-6 space-x-2 font-bold uppercase border-b bg-white/80 hover:bg-white hover:shadow-lg'
     >
-        { children }
+        {children}
         <span>{title}</span>
     </Link>
 )
 
-export default function AdminscreenWrapper({ title, children }) {
+interface Props {
+    title?: string;
+    children: React.ReactNode;
+}
+
+export default function AdminscreenWrapper({ title, children }: Props) {
 
     const titleHead = title ? `${title} - Spaceate` : "Spaceate"
 

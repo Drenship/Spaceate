@@ -29,7 +29,7 @@ export function useInterval(callback, delay) {
  * 
  * @param {function} callback
  * @param {number} delay 
- * @param {boolean} restart Condition pour annuler et redémarrer de 0 le Timeout
+ * @param {boolean | null | string} restart Condition pour annuler et redémarrer de 0 le Timeout
  */
 export function useTimeout(callback, delay, restart) {
     const savedCallback = useRef();
