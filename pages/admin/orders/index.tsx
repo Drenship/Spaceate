@@ -4,6 +4,7 @@ import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
 
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import LineChart from '@components/ui-ux/charts/LineChart';
 
 function AdminOrdersScreen({ initialOrders }: any) {
 
@@ -11,9 +12,28 @@ function AdminOrdersScreen({ initialOrders }: any) {
 
     console.log(initialOrders)
 
+    function generateRandomArray(size: number, min: number, max: number) {
+        const arr = [];
+        for (let i = 0; i < size; i++) {
+            if (Math.random() < 0.2) {
+                arr.push(NaN);
+            } else {
+                const num = Math.random() * (max - min) + min;
+                arr.push(num);
+            }
+        }
+        return arr;
+    }
+
     return (
         <AdminscreenWrapper title="Orders">
             <h1 className='text-xl font-bold uppercase'>Orders</h1>
+
+            <div className='mt-5 md:flex md:space-x-5'>
+                <LineChart title="Historique des commandes en €" datasets={generateRandomArray(12, 55, 300)} />
+                <LineChart title="Historique des commandes en £" datasets={generateRandomArray(12, 10, 400)} ordonnee="£" />
+                <LineChart title="Historique des commandes en $" datasets={generateRandomArray(12, 12, 500)} ordonnee="$" />
+            </div>
 
             <div className="flex flex-col items-start justify-between w-full p-4 lg:flex-row lg:p-8 lg:items-stretch">
                 <div className="flex flex-col items-start w-full lg:w-1/3 lg:flex-row lg:items-center">
@@ -58,7 +78,7 @@ function AdminOrdersScreen({ initialOrders }: any) {
                         </a>
                     </div>
                 </div>
-                
+
                 <div className="flex flex-col items-start justify-end w-full lg:w-2/3 lg:flex-row lg:items-center">
                     <div className="flex items-center py-3 border-gray-300 lg:border-l lg:border-r lg:py-0 lg:px-6">
                         <p className="text-base text-gray-600" id="page-view">

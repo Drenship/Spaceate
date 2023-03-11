@@ -24,9 +24,9 @@ function Navbar({ placeholderSearch }: NavbarProps) {
     const { status, data: session } = useSession();
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
-    const searchBarMenuRef = useRef();
+    const searchBarMenuRef = useRef(null);
     const [query, setQuery] = useState<null | string>(null);
-    const [searchBarFocus, setSearchBarFocus] = useState(false);
+    const [searchBarFocus, setSearchBarFocus] = useState<boolean>(false);
     const [searchResult, setSearchResult] = useState([]);
 
     //const { results, hasMore, loading, error } = useVideoSearch(query, pageNumber)

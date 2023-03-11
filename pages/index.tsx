@@ -9,6 +9,7 @@ import Slider from '@components/ui-ux/Slider'
 
 import database from "@devasset/database.json"
 import ServiceCard from '@components/cards/ServiceCard'
+import Carousel from '@components/contents/Carousel'
 
 
 type Props = {
@@ -42,15 +43,36 @@ const Home: NextPage<Props> = ({ products }) => {
     }
   ]
 
+  const slidesData = [
+    {
+      image: "https://images.unsplash.com/photo-1456518563096-0ff5ee08204e?auto=format&fit=crop&w=1351&q=60&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
+      title: "Slider One",
+      subtitle: "Tagline • 2017",
+      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.",
+      link: "#",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1510709657750-f5a80fc8da9c?auto=format&fit=crop&w=1950&q=60&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
+      title: "Slider Two",
+      subtitle: "Tagline • 2017",
+      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.",
+      link: "#",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1505567745926-ba89000d255a?auto=format&fit=crop&w=1951&q=60&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
+      title: "Slider Three",
+      subtitle: "Tagline • 2017",
+      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.",
+      link: "#",
+    }
+  ]
+
   return (
     <BasescreenWrapper title="Accueil" footer={true}>
       <div>
         <div className='relative'>
           <div className='absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-white/20'>
-            <div className="max-w-[780px] w-full bg-black p-4 rounded-lg text-white">
-              <h1 className='text-2xl font-semibold'>Des fruits et légumes locaux livrés directement chez vous</h1>
-              <p className='mt-3 font-semibold'>Mangez frais, mangez sain ! Nous livrons directement chez vous des produits frais de qualité supérieure. Commandez en ligne et profitez d'une alimentation saine et savoureuse. Essayez-nous dès aujourd'hui !</p>
-            </div>
+
           </div>
           <div className='absolute bottom-0 w-full h-full' />
           <div className='absolute bottom-0 z-0 w-full h-32 bg-gradient-to-t from-white to-transparent' />
@@ -61,6 +83,10 @@ const Home: NextPage<Props> = ({ products }) => {
             services.map((data, key) => <ServiceCard service={data} key={key} />)
           }
         </div>
+      </div>
+
+      <div className='relative w-full overflow-hidden'>
+        <Carousel slidesData={slidesData} />
       </div>
 
       <Slider slides={slides} />

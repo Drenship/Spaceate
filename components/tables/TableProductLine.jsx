@@ -87,7 +87,7 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap ">
                 <Link href={`/product/${product.slug}`}>
-                    <div className="relative text-gray-600 max-w-20">
+                    <div className="relative text-gray-600 max-w-[74px]">
                         <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                             <BlurImage
                                 src={replaceURL(product.main_image)}

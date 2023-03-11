@@ -20,6 +20,7 @@ export default function BasescreenWrapper({ title, placeholderSearch, footer = t
             <Head>
                 <title>{titleHead}</title>
                 <link rel="icon" href="/favicon.ico" />
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.min.js"></script>
             </Head>
 
             <Navbar placeholderSearch={placeholderSearch} />

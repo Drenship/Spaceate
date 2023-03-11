@@ -1,0 +1,80 @@
+import React, { useEffect } from 'react';
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/solid';
+//import Swiper from "swiper";
+
+type TypeSlide = {
+    image: string
+    title: string
+    subtitle: string
+    description: string
+    link: string
+}
+
+interface SlideProps {
+    slide: TypeSlide
+}
+
+function Slide({ slide }: SlideProps) {
+    const { image, title, subtitle, description, link } = slide;
+    return (
+        <div className="swiper-slide">
+            <div className="swiper-slide__block">
+                <div className="swiper-slide__block__img" data-swiper-parallax-y="70%">
+                    <a target="_blank" href="#">
+                        <img src={image} alt="" />
+                    </a>
+                </div>
+                <div className="swiper-slide__block__text">
+                    <p data-swiper-parallax-x="-60%" className="main__title">{title}<span>.</span></p>
+                    <h3 data-swiper-parallax-x="-50%" className="main__subtitle">{subtitle}</h3>
+                    <p data-swiper-parallax-x="-40%" className="paragraphe">{description}</p>
+                    <a data-swiper-parallax-x="-30%" className="link" target="_blank" href={link}>Discover</a>
+                    <span data-swiper-parallax-y="60%" className="number">1</span>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+interface CarouselProps {
+    slidesData: TypeSlide[]
+}
+
+export default function Carousel({ slidesData }: CarouselProps) {
+
+    useEffect(() => {
+        new Swiper(".swiper-container", {
+            direction: "horizontal",
+            slidesPerView: 1,
+            parallax: !0,
+            nextButton: ".swiper-button-next",
+            prevButton: ".swiper-button-prev",
+            paginationClickable: !0,
+            spaceBetween: 0,
+            speed: 1500,
+            parallax: !0,
+            autoplay: 2500,
+            loop: !0
+        })
+    }, []);
+
+    return (
+        <section className="section__slider">
+            <div className="container__center">
+                <div className="swiper-container">
+                    <div className="swiper-wrapper">
+                        {
+                            slidesData.map((slide, key) => <Slide key={key} slide={slide} />)
+                        }
+                    </div>
+                    <div className="z-50 swiper-button-next">
+                        <ArrowRightIcon className='fa-long-arrow-right' />
+                    </div>
+                    <div className="z-50 swiper-button-prev">
+                        <ArrowLeftIcon className='fa-long-arrow-left' />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}

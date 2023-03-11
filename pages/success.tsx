@@ -14,7 +14,7 @@ import { fetchGetJSON } from '@libs/utils/api-helpers';
 
 const Success: NextPage = () => {
     const router = useRouter();
-    const [cartItems, setCartItems] = useRecoilState(cartState)
+    const [cartItems, setCartItem] = useRecoilState(cartState)
 
     const { data, error } = useSWR(
         router.query.session_id
@@ -29,7 +29,7 @@ const Success: NextPage = () => {
                 action: CART_EMPTY,
                 product: {},
                 cartItems: cartItems,
-                setCartItems: setCartItems
+                setCartItem: setCartItem
             })
         }
     }, [data]);

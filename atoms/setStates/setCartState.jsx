@@ -41,15 +41,3 @@ export const setCartState = (props) => {
             return;
     }
 }
-
-/*            setCartItem(prevState => {
-                return prevState.map((item) => {
-                    return item.slug === product.slug ? { 
-                        ...item, 
-                        price: product.price, 
-                        countInStock: product.countInStock
-                    } : item
-                })
-            })
-            return;
-*/

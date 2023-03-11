@@ -148,8 +148,10 @@ const Cart: NextPage = () => {
                             </div>
 
                             <button
-                                className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect'
+                                role="link"
+                                className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100'
                                 onClick={createCheckoutSession}
+                                disabled={loading || cartItems.length === 0}
                             >{loading ? "Chargement..." : "Paiement"}</button>
                         </div>
 
