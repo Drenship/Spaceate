@@ -19,6 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const cartItems: TypeCartItem[] = req.body.items;
+    const order_id = req.body.order_id
     const user = req.body.user;
 
     // This is the shape in which stripe expects the data to be
@@ -55,14 +56,14 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
             metadata: {
                 userId: user._id,
-                cartItems: JSON.stringify(cartItems)
+                order_id: order_id
             }
         });
 
         res.status(200).json(checkoutSession);
     } catch (err) {
         console.log(err)
-        res.status(500).json({ statusCode: 500, message: "Internal server error" });
+        res.status(500).json({ err: err, statusCode: 500, message: "Internal server error" });
     }
 
 }

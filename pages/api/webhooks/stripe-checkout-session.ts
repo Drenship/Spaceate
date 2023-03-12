@@ -49,30 +49,32 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 }))
 
                 await db.connect();
-                const newOrder = new Order({
-                    user: session.metadata.userId,
-                    orderItems: orderItems,
-                    shippingAddress: {
+                const order = await Order.findById(req.query.id);
+                if (order) {
+                    order.shippingAddress = {
                         fullName: session.shipping_details.name,
                         address: session.shipping_details.address.line1,
                         address2: session.shipping_details.address.line2,
                         city: session.shipping_details.address.city,
                         postalCode: session.shipping_details.address.postal_code,
                         country: session.shipping_details.address.country,
-                    },
-                    paymentMethod: session.payment_method_types[0],
-                    itemsPrice: session.amount_subtotal / 100,
-                    shippingPrice: session.shipping_cost.amount_total / 100,
-                    taxPrice: (session.amount_subtotal * 0.055) / 100,
-                    totalPrice: session.amount_total / 100,
-                    paymentResultStripe: session,
-                    isPaid: true,
-                    paidAt: new Date(),
-                })
-                await newOrder.save();
-                await db.disconnect();
-                res.send({ message: 'Order created successfully' });
+                    };
+                    order.paymentMethod = session.payment_method_types[0];
+                    order.itemsPrice = session.amount_subtotal / 100;
+                    order.shippingPrice = session.shipping_cost.amount_total / 100;
+                    order.taxPrice = (session.amount_subtotal * 0.055) / 100;
+                    order.totalPrice = session.amount_total / 100;
+                    order.paymentResultStripe = session;
+                    order.isPaid = true;
+                    order.paidAt = new Date();
 
+                    await order.save();
+                    await db.disconnect();
+                    res.send({ message: 'Order created successfully' });
+                } else {
+                    await db.disconnect();
+                    return res.status(400).send({ message: "Order not found" });
+                }
             } catch (err) {
                 await db.disconnect();
                 return res.status(400).send({ err: err, message: "Error Webhook insert order payment" });

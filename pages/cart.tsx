@@ -37,15 +37,24 @@ const Cart: NextPage = () => {
     const createCheckoutSession = async () => {
         setLoading(true);
 
-        
+        // Put order
+
+        const createOrder = await fetchPostJSON("/api/order", { items: cartItems });
+
+        console.log(createOrder)
+        if(!createOrder || createOrder.err) {
+            setLoading(false);
+            return;
+        }
+
         const stripe = await getStripe();
         if (!stripe) {
             setLoading(false);
             return;
-        }   
+        }
 
-        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems });
-        console.log(checkoutSession)
+        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems, order_id: createOrder._id });
+        
 
         // Internal Server Error
         if ((checkoutSession).statusCode === 500) {
@@ -57,7 +66,7 @@ const Cart: NextPage = () => {
         // Redirect to checkout
         const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
         if (!stripe) alert(error.message);
-        
+
         setLoading(false);
     };
 
