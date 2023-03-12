@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { buffer } from "micro";
 import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
+import { TypeCartItem } from '@libs/typings';
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
@@ -37,10 +38,20 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
             try {
                 // insert order
+                const orderItems: TypeCartItem[] = JSON.parse(session.metadata.cartItems).map((item: TypeCartItem) => ({
+                    _id: item._id,
+                    name: item.name,
+                    slug: item.slug,
+                    quantity: item.quantity,
+                    image: item.main_image,
+                    price: item.price,
+                    price_in: item.price_in
+                }))
+
                 await db.connect();
                 const newOrder = new Order({
                     user: session.metadata.userId,
-                    orderItems: JSON.parse(session.metadata.cartItems),
+                    orderItems: orderItems,
                     shippingAddress: {
                         fullName: session.shipping_details.name,
                         address: session.shipping_details.address.line1,
@@ -49,14 +60,14 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                         postalCode: session.shipping_details.address.postal_code,
                         country: session.shipping_details.address.country,
                     },
-                    paymentMethod: { type: String, required: true },
-                    paymentResult: { id: String, status: String, email_address: String },
-                    itemsPrice: { type: Number, required: true },
+                    paymentMethod: session.payment_method_types[0],
+                    itemsPrice: session.amount_subtotal / 100,
                     shippingPrice: session.shipping_cost.amount_total / 100,
-                    taxPrice: { type: Number, required: true },
-                    totalPrice: { type: Number, required: true },
+                    taxPrice: (session.amount_subtotal * 0.05) / 100,
+                    totalPrice: session.amount_total / 100,
+                    paymentResultStripe: session,
                     isPaid: true,
-                    paidAt: { type: Date },
+                    paidAt: new Date(),
                 })
                 await newOrder.save();
                 await db.disconnect();
