@@ -37,26 +37,24 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             //if(session.livemode === false) return res.status(400).send({ message: "This session is not ni livemode, u can't create order" }); 
 
             try {
-                // insert order
-                const orderItems: TypeCartItem[] = JSON.parse(session.metadata.cartItems).map((item: TypeCartItem) => ({
-                    _id: item._id,
-                    name: item.name,
-                    slug: item.slug,
-                    quantity: item.quantity,
-                    image: item.main_image,
-                    price: item.price,
-                    price_in: item.price_in
-                }))
-
-                await db.connect();
+                 await db.connect();
                 const order = await Order.findById(session.metadata.order_id);
                 if (order) {
-                    order.shippingAddress.fullName = session.shipping_details.name;
-                    order.shippingAddress.address = session.shipping_details.address.line1;
-                    order.shippingAddress.address2 = session.shipping_details.address.line2;
-                    order.shippingAddress.city = session.shipping_details.address.city;
-                    order.shippingAddress.postalCode = session.shipping_details.address.postal_code;
-                    order.shippingAddress.country = session.shipping_details.address.country;
+                    //order.shippingAddress.fullName = session.shipping_details.name;
+                    //order.shippingAddress.address = session.shipping_details.address.line1;
+                    //order.shippingAddress.address2 = session.shipping_details.address.line2;
+                    //order.shippingAddress.city = session.shipping_details.address.city;
+                    //order.shippingAddress.postalCode = session.shipping_details.address.postal_code;
+                    //order.shippingAddress.country = session.shipping_details.address.country;
+
+                    order.shippingAddress = {
+                        fullName: session.shipping_details.name,
+                        address: session.shipping_details.address.line1,
+                        address2: session.shipping_details.address.line2,
+                        city: session.shipping_details.address.city,
+                        postalCode: session.shipping_details.address.postal_code,
+                        country: session.shipping_details.address.country,
+                    }
 
                     order.paymentMethod = session.payment_method_types[0];
                     order.itemsPrice = session.amount_subtotal / 100;
@@ -69,7 +67,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                     await order.save();
                     await db.disconnect();
-                    res.send({ message: 'Order created successfully' });
+                    res.send({ message: 'Order update successfully' });
                 } else {
                     await db.disconnect();
                     return res.status(400).send({ message: "Order not found" });
