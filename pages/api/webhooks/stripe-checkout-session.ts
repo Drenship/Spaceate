@@ -74,8 +74,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 res.send({ message: 'Order created successfully' });
 
             } catch (err) {
-                console.error(err);
-                return res.status(400).send({ message: "Error Webhook insert order payment" });
+                await db.disconnect();
+                return res.status(400).send({ err: err, message: "Error Webhook insert order payment" });
             }
         } else {
             return res.status(400).send({ message: "Error Webhook event not allowed" });
