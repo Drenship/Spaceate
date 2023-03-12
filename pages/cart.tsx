@@ -33,6 +33,8 @@ const Cart: NextPage = () => {
         return total
     }, [cartItems]);
 
+    console.log(cartItems)
+
 
     const createCheckoutSession = async () => {
         setLoading(true);

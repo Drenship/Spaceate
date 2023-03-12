@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const cartItems = req.body.items
-
+        
         const orderItems: TypeCartItem[] = cartItems.map((item: TypeCartItem) => ({
             _id: item._id,
             name: item.name,
