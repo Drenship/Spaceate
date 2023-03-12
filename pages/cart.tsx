@@ -1,25 +1,25 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import type { NextPage } from 'next/types'
 import dynamic from 'next/dynamic';
-import { TypeCartItem } from '@libs/typings'
+import axios from 'axios';
 import { useRecoilState } from 'recoil';
-import { cartState } from '@atoms/cartState';
 
+import { CART_UPDATE_ITEM, setCartState } from '@atoms/setStates/setCartState';
+import { cartState } from '@atoms/cartState';
+import { TypeCartItem } from '@libs/typings'
 import { fetchPostJSON } from "@libs/utils/api-helpers";
 import { getStripe } from "@libs/utils/stripe-helpers";
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CartItemCard from '@components/cards/CartItemCard';
-import axios from 'axios';
-import { CART_UPDATE_ITEM, setCartState } from '@atoms/setStates/setCartState';
 
 
 interface Update {
     product: TypeCartItem
     text: string
 }
-const Cart: NextPage = () => {
 
+const Cart: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const [priceChange, setPriceChange] = useState<Update[]>([])
     const [cartItems, setCartItem] = useRecoilState<TypeCartItem[]>(cartState)
@@ -37,6 +37,13 @@ const Cart: NextPage = () => {
     const createCheckoutSession = async () => {
         setLoading(true);
 
+        
+        const stripe = await getStripe();
+        if (!stripe) {
+            setLoading(false);
+            return;
+        }   
+
         const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems });
 
         // Internal Server Error
@@ -45,17 +52,11 @@ const Cart: NextPage = () => {
             setLoading(false);
             return;
         }
+
         // Redirect to checkout
-        const stripe = await getStripe();
-        if (stripe !== null) {
-            const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
-
-            // If `redirectToCheckout` fails due to a browser or network
-            // error, display the localized error message to your customer
-            // using `error.message`.
-            console.log(error.message);
-        }
-
+        const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
+        if (!stripe) alert(error.message);
+        
         setLoading(false);
     };
 

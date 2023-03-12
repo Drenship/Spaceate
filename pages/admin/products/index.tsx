@@ -55,9 +55,11 @@ function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: 
             <AdminControlPannel
                 pageHandler={pageHandler}
 
-                page={page}
-                maxPages={maxPages}
-                totalResults={totalResults}
+                navigationPanel={{
+                    page,
+                    maxPages,
+                    totalResults
+                }}
 
                 rightPanel={{
                     itemsByPage: {

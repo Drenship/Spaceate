@@ -63,11 +63,7 @@ export default function LineChart({ title, labels, datasets, ordonnee }: LineCha
 
     const options: any = {
         plugins: {
-            legend: {
-                labels: {
-                    usePointStyle: true,
-                },
-            }
+            legend: false
         },
         scales: {
             x: {
