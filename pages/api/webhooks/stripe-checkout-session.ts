@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { buffer } from "micro";
-//import Order from '@libs/models/Order';
-import Order from '@libs/models/OrderTest';
+import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -34,11 +33,30 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         if (event.type === "checkout.session.completed") {
             const session = event.data.object;
 
+            //if(session.livemode === false) return res.status(400).send({ message: "This session is not ni livemode, u can't create order" }); 
+
             try {
                 // insert order
                 await db.connect();
                 const newOrder = new Order({
-                    object: event.data
+                    user: session.metadata.userId,
+                    orderItems: JSON.parse(session.metadata.cartItems),
+                    shippingAddress: {
+                        fullName: session.shipping_details.name,
+                        address: session.shipping_details.address.line1,
+                        address2: session.shipping_details.address.line2,
+                        city: session.shipping_details.address.city,
+                        postalCode: session.shipping_details.address.postal_code,
+                        country: session.shipping_details.address.country,
+                    },
+                    paymentMethod: { type: String, required: true },
+                    paymentResult: { id: String, status: String, email_address: String },
+                    itemsPrice: { type: Number, required: true },
+                    shippingPrice: session.shipping_cost.amount_total / 100,
+                    taxPrice: { type: Number, required: true },
+                    totalPrice: { type: Number, required: true },
+                    isPaid: true,
+                    paidAt: { type: Date },
                 })
                 await newOrder.save();
                 await db.disconnect();

@@ -45,6 +45,7 @@ const Cart: NextPage = () => {
         }   
 
         const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems });
+        console.log(checkoutSession)
 
         // Internal Server Error
         if ((checkoutSession).statusCode === 500) {
