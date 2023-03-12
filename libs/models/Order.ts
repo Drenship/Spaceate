@@ -5,16 +5,19 @@ const orderSchema = new mongoose.Schema(
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         orderItems: [
             {
+                _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
                 name: { type: String, required: true },
+                slug: { type: String, required: true },
                 quantity: { type: Number, required: true },
                 image: { type: String, required: true },
                 price: { type: Number, required: true },
-            },
+                price_in: { type: String, required: true },
+            }
         ],
         shippingAddress: {
             fullName: { type: String, required: true },
             address: { type: String, required: true },
-            address2: { type: String, required: true },
+            address2: { type: String, required: false },
             city: { type: String, required: true },
             postalCode: { type: String, required: true },
             country: { type: String, required: true },
