@@ -38,10 +38,7 @@ const Cart: NextPage = () => {
         setLoading(true);
 
         // Put order
-
         const createOrder = await fetchPostJSON("/api/order", { items: cartItems });
-
-        console.log(createOrder)
         if(!createOrder || createOrder.err) {
             setLoading(false);
             return;
@@ -53,9 +50,7 @@ const Cart: NextPage = () => {
             return;
         }
 
-        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems, order_id: createOrder._id });
-        
-
+        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems, order_id: createOrder.data._id });
         // Internal Server Error
         if ((checkoutSession).statusCode === 500) {
             console.error((checkoutSession).message);

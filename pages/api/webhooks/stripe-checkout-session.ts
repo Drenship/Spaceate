@@ -51,14 +51,13 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 await db.connect();
                 const order = await Order.findById(session.metadata.order_id);
                 if (order) {
-                    order.shippingAddress = {
-                        fullName: session.shipping_details.name,
-                        address: session.shipping_details.address.line1,
-                        address2: session.shipping_details.address.line2,
-                        city: session.shipping_details.address.city,
-                        postalCode: session.shipping_details.address.postal_code,
-                        country: session.shipping_details.address.country,
-                    };
+                    order.shippingAddress.fullName = session.shipping_details.name;
+                    order.shippingAddress.address = session.shipping_details.address.line1;
+                    order.shippingAddress.address2 = session.shipping_details.address.line2;
+                    order.shippingAddress.city = session.shipping_details.address.city;
+                    order.shippingAddress.postalCode = session.shipping_details.address.postal_code;
+                    order.shippingAddress.country = session.shipping_details.address.country;
+
                     order.paymentMethod = session.payment_method_types[0];
                     order.itemsPrice = session.amount_subtotal / 100;
                     order.shippingPrice = session.shipping_cost.amount_total / 100;
