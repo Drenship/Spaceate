@@ -63,7 +63,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     paymentMethod: session.payment_method_types[0],
                     itemsPrice: session.amount_subtotal / 100,
                     shippingPrice: session.shipping_cost.amount_total / 100,
-                    taxPrice: (session.amount_subtotal * 0.05) / 100,
+                    taxPrice: (session.amount_subtotal * 0.055) / 100,
                     totalPrice: session.amount_total / 100,
                     paymentResultStripe: session,
                     isPaid: true,

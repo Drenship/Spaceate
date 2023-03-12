@@ -23,8 +23,6 @@ const userSchema = new mongoose.Schema(
             default: false
         },
 
-        ordersHistory: [],
-
         security: {
             code: {
                 type: String,

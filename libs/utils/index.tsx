@@ -1,3 +1,5 @@
+import { CURRENCY_SYMBOL } from "@config/index";
+
 export function generateUUID() {
     let d = new Date().getTime();
     if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -101,4 +103,8 @@ export function querySecurMongoDB(str: string): [string, boolean] {
     }
 
     return [strUpdate, true];
+}
+
+export const fixedPriceToCurrency = (price: number) => {
+    return `${price.toFixed(2)}${CURRENCY_SYMBOL}`
 }

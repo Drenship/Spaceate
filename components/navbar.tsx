@@ -189,8 +189,8 @@ function Navbar({ placeholderSearch }: NavbarProps) {
                                 </div>
                             </label>
                             <ul tabIndex={0} className="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-                                <li><a>Profil</a></li>
-                                <li><a>Paramètres</a></li>
+                                <li><Link href="/user">Profil</Link></li>
+                                <li><Link href="/user/order-history">Mes commandes</Link></li>
                                 {
                                     session?.user?.isAdmin && (
                                         <li className='border-t'><Link href="/admin/">Admin Dashboard</Link></li>
