@@ -49,7 +49,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 }))
 
                 await db.connect();
-                const order = await Order.findById(req.query.id);
+                const order = await Order.findById(session.metadata.order_id);
                 if (order) {
                     order.shippingAddress = {
                         fullName: session.shipping_details.name,
