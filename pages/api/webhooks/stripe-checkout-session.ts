@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { authSessionMiddleware } from '@libs/Middleware/Api.Middleware.auth-session';
 import { buffer } from "micro";
 //import Order from '@libs/models/Order';
 import Order from '@libs/models/OrderTest';
@@ -9,14 +8,12 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    authSessionMiddleware({ authOnly: true, adminOnly: true })(req, res, () => {
-        switch (req.method) {
-            case 'POST':
-                return handlePostRequest(req, res);
-            default:
-                return res.status(400).send({ message: 'Method not allowed' });
-        }
-    })
+    switch (req.method) {
+        case 'POST':
+            return handlePostRequest(req, res);
+        default:
+            return res.status(400).send({ message: 'Method not allowed' });
+    }
 };
 
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
