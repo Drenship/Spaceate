@@ -9,11 +9,12 @@ import { getSession } from 'next-auth/react';
 import Link from 'next/link';
 import React from 'react';
 
-interface Props {
-    orders: TypeOrder[]
+
+interface ItemOrderProps {
+    order: TypeOrder
 }
 
-const ItemOrder = ({ order }) => (
+const ItemOrder = ({ order }: ItemOrderProps) => (
     <div className='flex flex-col items-start w-full p-3 mb-3 border-2 border-black'>
         <Link href={`/user/order-history/${order._id}`}>
             {order._id}
@@ -39,6 +40,10 @@ const ItemOrder = ({ order }) => (
         </div>
     </div>
 )
+
+interface Props {
+    orders: TypeOrder[]
+}
 
 const OrderHistory: NextPage<Props> = ({ orders }) => {
 

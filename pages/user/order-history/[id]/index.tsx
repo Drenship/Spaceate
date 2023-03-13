@@ -13,12 +13,13 @@ import OrderItemCard from '@components/cards/OrderItemCard';
 interface Props {
     order: TypeOrder,
     countOrders: number,
-    orderNotFound: boolean
+    orderNotFound: boolean,
+    err?: any
 }
 
-const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound }) => {
+const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err }) => {
 
-    console.log(order, countOrders, orderNotFound)
+    console.log(order, countOrders, orderNotFound, err)
 
     const shippingAdress = useMemo(() => {
         if(!order?.shippingAddress?.address) return "";
@@ -174,7 +175,7 @@ export const getServerSideProps = async (context) => {
 
         return {
             props: {
-                order: JSON.parse(JSON.stringify(order)) || {},
+                order: JSON.parse(JSON.stringify(order)),
                 countOrders: countOrders,
                 orderNotFound: order && order._id ? false : true
             },
@@ -182,7 +183,14 @@ export const getServerSideProps = async (context) => {
 
     } catch (err) {
         await db.disconnect();
-        return defaultReturn
+        return {
+            props: {
+                order: {},
+                countOrders: 0,
+                orderNotFound: true,
+                err: err
+            },
+        }
     }
 }
 
