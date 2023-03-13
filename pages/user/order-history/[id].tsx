@@ -10,10 +10,17 @@ import { TypeOrder } from '@libs/typings';
 
 interface Props {
     order: TypeOrder,
-    countOrders: number
+    countOrders: number,
+    orderNotFound: boolean
 }
 
-const OrderSummary: NextPage<Props> = ({ order, countOrders }) => {
+const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound }) => {
+
+    if(orderNotFound) return (
+        <div>
+            <h1>Commande introuvable</h1>
+        </div>
+    )
 
     console.log("OrderSummary", order)
 
@@ -140,7 +147,8 @@ export const getServerSideProps = async (context) => {
     const defaultReturn = {
         props: {
             order: {},
-            countOrders: 0
+            countOrders: 0,
+            orderNotFound: true
         },
     }
 
@@ -160,7 +168,8 @@ export const getServerSideProps = async (context) => {
         return {
             props: {
                 order: JSON.parse(JSON.stringify(order)) || {},
-                countOrders: countOrders
+                countOrders: countOrders,
+                orderNotFound: order && order._id ? false : true
             },
         }
         
