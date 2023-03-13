@@ -68,7 +68,7 @@ export interface TypeOrderItem {
 }
 
 export interface TypeOrderProduct {
-    _id: Schema.Types.ObjectId;
+    _id: string;
     name: string;
     slug: string;
     quantity: number;
@@ -87,6 +87,7 @@ export interface TypeShippingAddress {
 }
 
 export interface TypeOrder {
+    _id: string,
     user: TypeUser;
     orderItems: TypeOrderProduct[];
     shippingAddress: TypeShippingAddress;

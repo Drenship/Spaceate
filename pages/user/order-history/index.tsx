@@ -2,6 +2,7 @@ import BlurImage from '@components/ui-ux/BlurImage';
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
+import { TypeOrder, TypeOrderProduct } from '@libs/typings';
 import { replaceURL } from '@libs/utils';
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/react';
@@ -9,17 +10,20 @@ import Link from 'next/link';
 import React from 'react';
 
 interface Props {
-    orders: any[]
+    orders: TypeOrder[]
 }
 
-const ItemOrder = ({order}) => (
+const ItemOrder = ({ order }) => (
     <div className='flex flex-col items-start w-full p-3 mb-3 border-2 border-black'>
         <Link href={`/user/order-history/${order._id}`}>
             {order._id}
         </Link>
+        <div>
+            status: {order.isPaid ? "paid" : "not paid"}
+        </div>
         <div className='flex flex-col pt-1'>
             {
-                order.orderItems.map((item, key) => (
+                order.orderItems.map((item: TypeOrderProduct, key) => (
                     <div key={key} className="flex">
                         <div className="relative text-gray-600 w-[74px] flex-grow">
                             <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
@@ -43,6 +47,7 @@ const OrderHistory: NextPage<Props> = ({ orders }) => {
         <BasescreenWrapper title="Mes commandes" footer={true}>
 
             <div className='flex flex-col w-full max-w-3xl py-5'>
+                <h1 className='text-2xl font-bold'>Mes commandes</h1>
                 {
                     orders.map((order, key) => <ItemOrder key={key} order={order} />)
                 }
@@ -52,7 +57,7 @@ const OrderHistory: NextPage<Props> = ({ orders }) => {
     );
 }
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps = async (context: any) => {
 
     const defaultReturn = {
         props: {
