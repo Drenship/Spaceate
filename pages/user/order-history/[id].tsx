@@ -6,9 +6,10 @@ import Order from '@libs/models/Order';
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import OrderItemCard from '@components/cards/OrderItemCard';
 import { fixedPriceToCurrency } from '@libs/utils';
+import { TypeOrder } from '@libs/typings';
 
 interface Props {
-    order: any,
+    order: TypeOrder,
     countOrders: number
 }
 
@@ -158,10 +159,11 @@ export const getServerSideProps = async (context) => {
 
         return {
             props: {
-                order: JSON.parse(JSON.stringify(order)),
+                order: JSON.parse(JSON.stringify(order)) || {},
                 countOrders: countOrders
             },
         }
+        
     } catch (err) {
         await db.disconnect();
         return defaultReturn
@@ -169,4 +171,4 @@ export const getServerSideProps = async (context) => {
 }
 
 OrderSummary.auth = true;
-export default OrderSummary
+export default OrderSummary;

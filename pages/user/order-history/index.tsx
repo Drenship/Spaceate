@@ -5,11 +5,36 @@ import Order from '@libs/models/Order';
 import { replaceURL } from '@libs/utils';
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/react';
+import Link from 'next/link';
 import React from 'react';
 
 interface Props {
     orders: any[]
 }
+
+const ItemOrder = ({order}) => (
+    <div className='flex flex-col items-start w-full p-3 mb-3 border-2 border-black'>
+        <Link href={`/user/order-history/${order._id}`}>
+            {order._id}
+        </Link>
+        <div className='flex flex-col pt-1'>
+            {
+                order.orderItems.map((item, key) => (
+                    <div key={key} className="flex">
+                        <div className="relative text-gray-600 w-[74px] flex-grow">
+                            <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
+                                <BlurImage
+                                    src={replaceURL(item.image)}
+                                />
+                            </div>
+                        </div>
+                        <h2>{item.name}</h2>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+)
 
 const OrderHistory: NextPage<Props> = ({ orders }) => {
 
@@ -17,29 +42,9 @@ const OrderHistory: NextPage<Props> = ({ orders }) => {
     return (
         <BasescreenWrapper title="Mes commandes" footer={true}>
 
-            <div className='flex flex-col'>
+            <div className='flex flex-col w-full max-w-3xl py-5'>
                 {
-                    orders.map((order, key) => (
-                        <div key={key}>
-                            <div>{order._id}</div>
-                            <div className='flex flex-col'>
-                                {
-                                    order.orderItems.map((item, key) => (
-                                        <div key={key}>
-                                            <div className="relative text-gray-600 max-w-[74px]">
-                                                <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
-                                                    <BlurImage
-                                                        src={replaceURL(item.image)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <h2>{item.name}</h2>
-                                        </div>
-                                    ))
-                                }
-                            </div>
-                        </div>
-                    ))
+                    orders.map((order, key) => <ItemOrder key={key} order={order} />)
                 }
             </div>
 

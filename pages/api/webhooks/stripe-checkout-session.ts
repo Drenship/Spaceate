@@ -40,12 +40,6 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                  await db.connect();
                 const order = await Order.findById(session.metadata.order_id);
                 if (order) {
-                    //order.shippingAddress.fullName = session.shipping_details.name;
-                    //order.shippingAddress.address = session.shipping_details.address.line1;
-                    //order.shippingAddress.address2 = session.shipping_details.address.line2;
-                    //order.shippingAddress.city = session.shipping_details.address.city;
-                    //order.shippingAddress.postalCode = session.shipping_details.address.postal_code;
-                    //order.shippingAddress.country = session.shipping_details.address.country;
 
                     order.shippingAddress = {
                         fullName: session.shipping_details.name,
@@ -67,6 +61,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                     await order.save();
                     await db.disconnect();
+
                     res.send({ message: 'Order update successfully' });
                 } else {
                     await db.disconnect();

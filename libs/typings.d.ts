@@ -3,10 +3,8 @@ export interface TypeUser {
     name: string;
     email: string;
     isAdmin: boolean;
-    ordersHistory: TypeOrder[];
     createdAt: Date;
 }
-
 
 export interface TypeSubCategories {
     _id: string;
@@ -69,34 +67,44 @@ export interface TypeOrderItem {
     price: number
 }
 
-export interface TypeOrder {
-    _id: string
-    user: string
-    orderItems: TypeOrderItem[];
-    shippingAddress: {
-        fullName: string
-        address: string
-        city: string
-        postalCode: string
-        country: string
-    }
-    paymentMethod: string
-    paymentResult: {
-        id: string
-        status: string
-        email_address: string
-    }
-    itemsPrice: number
-    shippingPrice: number
-    taxPrice: number
-    totalPrice: number
-    isPaid: boolean
-    isDelivered: boolean
-    paidAt?: Date
-    deliveredAt?: Date
+export interface TypeOrderProduct {
+    _id: Schema.Types.ObjectId;
+    name: string;
+    slug: string;
+    quantity: number;
+    image: string;
+    price: number;
+    price_in: string;
 }
 
-interface FileInfo {
+export interface TypeShippingAddress {
+    fullName: string;
+    address: string;
+    address2?: string;
+    city: string;
+    postalCode: string;
+    country: string;
+}
+
+export interface TypeOrder {
+    user: TypeUser;
+    orderItems: TypeOrderProduct[];
+    shippingAddress: TypeShippingAddress;
+    paymentMethod: string;
+    itemsPrice: number;
+    shippingPrice: number;
+    taxPrice: number;
+    totalPrice: number;
+    paymentResultStripe?: any;
+    isPaid: boolean;
+    isDelivered: boolean;
+    paidAt?: Date;
+    deliveredAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface FileInfo {
     name: string;
     size: number;
     url: string;
