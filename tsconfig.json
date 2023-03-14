@@ -1,0 +1,70 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": [
+        "components/*"
+      ],
+      "@atoms/*": [
+        "atoms/*"
+      ],
+      "@libs/*": [
+        "libs/*"
+      ],
+      "@devasset/*": [
+        "devasset/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/api/hello.js",
+    "pages/order/pay.tsx",
+    "pages/order/index.jsx",
+    "pages/product/[slug].tsx",
+    "pages/search/index.tsx",
+    "pages/index.tsx",
+    "pages/_app.tsx",
+    "pages/auth/recovery.tsx",
+    "pages/auth/register.tsx",
+    "pages/api/auth/[...nexthauth].jhs",
+    "pages/auth/signin.ts",
+    "hooks/useAuth.js",
+    "atoms/cartState.tsx",
+    "pages/cart.tsx",
+    "pages/api/checkout_sessions/checkout_sessions.js",
+    "pages/api/admin/products/index.js",
+    "pages/admin/index.js",
+    "pages/admin/index.jsx",
+    "components/Wrapper/BasescreenWrapper.tsx",
+    "components/tables/TableProductLine.jsx",
+    "components/PrintObject.tsx",
+    "components/footer.tsx"
+, "components/navbar.tsx"  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
