@@ -154,7 +154,7 @@ export const getServerSideProps = async (context) => {
 
     const defaultReturn = {
         props: {
-            order: {},
+            order: {}, 
             countOrders: 0,
             orderNotFound: true
         },
@@ -163,26 +163,16 @@ export const getServerSideProps = async (context) => {
     try {
         const { query: { id } } = context;
         if (!id) return defaultReturn
-<<<<<<< HEAD
         console.log(id)
 
         const { user } = await getSession(context);
         if (!user) return defaultReturn
         console.log(user)
 
-=======
-
-        const { user } = await getSession(context);
-        if (!user) return defaultReturn
->>>>>>> ea2ac59468c8638604f4859f56a036ea82076cb5
-
 
         await db.connect();
         const order = await Order.findOne({ _id: id, user: user._id }, { paymentResultStripe: 0 }).populate('user').lean();
-<<<<<<< HEAD
         console.log(order)
-=======
->>>>>>> ea2ac59468c8638604f4859f56a036ea82076cb5
         const countOrders = await Order.countDocuments({ _id: id, user: user._id });
         await db.disconnect();
 
