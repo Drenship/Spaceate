@@ -165,15 +165,16 @@ export const getServerSideProps = async (context) => {
         if (!id) return defaultReturn
         console.log(id)
 
-        const { user } = await getSession(context);
-        if (!user) return defaultReturn
-        console.log(user)
+        //const { user } = await getSession(context);
+        //if (!user) return defaultReturn
+        //user: user._id
+        //console.log(user)
 
 
         await db.connect();
-        const order = await Order.findOne({ _id: id, user: user._id }, { paymentResultStripe: 0 }).populate('user').lean();
+        const order = await Order.findOne({ _id: id }, { paymentResultStripe: 0 }).populate('user').lean();
         console.log(order)
-        const countOrders = await Order.countDocuments({ _id: id, user: user._id });
+        const countOrders = await Order.countDocuments({ _id: id });
         await db.disconnect();
 
         return {
@@ -186,6 +187,7 @@ export const getServerSideProps = async (context) => {
 
     } catch (err) {
         await db.disconnect();
+        throw new Error(err);
         return {
             props: {
                 order: {},
