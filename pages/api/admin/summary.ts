@@ -31,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const salesData = await Order.aggregate([
         {
             $group: {
-                _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+                _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
                 totalSales: { $sum: '$totalPrice' },
             },
         },
