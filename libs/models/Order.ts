@@ -50,7 +50,7 @@ orderSchema.pre('find', function () {
 
 orderSchema.post('find', async function (result) {
     // Populate the categorie field
-    console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds');
+    console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds', result);
 });
 
 export default mongoose.models.Order || mongoose.model('Order', orderSchema);
