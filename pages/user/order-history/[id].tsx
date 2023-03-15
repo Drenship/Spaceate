@@ -193,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 order: {},
                 countOrders: 0,
                 orderNotFound: true,
-                err: err
+                err: JSON.parse(JSON.stringify(err))
             },
         }
     }

@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-mongoose.set('strictQuery', false);
-
 const orderSchema = new mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
