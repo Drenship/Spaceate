@@ -5,7 +5,7 @@ import { getSession } from 'next-auth/react';
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
 import { fixedPriceToCurrency } from '@libs/utils';
-import { TypeOrder } from '@libs/typings';
+import { TypeOrder, TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import OrderItemCard from '@components/cards/OrderItemCard';
@@ -153,16 +153,7 @@ const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotF
 
 export const getServerSideProps = async (context) => {
 
-    const defaultReturn = {
-        props: {
-            query_id: "",
-            order: {}, 
-            countOrders: 0,
-            orderNotFound: true
-        },
-    }
-
-    try {
+    //try {
         const { query: { id } } = context;
         if (!id) return {
             props: {
@@ -172,16 +163,22 @@ export const getServerSideProps = async (context) => {
                 orderNotFound: true
             },
         }
-        console.log(id)
 
-        //const { user } = await getSession(context);
-        //if (!user) return defaultReturn
-        //console.log(user)
+        const { user } = await getSession(context);
+        if (!user) return {
+            props: {
+                query_id: "user not found",
+                order: {}, 
+                countOrders: 0,
+                orderNotFound: true
+            },
+        }
+        
 
 
         await db.connect();
-        const order = await Order.findOne({ _id: id }, { paymentResultStripe: 0 }).populate('user').lean();
-        const countOrders = await Order.countDocuments({ _id: id });
+        const order = await Order.findOne({ _id: id, user: user._id }, { paymentResultStripe: 0 }).populate('user').lean();
+        const countOrders = await Order.countDocuments({ _id: id, user: user._id });
         await db.disconnect();
 
         return {
@@ -193,7 +190,7 @@ export const getServerSideProps = async (context) => {
             },
         }
 
-    } catch (err) {
+    /*} catch (err) {
         await db.disconnect();
         const { query: { id } } = context;
         return {
@@ -205,7 +202,7 @@ export const getServerSideProps = async (context) => {
                 err: err
             },
         }
-    }
+    }*/
 }
 
 OrderSummary.auth = true;
