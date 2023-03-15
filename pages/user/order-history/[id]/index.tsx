@@ -153,7 +153,7 @@ const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotF
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-    const defaultReturn = (txt: string, err?: any) => ({
+    const defaultReturn = (txt: string, err?: object | undefined) => ({
         props: {
             query_id: txt,
             order: {},
@@ -162,8 +162,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             err: err
         },
     })
-
-    console.log()
 
     try {
         const { query: { id } } = context;
@@ -175,21 +173,29 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
         await db.connect();
         const order = await Order.findOne({ _id: id, user: user._id }, { paymentResultStripe: 0 }).populate('user').lean();
-        //const countOrders = await Order.countDocuments({ _id: id, user: user._id });
+        const countOrders = await Order.countDocuments({ _id: id, user: user._id });
         await db.disconnect();
 
         return {
             props: {
                 query_id: id,
                 order: JSON.parse(JSON.stringify(order)),
-                countOrders: 0, //countOrders,
+                countOrders: countOrders,
                 orderNotFound: order && order._id ? false : true
             },
         }
 
     } catch (err) {
         await db.disconnect();
-        return defaultReturn("catch err", err)
+        return {
+            props: {
+                query_id: "err catch",
+                order: {},
+                countOrders: 0,
+                orderNotFound: true,
+                err: err
+            },
+        }
     }
 }
 
