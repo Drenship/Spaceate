@@ -17,6 +17,7 @@ interface Props {
 }
 
 const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotFound, err }) => {
+    console.log(query_id, order, countOrders, orderNotFound, err)
     return (
         <BasescreenWrapper>
             <div>
