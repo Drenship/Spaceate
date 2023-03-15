@@ -202,27 +202,7 @@ productSchema.post('find', async function (result) {
         console.log(`Could not find Categorie with id ${result.categorie}`)
     }
 
-    console.log('find() took ' + (Date.now() - findstart) + ' milliseconds');
+    console.log('find() product in ' + (Date.now() - findstart) + ' milliseconds');
 });
-/*
-productSchema.post('find', async function (results) {
-    for (let i = 0; i < results.length; i++) {
-        const result = results[i];
-
-        // Populate the categorie field
-        const productWithCategorie = await this.findById(result._id).populate('categorie');
-
-        if (productWithCategorie && productWithCategorie.categorie) {
-            result.categorie = productWithCategorie.categorie;
-            result.subCategorie = productWithCategorie.categorie.subCategorie.filter(c => c._id === result.subCategorie);
-        } else {
-            console.log(`Could not find Categorie with id ${result.categorie}`);
-            //throw new Error(`Could not find Categorie with id ${result.categorie}`);
-        }
-    }
-
-    console.log('find() took ' + (Date.now() - findstart) + ' milliseconds');
-});
-*/
 
 export default mongoose.models.Product || mongoose.model<IProduct>("Product", productSchema)
