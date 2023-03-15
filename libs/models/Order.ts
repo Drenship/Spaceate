@@ -39,5 +39,6 @@ const orderSchema = new mongoose.Schema(
     }
 );
 
+mongoose.set('strictQuery', false);
 
 export default mongoose.models.Order || mongoose.model('Order', orderSchema);
