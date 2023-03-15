@@ -48,6 +48,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             totalPrice: 0,
         })
         const order = await newOrder.save();
+        // update product stats
+        
         await db.disconnect();
         res.send({ message: 'Order created successfully', data: order });
     } catch (err) {
