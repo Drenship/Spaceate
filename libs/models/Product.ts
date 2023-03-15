@@ -1,8 +1,6 @@
 import mongoose, { Document } from "mongoose";
 import Categorie from "./Categorie";
 
-mongoose.set('strictQuery', false)
-
 interface IProduct extends Document {
     name: string;
     slug: string;
@@ -102,6 +100,11 @@ const productSchema = new mongoose.Schema(
             default: 0
         },
         stats: {
+            totalSellInAwait: {
+                type: Number,
+                min: 0,
+                default: 0
+            },
             totalSelled: {
                 type: Number,
                 min: 0,
@@ -124,6 +127,7 @@ const productSchema = new mongoose.Schema(
 );
 
 
+productSchema.set('strictQuery', false)
 
 productSchema.index({
     slug: 1,
@@ -132,6 +136,7 @@ productSchema.index({
     categorie: 1,
     subCategorie: 1,
 });
+
 /*
 // test
 productSchema.pre('validate', function () {

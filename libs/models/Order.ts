@@ -39,7 +39,7 @@ const orderSchema = new mongoose.Schema(
     }
 );
 
-mongoose.set('strictQuery', false);
+orderSchema.set('strictQuery', false);
 
 
 let findstart = 0;
@@ -48,9 +48,8 @@ orderSchema.pre('find', function () {
     findstart = Date.now();
 });
 
-orderSchema.post('find', async function (result) {
-    // Populate the categorie field
-    console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds', result);
+orderSchema.post('find', async function () {
+    console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds');
 });
 
 export default mongoose.models.Order || mongoose.model('Order', orderSchema);

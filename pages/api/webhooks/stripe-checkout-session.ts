@@ -3,6 +3,7 @@ import { buffer } from "micro";
 import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
 import { TypeCartItem } from '@libs/typings';
+import Product from '@libs/models/Product';
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
@@ -60,6 +61,24 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     order.paidAt = new Date();
 
                     await order.save();
+
+                    const updateProducts = async () => {
+                        try {
+                            for (let product of order.orderItems) {
+                                const result = await Product.updateOne({ _id: product._id }, {
+                                    $inc: {
+                                        "stats.totalSellInAwait": product.quantity - (product.quantity * 2),
+                                        "stats.totalSelled": product.quantity,
+                                    }
+                                });
+                                console.log(result);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+                    await updateProducts();
+
                     await db.disconnect();
 
                     res.send({ message: 'Order update successfully' });
