@@ -166,7 +166,7 @@ export const getServerSideProps = async (context) => {
         const { query: { id } } = context;
         if (!id) return {
             props: {
-                query_id: id,
+                query_id: "id not found",
                 order: {}, 
                 countOrders: 0,
                 orderNotFound: true
@@ -195,9 +195,10 @@ export const getServerSideProps = async (context) => {
 
     } catch (err) {
         await db.disconnect();
+        const { query: { id } } = context;
         return {
             props: {
-                query_id: id,
+                query_id: id+" catch err",
                 order: {},
                 countOrders: 0,
                 orderNotFound: true,
