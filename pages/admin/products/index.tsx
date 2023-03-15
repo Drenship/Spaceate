@@ -98,6 +98,7 @@ function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: 
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Nom</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Slug</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">En stock</th>
+                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Ventes en attentes</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Total des ventes</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Prix</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600">Date</th>

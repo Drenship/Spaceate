@@ -35,12 +35,28 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         if (event.type === "checkout.session.completed") {
             const session = event.data.object;
 
+            // verify si la session en live mode
             //if(session.livemode === false) return res.status(400).send({ message: "This session is not ni livemode, u can't create order" }); 
 
             try {
-                 await db.connect();
-                const order = await Order.findById(session.metadata.order_id);
+                await db.connect();
+
+                // verify is session id already existe and is pay
+                const orderAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
+                if (orderAlreadyUpdate && orderAlreadyUpdate.isPaid === true) {
+                    return res.send({ message: 'This session id already pay' });
+                }
+
+                const order = (orderAlreadyUpdate._id === session.metadata.order_id) ? orderAlreadyUpdate : await Order.findById(session.metadata.order_id);
+
                 if (order) {
+                    // verify is order is pay
+                    if (order.isPaid === true) {
+                        await db.disconnect();
+                        return res.send({ message: 'This order is already paid' });
+                    }
+
+                    order.stripe_pay_id = session.id;
 
                     order.shippingAddress = {
                         fullName: session.shipping_details.name,
@@ -62,7 +78,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                     await order.save();
 
-                    const updateProducts = async () => {
+                    // update stats and stock of all cart product
+                    const updateStatsAndStockProducts = async () => {
                         try {
                             for (let product of order.orderItems) {
                                 const result = await Product.updateOne({ _id: product._id }, {
@@ -77,11 +94,11 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                             console.error(err);
                         }
                     }
-                    await updateProducts();
+                    await updateStatsAndStockProducts();
 
                     await db.disconnect();
 
-                    res.send({ message: 'Order update successfully' });
+                    return res.send({ message: 'Order update successfully' });
                 } else {
                     await db.disconnect();
                     return res.status(400).send({ message: "Order not found" });

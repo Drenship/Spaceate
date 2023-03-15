@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        stripe_pay_id: { type: String, required: false },
         orderItems: [
             {
                 _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -22,16 +23,38 @@ const orderSchema = new mongoose.Schema(
             postalCode: { type: String, required: true },
             country: { type: String, required: true },
         },
+
+        blindingAdress: {
+            fullName: { type: String, required: false },
+            address: { type: String, required: false },
+            address2: { type: String, required: false },
+            city: { type: String, required: false },
+            postalCode: { type: String, required: false },
+            country: { type: String, required: false },
+        },
+
+        shippingTrack: {
+            id: { type: String, required: false },
+            service: { type: String, required: false },
+        },
+
         paymentMethod: { type: String, required: true },
         itemsPrice: { type: Number, required: true },
         shippingPrice: { type: Number, required: true },
         taxPrice: { type: Number, required: true },
         totalPrice: { type: Number, required: true },
         paymentResultStripe: { type: Object },
+
+        isCancel: { type: Boolean, required: true, default: false },
         isPaid: { type: Boolean, required: true, default: false },
         isDelivered: { type: Boolean, required: true, default: false },
+        isRefund: { type: Boolean, required: true, default: false },
+
+        cancelAt: { type: Date },
         paidAt: { type: Date },
         deliveredAt: { type: Date },
+        refundAskAt: { type: Date },
+        refundAt: { type: Date },
     },
     {
         strict: false,

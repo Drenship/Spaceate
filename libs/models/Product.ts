@@ -100,12 +100,26 @@ const productSchema = new mongoose.Schema(
             default: 0
         },
         stats: {
+            // product with pending payment
             totalSellInAwait: {
                 type: Number,
                 min: 0,
                 default: 0
             },
+            // product payed
             totalSelled: {
+                type: Number,
+                min: 0,
+                default: 0
+            },
+            // product périmé / lost
+            totalExpired: {
+                type: Number,
+                min: 0,
+                default: 0
+            },
+            // product vue
+            totalViews: {
                 type: Number,
                 min: 0,
                 default: 0

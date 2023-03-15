@@ -101,6 +101,7 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.slug}</td>
             <td className="pr-6 whitespace-no-wrap">{product.countInStock}</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product?.stats?.totalSellInAwait || 0}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product?.stats?.totalSelled || 0}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{product.price}€</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(product.createdAt)}</td>
