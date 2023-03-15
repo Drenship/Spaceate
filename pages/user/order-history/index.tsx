@@ -75,7 +75,7 @@ export const getServerSideProps = async (context: any) => {
         if (!user) return defaultReturn
 
         await db.connect();
-        const orders = await Order.find({ user: user._id }, { paymentResultStripe: 0 }).lean();
+        const orders = await Order.find({ user: user._id }, { paymentResultStripe: 0 }).sort({ _id: -1 }).lean();
         await db.disconnect();
 
         return {
