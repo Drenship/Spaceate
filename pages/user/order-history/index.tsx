@@ -47,7 +47,6 @@ interface Props {
 
 const OrderHistory: NextPage<Props> = ({ orders }) => {
 
-    console.log(orders[0].orderItems)
     return (
         <BasescreenWrapper title="Mes commandes" footer={true}>
 

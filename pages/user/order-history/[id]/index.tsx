@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import { getSession } from 'next-auth/react';
 
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
 import { fixedPriceToCurrency } from '@libs/utils';
-import { TypeOrder, TypeUser } from '@libs/typings';
+import { TypeOrder } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import OrderItemCard from '@components/cards/OrderItemCard';
@@ -23,12 +23,12 @@ const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotF
     console.log(query_id, order, countOrders, orderNotFound, err)
 
     const shippingAdress = useMemo(() => {
-        if(!order?.shippingAddress?.address) return "";
+        if (!order?.shippingAddress?.address) return "";
         return `${order.shippingAddress.address}, ${order.shippingAddress.city} ${order.shippingAddress.postalCode}, ${order.shippingAddress.country}`
     }, [order]);
 
     const blindingAdress = useMemo(() => {
-        if(!order?.shippingAddress?.address) return "";
+        if (!order?.shippingAddress?.address) return "";
         return `${order.shippingAddress.address}, ${order.shippingAddress.city} ${order.shippingAddress.postalCode}, ${order.shippingAddress.country}`
     }, [order]);
 
@@ -151,58 +151,46 @@ const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotF
 };
 
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 
-    //try {
+    const defaultReturn = (txt: string, err?: any) => ({
+        props: {
+            query_id: txt,
+            order: {},
+            countOrders: 0,
+            orderNotFound: true,
+            err: err
+        },
+    })
+
+    console.log()
+
+    try {
         const { query: { id } } = context;
-        if (!id) return {
-            props: {
-                query_id: "id not found",
-                order: {}, 
-                countOrders: 0,
-                orderNotFound: true
-            },
-        }
+        if (!id) return defaultReturn("id not found")
 
         const { user } = await getSession(context);
-        if (!user) return {
-            props: {
-                query_id: "user not found",
-                order: {}, 
-                countOrders: 0,
-                orderNotFound: true
-            },
-        }
-        
+        if (!user) return defaultReturn("user not found")
 
 
         await db.connect();
         const order = await Order.findOne({ _id: id, user: user._id }, { paymentResultStripe: 0 }).populate('user').lean();
-        const countOrders = await Order.countDocuments({ _id: id, user: user._id });
+        //const countOrders = await Order.countDocuments({ _id: id, user: user._id });
         await db.disconnect();
 
         return {
             props: {
                 query_id: id,
                 order: JSON.parse(JSON.stringify(order)),
-                countOrders: countOrders,
+                countOrders: 0, //countOrders,
                 orderNotFound: order && order._id ? false : true
             },
         }
 
-    /*} catch (err) {
+    } catch (err) {
         await db.disconnect();
-        const { query: { id } } = context;
-        return {
-            props: {
-                query_id: id+" catch err",
-                order: {},
-                countOrders: 0,
-                orderNotFound: true,
-                err: err
-            },
-        }
-    }*/
+        return defaultReturn("catch err", err)
+    }
 }
 
 OrderSummary.auth = true;
