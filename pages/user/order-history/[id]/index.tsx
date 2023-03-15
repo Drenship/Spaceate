@@ -11,15 +11,16 @@ import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import OrderItemCard from '@components/cards/OrderItemCard';
 
 interface Props {
+    query_id: string,
     order: TypeOrder,
     countOrders: number,
     orderNotFound: boolean,
     err?: any
 }
 
-const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err }) => {
+const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotFound, err }) => {
 
-    console.log(order, countOrders, orderNotFound, err)
+    console.log(query_id, order, countOrders, orderNotFound, err)
 
     const shippingAdress = useMemo(() => {
         if(!order?.shippingAddress?.address) return "";
@@ -36,7 +37,7 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
             <div className="px-4 py-14 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
                 {
                     orderNotFound ? (
-                        <h1 className='text-2xl font-bold'>Commande introuvable</h1>
+                        <h1 className='text-2xl font-bold'>Commande introuvable: {query_id || "???"}</h1>
                     ) : (
                         <div className="flex flex-col items-stretch w-full mt-10 space-y-4 xl:flex-row jusitfy-center xl:space-x-8 md:space-y-6 xl:space-y-0">
                             <div className="flex flex-col items-start justify-start w-full space-y-4 md:space-y-6 xl:space-y-8">
@@ -154,6 +155,7 @@ export const getServerSideProps = async (context) => {
 
     const defaultReturn = {
         props: {
+            query_id: "",
             order: {}, 
             countOrders: 0,
             orderNotFound: true
@@ -162,7 +164,14 @@ export const getServerSideProps = async (context) => {
 
     try {
         const { query: { id } } = context;
-        if (!id) return defaultReturn
+        if (!id) return {
+            props: {
+                query_id: id,
+                order: {}, 
+                countOrders: 0,
+                orderNotFound: true
+            },
+        }
         console.log(id)
 
         //const { user } = await getSession(context);
@@ -177,6 +186,7 @@ export const getServerSideProps = async (context) => {
 
         return {
             props: {
+                query_id: id,
                 order: JSON.parse(JSON.stringify(order)),
                 countOrders: countOrders,
                 orderNotFound: order && order._id ? false : true
@@ -187,6 +197,7 @@ export const getServerSideProps = async (context) => {
         await db.disconnect();
         return {
             props: {
+                query_id: id,
                 order: {},
                 countOrders: 0,
                 orderNotFound: true,
