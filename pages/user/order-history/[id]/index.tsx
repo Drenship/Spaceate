@@ -11,16 +11,15 @@ import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import OrderItemCard from '@components/cards/OrderItemCard';
 
 interface Props {
-    query_id: string,
     order: TypeOrder,
     countOrders: number,
     orderNotFound: boolean,
     err?: any
 }
 
-const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotFound, err }) => {
+const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err }) => {
 
-    console.log(query_id, order, countOrders, orderNotFound, err)
+    console.log( order, countOrders, orderNotFound, err)
 
     const shippingAdress = useMemo(() => {
         if (!order?.shippingAddress?.address) return "";
@@ -37,7 +36,7 @@ const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotF
             <div className="px-4 py-14 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
                 {
                     orderNotFound ? (
-                        <h1 className='text-2xl font-bold'>Commande introuvable: {query_id || "???"}</h1>
+                        <h1 className='text-2xl font-bold'>Commande introuvable !</h1>
                     ) : (
                         <div className="flex flex-col items-stretch w-full mt-10 space-y-4 xl:flex-row jusitfy-center xl:space-x-8 md:space-y-6 xl:space-y-0">
                             <div className="flex flex-col items-start justify-start w-full space-y-4 md:space-y-6 xl:space-y-8">
@@ -153,9 +152,8 @@ const OrderSummary: NextPage<Props> = ({ query_id, order, countOrders, orderNotF
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-    const defaultReturn = (txt: string, err?: object | undefined) => ({
+    const defaultReturn = (err?: object | undefined) => ({
         props: {
-            query_id: txt,
             order: {},
             countOrders: 0,
             orderNotFound: true,
@@ -165,10 +163,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     try {
         const { query: { id } } = context;
-        if (!id) return defaultReturn("id not found")
+        if (!id) return defaultReturn()
 
         const { user } = await getSession(context);
-        if (!user) return defaultReturn("user not found")
+        if (!user) return defaultReturn()
 
 
         await db.connect();
@@ -187,15 +185,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     } catch (err) {
         await db.disconnect();
-        return {
-            props: {
-                query_id: "err catch",
-                order: {},
-                countOrders: 0,
-                orderNotFound: true,
-                err: err
-            },
-        }
+        return defaultReturn(err)
     }
 }
 

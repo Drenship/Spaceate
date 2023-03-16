@@ -1,17 +1,16 @@
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
-import { NextPage } from 'next';
 import React from 'react';
+import { NextPage } from 'next';
+import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 
 interface Props {
-    
+
 }
 
-const UserProfil: NextPage<Props> = ({}) => {
+const UserProfil: NextPage<Props> = ({ }) => {
 
     return (
         <BasescreenWrapper title="Profile" footer={true}>
 
-            
 
         </BasescreenWrapper>
     );

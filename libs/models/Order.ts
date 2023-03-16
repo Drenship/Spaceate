@@ -47,11 +47,13 @@ const orderSchema = new mongoose.Schema(
 
         isCancel: { type: Boolean, required: true, default: false },
         isPaid: { type: Boolean, required: true, default: false },
+        isSended: { type: Boolean, required: true, default: false },
         isDelivered: { type: Boolean, required: true, default: false },
         isRefund: { type: Boolean, required: true, default: false },
 
         cancelAt: { type: Date },
         paidAt: { type: Date },
+        sendedAt: { type: Date },
         deliveredAt: { type: Date },
         refundAskAt: { type: Date },
         refundAt: { type: Date },

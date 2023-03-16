@@ -82,13 +82,12 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     const updateStatsAndStockProducts = async () => {
                         try {
                             for (let product of order.orderItems) {
-                                const result = await Product.updateOne({ _id: product._id }, {
+                                await Product.updateOne({ _id: product._id }, {
                                     $inc: {
                                         "stats.totalSellInAwait": product.quantity - (product.quantity * 2),
                                         "stats.totalSelled": product.quantity,
                                     }
                                 });
-                                console.log(result);
                             }
                         } catch (err) {
                             console.error(err);
