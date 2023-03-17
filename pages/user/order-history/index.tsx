@@ -12,6 +12,7 @@ import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import BlurImage from '@components/ui-ux/BlurImage';
 import { DotsVerticalIcon } from '@heroicons/react/solid';
 import { useEscapeListener } from '@libs/hooks';
+import { fetchPostJSON } from '@libs/utils/api-helpers';
 
 
 interface ItemOrderProps {
@@ -25,21 +26,19 @@ const OrderCard = ({ order }: ItemOrderProps) => {
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
-    async function handleRefund() {
-        const response = await fetch('/api/checkout_sessions/refund', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ sessionId: order.stripe_pay_id }),
-        });
-
+    async function handleRefund(order: TypeOrder){
+        console.log(order)
+        if(!order?.stripeDetails?.id) {
+            return;
+        }
+        const response = await fetchPostJSON("/api/checkout_sessions/refund", { sessionId: order.stripeDetails.id });
+        
         if (response.ok) {
             const refund = await response.json();
             console.log('Remboursement réussi', refund);
         } else {
             const error = await response.json();
-            console.error('Erreur lors du remboursement', error.message);
+            console.error('Erreur lors du remboursement', error);
         }
     }
 
@@ -79,7 +78,7 @@ const OrderCard = ({ order }: ItemOrderProps) => {
                                     <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire</li>
                                 </Link>
 
-                                <li onClick={handleRefund} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
+                                <li onClick={() => handleRefund(order)} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
 
                                 <Link href={`/admin/products/edit?slug=${order._id}`}>
                                     <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Facture</li>

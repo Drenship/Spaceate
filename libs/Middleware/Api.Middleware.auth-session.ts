@@ -25,7 +25,6 @@ export const authSessionMiddleware = (authVerifyNeed: Props) => {
                 if (!req.body) {
                     req.body = {}
                 }
-                console.log(user)
                 req.body.user = user
             }
         }

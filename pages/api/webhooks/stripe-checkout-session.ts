@@ -55,7 +55,11 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                         return res.send({ message: 'This order is already paid' });
                     }
 
-                    order.stripe_pay_id = session.id;
+                    order.stripeDetails = {
+                        id: session.id,
+                        customer: session.customer,
+                        payment_intent: session.payment_intent,
+                    }
 
                     order.shippingAddress = {
                         fullName: session.shipping_details.name,

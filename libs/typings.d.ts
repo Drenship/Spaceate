@@ -89,7 +89,11 @@ export interface TypeShippingAddress {
 export interface TypeOrder {
     _id: string;
     user: TypeUser;
-    stripe_pay_id?: string;
+    stripeDetails?: {
+        id: string; 
+        customer: string;
+        payment_intent: string;
+    },
     orderItems: TypeOrderProduct[];
     shippingAddress: TypeShippingAddress;
     blindingAdress?: TypeShippingAddress;
