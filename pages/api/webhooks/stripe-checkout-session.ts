@@ -137,7 +137,20 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     order.isRefund = true;
                     order.refundAt = new Date();
 
-                    await order.save();
+                    const updateResult = await order.save();
+
+                    const updateStatsAndStockProducts = async () => {
+                        for (let product of updateResult.orderItems) {
+                            await Product.updateOne({ _id: product._id }, {
+                                $inc: {
+                                    countInStock: product.quantity,
+                                    "stats.totalSelled": product.quantity - (product.quantity * 2),
+                                }
+                            });
+                        }
+                    }
+                    await updateStatsAndStockProducts();
+
                     await db.disconnect();
 
                     return res.send({ message: "Order refund is successfully updated" });
