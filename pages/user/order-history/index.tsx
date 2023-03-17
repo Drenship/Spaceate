@@ -5,7 +5,7 @@ import { getSession } from 'next-auth/react';
 
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
-import { TypeOrder, TypeOrderProduct } from '@libs/typings';
+import { TypeOrder } from '@libs/typings';
 import { fixedPriceToCurrency, replaceURL, splitString } from '@libs/utils';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
@@ -27,7 +27,7 @@ const OrderCard = ({ order }: ItemOrderProps) => {
 
     return (
         <div className="py-4 mt-3 bg-white border rounded shadow-md">
-            <div className="flex items-center p-4 ">
+            <div className="flex items-center justify-between p-4">
                 <div>
                     <h2 className="text-sm font-semibold">N° DE COMMANDE: {splitString(order._id)}</h2>
                     <p className='text-sm text-gray-500'>
@@ -37,14 +37,18 @@ const OrderCard = ({ order }: ItemOrderProps) => {
                                 : order.isRefund
                                     ? "Commande rembourser"
                                     : order.isDelivered
-                                        ? `Livré : ${new Date(order.deliveredAt).toLocaleDateString()}`
+                                        ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
                                         : order.isSended
                                             ? "Commande envoyée"
                                             : order.isPaid
                                                 ? "En cours de Préparation"
-                                                : "Payement en attente"
+                                                : <span className='text-red-600'>Payement en attente</span>
                         }
                     </p>
+                </div>
+                <div className='mx-4'>
+                    <h2 className="text-sm font-semibold">Total</h2>
+                    <p className='text-sm text-gray-500'>{fixedPriceToCurrency(order.totalPrice)}</p>
                 </div>
                 <div className='flex items-center justify-center ml-auto space-x-5'>
                     <div className="text-sm text-gray-500">
@@ -89,9 +93,8 @@ const OrderCard = ({ order }: ItemOrderProps) => {
                             <Link href={`/product/${item.slug}`}>
                                 <p className='text-lg font-semibold'>{item.name}</p>
                             </Link>
-                            <p>
-                                {item.quantity} x {fixedPriceToCurrency(item.price)}
-                            </p>
+                            <p className='ml-2'>Quantité: {item.quantity}</p>
+                            <p className='mt-1 ml-2'>Prix: {fixedPriceToCurrency(item.price)}</p>
                         </div>
                     </div>
                 ))}
@@ -132,7 +135,7 @@ export const getServerSideProps = async (context: any) => {
         if (!user) return defaultReturn
 
         await db.connect();
-        const orders = await Order.find({ user: user._id }, { paymentResultStripe: 0 }).sort({ _id: -1 }).lean();
+        const orders = await Order.find({ user: user._id }, { paymentResultStripe: 0 }).sort({ _id: -1 }).limit(10).lean();
         await db.disconnect();
 
         return {

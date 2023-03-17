@@ -118,6 +118,12 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 await db.disconnect();
                 return res.status(400).send({ err: err, message: "Error Webhook insert order payment" });
             }
+        } 
+        else if(event.type === "checkout.session.async_payment_failed") {
+            return res.send({ message: "checkout.session.async_payment_failed" });
+        } 
+        else if(event.type === "payment_intent.canceled") {
+            return res.send({ message: "payment_intent.canceled" });
         } else {
             return res.status(400).send({ message: "Error Webhook event not allowed" });
         }
