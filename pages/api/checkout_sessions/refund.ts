@@ -64,8 +64,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 orderForUpdate.stripeDetails = {
                     charge_id: chargeId,
-                    refund_id: refund.id,
-                }
+                    refund_id: refund.id
+                };
 
                 //orderForUpdate.stripeDetails.charge_id = chargeId
                 //orderForUpdate.stripeDetails.refund_id = refund.id

@@ -42,24 +42,24 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 await db.connect();
 
                 // verify is session id already existe and is pay
-                const orderIsAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
-                if (orderIsAlreadyUpdate && orderIsAlreadyUpdate.isPaid === true) {
-                    return res.send({ message: 'This session id already pay' });
-                }
+                //const orderIsAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
+                //if (orderIsAlreadyUpdate && orderIsAlreadyUpdate.isPaid === true) {
+                //    return res.send({ message: 'This session id already pay' });
+                //}
 
                 const order = await Order.findById(session.metadata.order_id)
                 if (order) {
                     // verify is order is pay
-                    if (order.isPaid === true) {
-                        await db.disconnect();
-                        return res.send({ message: 'This order is already paid' });
-                    }
+                    //if (order.isPaid === true) {
+                    //    await db.disconnect();
+                    //    return res.send({ message: 'This order is already paid' });
+                    //}
 
                     order.stripeDetails = {
                         session_id: session.id,
                         customer_id: session.customer,
-                        payment_intent_id: session.payment_intent,
-                    }
+                        payment_intent_id: session.payment_intent
+                    };
 
                     order.shippingAddress = {
                         fullName: session.shipping_details.name,
@@ -68,7 +68,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                         city: session.shipping_details.address.city,
                         postalCode: session.shipping_details.address.postal_code,
                         country: session.shipping_details.address.country,
-                    }
+                    };
 
                     order.paymentMethod = session.payment_method_types[0];
                     order.itemsPrice = session.amount_subtotal / 100;
