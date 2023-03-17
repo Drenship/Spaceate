@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { buffer } from "micro";
 import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
-import { TypeCartItem } from '@libs/typings';
+import { TypeOrder } from '@libs/typings';
 import Product from '@libs/models/Product';
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -48,10 +48,14 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
 
                 let order = null
-                if(orderAlreadyUpdate._id === session.metadata.order_id) {
+                if (orderAlreadyUpdate._id === session.metadata.order_id) {
                     order = orderAlreadyUpdate;
                 } else {
-                    order =await Order.findById(session.metadata.order_id)
+                    order = await Order.findById(session.metadata.order_id)
+                }
+
+                if (order) {
+                    return res.send({ message: 'Order id finded' });
                 }
 
                 if (order) {
