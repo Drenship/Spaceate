@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router';
 import { AnnotationIcon } from '@heroicons/react/solid';
 import { useRecoilState } from "recoil"
@@ -33,6 +33,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
     const addItemsToCart = () => {
+        if (isOutOfStock) {
+            return alert('le produit est en rupture de stock');
+        }
+
         let newProductCart: TypeCartItem = {
             ...product,
             quantity: quantity
@@ -47,6 +51,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
         router.push('/cart')
     }
+
+    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
 
     const getCommentaires = async () => {
         console.log('> getCommentaires')
@@ -122,7 +128,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                         { /* Product info */}
                         <section>
-                            <p>Accueil &gt; {product?.categorie?.name} &gt; {product.subCategorie.name}</p>
+                            <p>Accueil &gt; {product?.categorie?.name} &gt; {product?.subCategorie?.name}</p>
                             <h1 className='text-3xl font-bold uppercase'>{product.name}</h1>
                             <div className='flex items-center justify-start mt-5 space-x-2'>
                                 <Rating rating={product.rating === 0 ? 5 : product.rating} />
@@ -140,20 +146,30 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                 <span className='text-xl'>{product.price_in}</span>
                             </div>
 
-                            <div className="flex flex-row items-center justify-start mt-2 space-x-5">
-                                <p>Sélectionnez la quantité :</p>
-                                <InputNumber
-                                    min={1}
-                                    max={product.countInStock}
-                                    defaultValue={1}
-                                    setUpdate={setQuantity}
-                                />
-                            </div>
+                            {
+                                !isOutOfStock && (
+                                    <div className="flex flex-row items-center justify-start mt-2 space-x-5">
+                                        <p>Sélectionnez la quantité :</p>
+                                        <InputNumber
+                                            min={1}
+                                            max={product.countInStock}
+                                            defaultValue={1}
+                                            setUpdate={setQuantity}
+                                        />
+                                    </div>
+                                )
+                            }
+
 
                             <button
                                 onClick={addItemsToCart}
+                                disabled={isOutOfStock}
                                 className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect'
-                            >Ajouter au panier</button>
+                            >
+                                {
+                                    isOutOfStock ? "Rupture de stock" : "Ajouter au panier"
+                                }
+                            </button>
                         </section>
 
                         { /* Product associate */}
@@ -227,6 +243,7 @@ export const getServerSideProps = async ({ query }: any) => {
                     price: 1,
                     price_in: 1,
                     rating: 1,
+                    countInStock: 1,
                     numReviews: 1
                 })
             }

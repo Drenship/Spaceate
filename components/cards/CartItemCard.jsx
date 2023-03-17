@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link';
 import { useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
@@ -15,8 +15,15 @@ export default function CartItemCard({ product }) {
     const [quantity, setQuantity] = useState(product.quantity);
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
+    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
+
     useEffect(() => {
         const updateItemToCart = () => {
+            if (isOutOfStock) {
+                return alert('le produit est en rupture de stock');
+            }
+
+
             let newProductCart = { ...product }
             newProductCart.quantity = quantity
 

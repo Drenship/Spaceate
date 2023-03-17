@@ -349,6 +349,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
             price: 1,
             price_in: 1,
             rating: 1,
+            countInStock: 1,
             numReviews: 1
         })
             .sort(order)

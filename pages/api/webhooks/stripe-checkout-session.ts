@@ -31,152 +31,142 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(400).send({ message: "Error Webhook signature verification" });
         }
 
-
-        if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
-            const session = event.data.object;
-
-            // verify si la session en live mode
-            //if(session.livemode === false) return res.status(400).send({ message: "This session is not ni livemode, u can't create order" }); 
-
-            try {
-                await db.connect();
-
-                // verify is session id already existe and is pay
-                //const orderIsAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
-                //if (orderIsAlreadyUpdate && orderIsAlreadyUpdate.isPaid === true) {
-                //    return res.send({ message: 'This session id already pay' });
-                //}
-
-                const order = await Order.findById(session.metadata.order_id)
-                if (order) {
-                    // verify is order is pay
-                    //if (order.isPaid === true) {
-                    //    await db.disconnect();
-                    //    return res.send({ message: 'This order is already paid' });
-                    //}
-
-
-                    order.stripeDetails.session_id = session.id;
-                    order.stripeDetails.customer_id = session.customer;
-                    order.stripeDetails.payment_intent_id = session.payment_intent;
-
-
-                    order.shippingAddress = {
-                        fullName: session.shipping_details.name,
-                        address: session.shipping_details.address.line1,
-                        address2: session.shipping_details.address.line2,
-                        city: session.shipping_details.address.city,
-                        postalCode: session.shipping_details.address.postal_code,
-                        country: session.shipping_details.address.country,
-                    };
-
-                    order.paymentMethod = session.payment_method_types[0];
-                    order.itemsPrice = session.amount_subtotal / 100;
-                    order.shippingPrice = session.shipping_cost.amount_total / 100;
-                    order.taxPrice = (session.amount_subtotal * 0.055) / 100;
-                    order.totalPrice = session.amount_total / 100;
-                    order.paymentResultStripe = session;
-                    order.isPaid = true;
-                    order.paidAt = new Date();
-
-                    const updateResult = await order.save();
-
-                    try {
-                        // update stats and stock of all cart product
-                        const updateStatsAndStockProducts = async () => {
-                            for (let product of updateResult.orderItems) {
-                                await Product.updateOne({ _id: product._id }, {
-                                    $inc: {
-                                        "stats.totalSellInAwait": product.quantity - (product.quantity * 2),
-                                        "stats.totalSelled": product.quantity,
-                                    }
-                                });
-                            }
-                        }
-                        await updateStatsAndStockProducts();
-                        await db.disconnect();
-                        return res.send({ message: 'Order update successfully' });
-
-                    } catch (err) {
-                        await db.disconnect();
-                        return res.send({ message: 'update Stats And Stock Products fail' });
-                    }
-
-
-                } else {
-                    await db.disconnect();
-                    return res.status(400).send({ message: "Order not found" });
-                }
-            } catch (err) {
-                await db.disconnect();
-                return res.status(400).send({ err: err, message: "Error Webhook insert order payment" });
-            }
-        }
-
-        else if (event.type === "checkout.session.async_payment_failed") {
-            return res.send({ message: "checkout.session.async_payment_failed" });
-        }
-
-        else if (event.type === "payment_intent.canceled") {
-            return res.send({ message: "payment_intent.canceled" });
-        }
-
-        else if (event.type === "charge.refunded") {
-            const session = event.data.object;
-            try {
-
-                await db.connect();
-                const order = await Order.findOne({ "stripeDetails.charge_id": session.id })
-                if (order) {
-                    // verify is order is pay
-                    if (order.isRefund === true) {
-                        await db.disconnect();
-                        return res.send({ message: 'This order is already refund' });
-                    }
-
-                    order.isRefund = true;
-                    order.refundAt = new Date();
-
-                    const updateResult = await order.save();
-
-                    const updateStatsAndStockProducts = async () => {
-                        for (let product of updateResult.orderItems) {
-                            await Product.updateOne({ _id: product._id }, {
-                                $inc: {
-                                    countInStock: product.quantity,
-                                    "stats.totalSelled": product.quantity - (product.quantity * 2),
-                                }
-                            });
-                        }
-                    }
-                    await updateStatsAndStockProducts();
-
-                    await db.disconnect();
-
-                    return res.send({ message: "Order refund is successfully updated" });
-
-                } else {
-                    await db.disconnect();
-                    return res.status(404).send({ message: "Order is not found " + session.id });
-                }
-            } catch (error) {
-                await db.disconnect();
-                return res.status(500).send({ message: "A error is occured", error: error });
-            }
-        } else {
-            return res.status(401).send({ message: "Error Webhook event not allowed", eventType: event.type });
+        // event trigger
+        switch (event.type) {
+            case "checkout.session.completed":
+                return handleStripeCheckoutSessionCompleted(req, res, event);
+            case "charge.refunded":
+                return handleStripeChargeRefunded(req, res, event);
+            default:
+                return res.status(400).send({ message: 'Method not allowed on this Webhook', eventType: event.type });
         }
 
     } catch (error) {
-        console.log(error)
         res.status(500).send({ message: 'An error has occurred' });
     }
 };
 
 
+const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: NextApiResponse, event: any) => {
+    const session = event.data.object;
+
+    // verify si la session en live mode
+    //if(session.livemode === false) return res.status(400).send({ message: "This session is not ni livemode, u can't create order" }); 
+
+    try {
+        await db.connect();
+
+        //verify is session id already existe and is pay
+        const orderIsAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
+        if (orderIsAlreadyUpdate && orderIsAlreadyUpdate.isPaid === true) {
+            return res.send({ message: 'This session id already pay' });
+        }
+
+        const order = await Order.findById(session.metadata.order_id)
+        if (order) {
+            // verify is order is pay
+            if (order.isPaid === true) {
+                await db.disconnect();
+                return res.send({ message: 'This order is already paid' });
+            }
+
+            order.stripeDetails.session_id = session.id;
+            order.stripeDetails.customer_id = session.customer;
+            order.stripeDetails.payment_intent_id = session.payment_intent;
+            order.shippingAddress = {
+                fullName: session.shipping_details.name,
+                address: session.shipping_details.address.line1,
+                address2: session.shipping_details.address.line2,
+                city: session.shipping_details.address.city,
+                postalCode: session.shipping_details.address.postal_code,
+                country: session.shipping_details.address.country,
+            };
+            order.paymentMethod = session.payment_method_types[0];
+            order.itemsPrice = session.amount_subtotal / 100;
+            order.shippingPrice = session.shipping_cost.amount_total / 100;
+            order.taxPrice = (session.amount_subtotal * 0.055) / 100;
+            order.totalPrice = session.amount_total / 100;
+            order.paymentResultStripe = session;
+            order.isPaid = true;
+            order.paidAt = new Date();
+
+            const updateResult = await order.save();
+
+            try {
+                // update stats and stock of all cart product
+                const updateStatsAndStockProducts = async () => {
+                    for (let product of updateResult.orderItems) {
+                        await Product.updateOne({ _id: product._id }, {
+                            $inc: {
+                                "stats.totalSellInAwait": product.quantity - (product.quantity * 2),
+                                "stats.totalSelled": product.quantity,
+                            }
+                        });
+                    }
+                }
+                await updateStatsAndStockProducts();
+                await db.disconnect();
+                return res.send({ message: 'Order update successfully' });
+
+            } catch (err) {
+                await db.disconnect();
+                return res.send({ message: 'update Stats And Stock Products fail' });
+            }
 
 
+        } else {
+            await db.disconnect();
+            return res.status(400).send({ message: "Order not found" });
+        }
+    } catch (err) {
+        await db.disconnect();
+        return res.status(400).send({ err: err, message: "Error Webhook insert order payment" });
+    }
+}
 
+const handleStripeChargeRefunded = async (req: NextApiRequest, res: NextApiResponse, event: any) => {
+    const session = event.data.object;
+    try {
+
+        await db.connect();
+        const order = await Order.findOne({ "stripeDetails.charge_id": session.id })
+        if (order) {
+            // verify is order is pay
+            if (order.isRefund === true) {
+                await db.disconnect();
+                return res.send({ message: 'This order is already refund' });
+            }
+
+            order.isRefund = true;
+            order.refundAt = new Date();
+
+            const updateResult = await order.save();
+
+            const updateStatsAndStockProducts = async () => {
+                for (let product of updateResult.orderItems) {
+                    await Product.updateOne({ _id: product._id }, {
+                        $inc: {
+                            countInStock: product.quantity,
+                            "stats.totalSelled": product.quantity - (product.quantity * 2),
+                        }
+                    });
+                }
+            }
+            await updateStatsAndStockProducts();
+
+            await db.disconnect();
+
+            return res.send({ message: "Order refund is successfully updated" });
+
+        } else {
+            await db.disconnect();
+            return res.status(404).send({ message: "Order is not found " + session.id });
+        }
+    } catch (error) {
+        await db.disconnect();
+        return res.status(500).send({ message: "A error is occured", error: error });
+    }
+}
 
 export default handler;
 

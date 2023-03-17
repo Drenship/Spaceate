@@ -22,11 +22,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const handleGetRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await db.connect();
- 
+
     const salesData = await Order.aggregate([
         {
             $match: {
                 createdAt: {
+                    isPaid: true,
+                    isRefund: false,
+                    isCancel: false,
                     $gte: new Date((new Date()) - 7 * 24 * 60 * 60 * 1000) // 7 derniers jours
                 }
             }

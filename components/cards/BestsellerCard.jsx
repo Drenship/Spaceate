@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
 import { useRouter } from 'next/dist/client/router';
@@ -12,8 +12,17 @@ export default function BestsellerCard({ product }) {
     const router = useRouter()
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
+    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
+
+    console.log(product)
+
     const addItemsToCart = (e) => {
         e.preventDefault();
+
+        if (isOutOfStock) {
+            return alert('le produit est en rupture de stock');
+        }
+
         let newProductCart = { ...product }
         newProductCart.quantity = 1
 
@@ -30,12 +39,15 @@ export default function BestsellerCard({ product }) {
     return (
         <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
             <div className="relative">
-                <div className='aspect-[3/2]  overflow-hidden'>
+                
+                <div className='relative aspect-[3/2] overflow-hidden'>
+                    <div className='absolute z-[1] w-full h-full group-hover:bg-black/10 duration-300 transition-color' />
                     <img className="object-cover w-full h-full transition-transform duration-300 scale-100 group-hover:scale-110" src={replaceURL(product.main_image)} alt="watch" />
                 </div>
 
                 <button
-                    className="top-3 right-3 absolute p-3.5 shadow-md text-gray-600 hover:text-gray-500 flex justify-center items-center bg-white rounded-full button-click-effect"
+                    className="z-10 top-3 right-3 absolute p-3.5 shadow-md text-gray-600 disabled:cursor-no-drop hover:text-gray-500 flex justify-center items-center bg-white rounded-full button-click-effect"
+                    disabled={isOutOfStock}
                     onClick={addItemsToCart}
                 >
                     <svg className="fill-stroke" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,7 +71,7 @@ export default function BestsellerCard({ product }) {
                         </div>
                     </div>
                     <div className="flex justify-start space-x-1">
-                        <Rating rating={product.rating} /> 
+                        <Rating rating={product.rating} />
                         <span>{product.numReviews} avis</span>
                     </div>
                 </div>
