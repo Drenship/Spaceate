@@ -55,7 +55,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
 
                 if (order) {
-                    return res.send({ message: 'Order id finded' });
+                    await db.disconnect();
+                    return res.send({ message: 'Order id finded ' + session.id });
                 }
 
                 if (order) {
@@ -85,12 +86,12 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     order.isPaid = true;
                     order.paidAt = new Date();
 
-                    await order.save();
+                    const updateResult = await order.save();
 
                     // update stats and stock of all cart product
                     const updateStatsAndStockProducts = async () => {
                         try {
-                            for (let product of order.orderItems) {
+                            for (let product of updateResult.orderItems) {
                                 await Product.updateOne({ _id: product._id }, {
                                     $inc: {
                                         "stats.totalSellInAwait": product.quantity - (product.quantity * 2),
@@ -99,13 +100,13 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                                 });
                             }
                         } catch (err) {
-                            console.error(err);
+                            await db.disconnect();
+                            return res.send({ message: 'update Stats And Stock Products fail' });
                         }
                     }
                     await updateStatsAndStockProducts();
 
                     await db.disconnect();
-
                     return res.send({ message: 'Order update successfully' });
                 } else {
                     await db.disconnect();
