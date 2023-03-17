@@ -88,9 +88,9 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                     const updateResult = await order.save();
 
-                    // update stats and stock of all cart product
-                    const updateStatsAndStockProducts = async () => {
-                        try {
+                    try {
+                        // update stats and stock of all cart product
+                        const updateStatsAndStockProducts = async () => {
                             for (let product of updateResult.orderItems) {
                                 await Product.updateOne({ _id: product._id }, {
                                     $inc: {
@@ -99,15 +99,17 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                                     }
                                 });
                             }
-                        } catch (err) {
-                            await db.disconnect();
-                            return res.send({ message: 'update Stats And Stock Products fail' });
                         }
-                    }
-                    await updateStatsAndStockProducts();
+                        await updateStatsAndStockProducts();
+                        await db.disconnect();
+                        return res.send({ message: 'Order update successfully' });
 
-                    await db.disconnect();
-                    return res.send({ message: 'Order update successfully' });
+                    } catch (err) {
+                        await db.disconnect();
+                        return res.send({ message: 'update Stats And Stock Products fail' });
+                    }
+
+
                 } else {
                     await db.disconnect();
                     return res.status(400).send({ message: "Order not found" });
