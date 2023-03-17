@@ -25,6 +25,24 @@ const OrderCard = ({ order }: ItemOrderProps) => {
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
+    async function handleRefund() {
+        const response = await fetch('/api/checkout_sessions/refund', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sessionId: order.stripe_pay_id }),
+        });
+
+        if (response.ok) {
+            const refund = await response.json();
+            console.log('Remboursement réussi', refund);
+        } else {
+            const error = await response.json();
+            console.error('Erreur lors du remboursement', error.message);
+        }
+    }
+
     return (
         <div className="py-4 mt-3 bg-white border rounded shadow-md">
             <div className="flex items-center justify-between p-4">
@@ -60,9 +78,9 @@ const OrderCard = ({ order }: ItemOrderProps) => {
                                 <Link href={`/user/order-history/${order._id}`}>
                                     <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire</li>
                                 </Link>
-                                <Link href={`/admin/products/edit?slug=${order._id}`}>
-                                    <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
-                                </Link>
+
+                                <li onClick={handleRefund} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
+
                                 <Link href={`/admin/products/edit?slug=${order._id}`}>
                                     <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Facture</li>
                                 </Link>

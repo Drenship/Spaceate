@@ -114,7 +114,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         else if(event.type === "payment_intent.canceled") {
             return res.send({ message: "payment_intent.canceled" });
         } else {
-            return res.status(400).send({ message: "Error Webhook event not allowed" });
+            return res.status(400).send({ message: "Error Webhook event not allowed", eventType: event.type });
         }
 
     } catch (error) {
