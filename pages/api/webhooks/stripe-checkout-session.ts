@@ -32,7 +32,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
 
-        if (event.type === "checkout.session.completed") {
+        if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
             const session = event.data.object;
 
             // verify si la session en live mode
@@ -42,22 +42,17 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 await db.connect();
 
                 // verify is session id already existe and is pay
-                const orderAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
-                if (orderAlreadyUpdate && orderAlreadyUpdate.isPaid === true) {
-                    return res.send({ message: 'This session id already pay' });
-                }
+                //const orderAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
+                //if (orderAlreadyUpdate && orderAlreadyUpdate.isPaid === true) {
+                //    return res.send({ message: 'This session id already pay' });
+                //}
 
-                let order = null
-                if (orderAlreadyUpdate._id === session.metadata.order_id) {
-                    order = orderAlreadyUpdate;
-                } else {
-                    order = await Order.findById(session.metadata.order_id)
-                }
-
-                if (order) {
-                    await db.disconnect();
-                    return res.send({ message: 'Order id finded ' + session.id });
-                }
+                const order = await Order.findById(session.metadata.order_id)
+                //if (orderAlreadyUpdate._id === session.metadata.order_id) {
+                //    order = orderAlreadyUpdate;
+                //} else {
+                //    order = await Order.findById(session.metadata.order_id)
+                //}
 
                 if (order) {
                     // verify is order is pay
