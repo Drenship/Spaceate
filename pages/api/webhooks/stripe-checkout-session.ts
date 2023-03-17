@@ -56,9 +56,9 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
 
                     order.stripeDetails = {
-                        id: session.id,
-                        customer: session.customer,
-                        payment_intent: session.payment_intent,
+                        session_id: session.id,
+                        customer_id: session.customer,
+                        payment_intent_id: session.payment_intent,
                     }
 
                     order.shippingAddress = {
@@ -122,8 +122,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         else if (event.type === "charge.refunded") {
+            const session = event.data.object;
             try {
-                const session = event.data.object;
 
                 await db.connect();
                 const order = await Order.findOne({ "stripeDetails.charge_id":  session.id })
@@ -144,7 +144,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 } else {
                     await db.disconnect();
-                    return res.status(404).send({ message: "Order is not found" });
+                    return res.status(404).send({ message: "Order is not found "+session.id });
                 }
             } catch (error) {
                 await db.disconnect();

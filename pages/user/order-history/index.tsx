@@ -32,8 +32,9 @@ const OrderCard = ({ order, setOrders }: ItemOrderProps) => {
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
     async function handleRefund(orderForUpdate: TypeOrder) {
+        console.log(orderForUpdate?.stripeDetails?.session_id ? orderForUpdate.stripeDetails.session_id : null)
         const { order: updateOrder, message }: refundOrder = await fetchPostJSON("/api/checkout_sessions/refund", {
-            sessionId: orderForUpdate?.stripeDetails?.id ? orderForUpdate.stripeDetails.id : null,
+            sessionId: orderForUpdate?.stripeDetails?.session_id ? orderForUpdate.stripeDetails.session_id : null,
             orderId: orderForUpdate._id
         });
 
@@ -55,15 +56,17 @@ const OrderCard = ({ order, setOrders }: ItemOrderProps) => {
                         {
                             order.isRefund
                                 ? "Commande rembourser"
-                                : order.isCancel
-                                    ? "Commande annuler"
-                                    : order.isDelivered
-                                        ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
-                                        : order.isSended
-                                            ? "Commande envoyée"
-                                            : order.isPaid
-                                                ? "En cours de Préparation"
-                                                : <span className='text-red-600'>Payement en attente</span>
+                                : order.isRefundAsked
+                                    ? "Remboursement demander"
+                                    : order.isCancel
+                                        ? "Commande annuler"
+                                        : order.isDelivered
+                                            ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
+                                            : order.isSended
+                                                ? "Commande envoyée"
+                                                : order.isPaid
+                                                    ? "En cours de Préparation"
+                                                    : <span className='text-red-600'>Payement en attente</span>
                         }
                     </p>
                 </div>

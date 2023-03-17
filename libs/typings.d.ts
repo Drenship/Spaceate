@@ -90,9 +90,11 @@ export interface TypeOrder {
     _id: string;
     user: TypeUser;
     stripeDetails?: {
-        id: string; 
-        customer: string;
-        payment_intent: string;
+        session_id: string; 
+        customer_id: string;
+        payment_intent_id: string;
+        refund_id: string;
+        charge_id: string;
     },
     orderItems: TypeOrderProduct[];
     shippingAddress: TypeShippingAddress;

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        
         stripeDetails: {
             session_id: { type: String, required: false }, 
             customer_id: { type: String, required: false },
@@ -10,6 +11,7 @@ const orderSchema = new mongoose.Schema(
             refund_id: { type: String, required: false }, 
             charge_id: { type: String, required: false }, 
         },
+
         orderItems: [
             {
                 _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
