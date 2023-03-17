@@ -4,9 +4,11 @@ const orderSchema = new mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         stripeDetails: {
-            id: { type: String, required: false }, 
-            customer: { type: String, required: false },
-            payment_intent: { type: String, required: false },
+            session_id: { type: String, required: false }, 
+            customer_id: { type: String, required: false },
+            payment_intent_id: { type: String, required: false },
+            refund_id: { type: String, required: false }, 
+            charge_id: { type: String, required: false }, 
         },
         orderItems: [
             {
@@ -54,6 +56,8 @@ const orderSchema = new mongoose.Schema(
         isSended: { type: Boolean, required: true, default: false },
         isDelivered: { type: Boolean, required: true, default: false },
         isRefund: { type: Boolean, required: true, default: false },
+        
+        isRefundAsked: { type: Boolean, required: true, default: false },
 
         cancelAt: { type: Date },
         paidAt: { type: Date },

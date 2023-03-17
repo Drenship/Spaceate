@@ -112,13 +112,13 @@ export interface TypeOrder {
     isSended: boolean;
     isDelivered: boolean;
     isRefund: boolean;
+    isRefundAsked: boolean;
     cancelAt?: Date;
     paidAt?: Date;
     sendedAt?: Date;
     deliveredAt?: Date;
     refundAskAt?: Date;
     refundAt?: Date;
-
     createdAt: Date;
     updatedAt: Date;
 }

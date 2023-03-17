@@ -111,14 +111,47 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 await db.disconnect();
                 return res.status(400).send({ err: err, message: "Error Webhook insert order payment" });
             }
-        } 
-        else if(event.type === "checkout.session.async_payment_failed") {
+        }
+
+        else if (event.type === "checkout.session.async_payment_failed") {
             return res.send({ message: "checkout.session.async_payment_failed" });
-        } 
-        else if(event.type === "payment_intent.canceled") {
+        }
+
+        else if (event.type === "payment_intent.canceled") {
             return res.send({ message: "payment_intent.canceled" });
+        }
+
+        else if (event.type === "charge.refunded") {
+            try {
+                const session = event.data.object;
+
+                await db.connect();
+                const order = await Order.findOne({ "stripeDetails.charge_id":  session.id })
+                if (order) {
+                    // verify is order is pay
+                    if (order.isPaid === true) {
+                        await db.disconnect();
+                        return res.send({ message: 'This order is already paid' });
+                    }
+
+                    order.isRefund = true;
+                    order.refundAt = new Date();
+
+                    await order.save();
+                    await db.disconnect();
+
+                    return res.send({ message: "Order refund is successfully updated" });
+
+                } else {
+                    await db.disconnect();
+                    return res.status(404).send({ message: "Order is not found" });
+                }
+            } catch (error) {
+                await db.disconnect();
+                return res.status(500).send({ message: "A error is occured", error: error });
+            }
         } else {
-            return res.status(400).send({ message: "Error Webhook event not allowed", eventType: event.type });
+            return res.status(401).send({ message: "Error Webhook event not allowed", eventType: event.type });
         }
 
     } catch (error) {

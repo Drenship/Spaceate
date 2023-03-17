@@ -16,29 +16,33 @@ import { fetchPostJSON } from '@libs/utils/api-helpers';
 
 
 interface ItemOrderProps {
-    order: TypeOrder
+    order: TypeOrder,
+    setOrders: void
+}
+interface refundOrder {
+    order: TypeOrder,
+    message?: string,
 }
 
-const OrderCard = ({ order }: ItemOrderProps) => {
+const OrderCard = ({ order, setOrders }: ItemOrderProps) => {
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);
 
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
-    async function handleRefund(order: TypeOrder){
-        console.log(order)
-        if(!order?.stripeDetails?.id) {
-            return;
-        }
-        const response = await fetchPostJSON("/api/checkout_sessions/refund", { sessionId: order.stripeDetails.id });
-        
-        if (response.ok) {
-            const refund = await response.json();
-            console.log('Remboursement réussi', refund);
+    async function handleRefund(orderForUpdate: TypeOrder) {
+        const { order: updateOrder, message }: refundOrder = await fetchPostJSON("/api/checkout_sessions/refund", {
+            sessionId: orderForUpdate?.stripeDetails?.id ? orderForUpdate.stripeDetails.id : null,
+            orderId: orderForUpdate._id
+        });
+
+        console.log(updateOrder, message)
+
+        if (updateOrder) {
+            setOrders(prev => [...prev].map(o => o._id === updateOrder._id ? updateOrder : o))
         } else {
-            const error = await response.json();
-            console.error('Erreur lors du remboursement', error);
+            console.error(message)
         }
     }
 
@@ -49,10 +53,10 @@ const OrderCard = ({ order }: ItemOrderProps) => {
                     <h2 className="text-sm font-semibold">N° DE COMMANDE: {splitString(order._id)}</h2>
                     <p className='text-sm text-gray-500'>
                         {
-                            order.isCancel
-                                ? "Cancel"
-                                : order.isRefund
-                                    ? "Commande rembourser"
+                            order.isRefund
+                                ? "Commande rembourser"
+                                : order.isCancel
+                                    ? "Commande annuler"
                                     : order.isDelivered
                                         ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
                                         : order.isSended
@@ -120,10 +124,13 @@ const OrderCard = ({ order }: ItemOrderProps) => {
     )
 }
 interface Props {
-    orders: TypeOrder[]
+    initialOrders: TypeOrder[]
 }
 
-const OrderHistory: NextPage<Props> = ({ orders }) => {
+const OrderHistory: NextPage<Props> = ({ initialOrders }) => {
+
+    const [orders, setOrders] = useState(initialOrders)
+    console.log(orders)
 
     return (
         <BasescreenWrapper title="Mes commandes" footer={true}>
@@ -131,7 +138,7 @@ const OrderHistory: NextPage<Props> = ({ orders }) => {
             <div className='flex flex-col w-full max-w-3xl py-5'>
                 <h1 className='text-2xl font-bold'>Mes commandes</h1>
                 {
-                    orders.map((order, key) => <OrderCard key={key} order={order} />)
+                    orders.map((order, key) => <OrderCard key={key} order={order} setOrders={setOrders} />)
                 }
             </div>
 
@@ -143,7 +150,7 @@ export const getServerSideProps = async (context: any) => {
 
     const defaultReturn = {
         props: {
-            orders: []
+            initialOrders: []
         },
     }
 
@@ -157,7 +164,7 @@ export const getServerSideProps = async (context: any) => {
 
         return {
             props: {
-                orders: JSON.parse(JSON.stringify(orders)) || []
+                initialOrders: JSON.parse(JSON.stringify(orders)) || []
             },
         }
     } catch (err) {
