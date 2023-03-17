@@ -94,7 +94,7 @@ export default function AdminControlPannel({ pageHandler, navigationPanel, leftP
                 {
                     navigationPanel! && (
 
-                        <div className="flex items-center py-3 border-gray-300 lg:border-l lg:border-r lg:py-0 lg:px-6">
+                        <div className={`flex items-center py-3 border-gray-300 ${rightPanel! && rightPanel.itemsByPage && "lg:border-l lg:border-r"} lg:py-0 lg:px-6`}>
                             <p className="text-base text-gray-600" id="page-view">
                                 {totalResults} résultats - page {page} sur {maxPages}
                             </p>
@@ -123,7 +123,7 @@ export default function AdminControlPannel({ pageHandler, navigationPanel, leftP
                 {
                     rightPanel! && rightPanel.itemsByPage && (
 
-                        <div className="flex items-center pb-3 border-gray-300 lg:border-r lg:pb-0 lg:px-6">
+                        <div className={`flex items-center pb-3 border-gray-300 ${rightPanel! && rightPanel.addNewItem && "lg:border-r"} lg:pb-0 lg:px-6`}>
                             <div className="relative z-10 w-32">
                                 <div className="absolute inset-0 z-0 w-5 h-5 m-auto text-gray-600 lg:mr-2 pointer-events-nonexl:mr-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer icon icon-tabler icon-tabler-chevron-down" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">

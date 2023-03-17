@@ -47,7 +47,12 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     return res.send({ message: 'This session id already pay' });
                 }
 
-                const order = (orderAlreadyUpdate._id === session.metadata.order_id) ? orderAlreadyUpdate : await Order.findById(session.metadata.order_id);
+                let order = null
+                if(orderAlreadyUpdate._id === session.metadata.order_id) {
+                    order = orderAlreadyUpdate;
+                } else {
+                    order =await Order.findById(session.metadata.order_id)
+                }
 
                 if (order) {
                     // verify is order is pay

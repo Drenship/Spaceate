@@ -4,31 +4,33 @@ import Product from '@libs/models/Product';
 import User from '@libs/models/User';
 import db from '@libs/database/dbConnect';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { authSessionMiddleware } from '@libs/Middleware/Api.Middleware.auth-session';
+
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = await getSession({ req });
-    
-    if (!session || (session && !session.user.isAdmin)) {
-        return res.status(401).send('signin required');
-    }
+    authSessionMiddleware({ authOnly: true, adminOnly: true })(req, res, () => {
+        switch (req.method) {
+            case 'GET':
+                return handleGetRequest(req, res);
+            default:
+                return res.status(400).send({ message: 'Method not allowed' });
+        }
+    })
+};
+
+
+const handleGetRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await db.connect();
-
-    const ordersCount = await Order.countDocuments();
-    const productsCount = await Product.countDocuments();
-    const usersCount = await User.countDocuments();
-
-    const ordersPriceGroup = await Order.aggregate([
-        {
-            $group: {
-                _id: null,
-                sales: { $sum: '$totalPrice' },
-            },
-        },
-    ]);
-    const ordersPrice = ordersPriceGroup.length > 0 ? ordersPriceGroup[0].sales : 0;
-
+ 
     const salesData = await Order.aggregate([
+        {
+            $match: {
+                createdAt: {
+                    $gte: new Date((new Date()) - 7 * 24 * 60 * 60 * 1000) // 7 derniers jours
+                }
+            }
+        },
         {
             $addFields: {
                 createdAtInterval: {
@@ -60,15 +62,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         {
             $group: {
                 _id: '$createdAtRounded',
-                totalSales: { $sum: '$totalPrice' }
+                totalPrice: { $sum: '$totalPrice' },
+                numberOfOrders: { $sum: 1 }
             }
         }
     ]).sort({ createAt: 1 });
 
-    console.log(salesData)
-
     await db.disconnect();
-    res.send({ ordersCount, productsCount, usersCount, ordersPrice, salesData });
+    res.send({ salesData });
 };
 
 export default handler;

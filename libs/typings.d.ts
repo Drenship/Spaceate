@@ -87,20 +87,34 @@ export interface TypeShippingAddress {
 }
 
 export interface TypeOrder {
-    _id: string,
+    _id: string;
     user: TypeUser;
+    stripe_pay_id?: string;
     orderItems: TypeOrderProduct[];
     shippingAddress: TypeShippingAddress;
+    blindingAdress?: TypeShippingAddress;
+    shippingTrack?: {
+        id?: string;
+        service?: string;
+    };
     paymentMethod: string;
     itemsPrice: number;
     shippingPrice: number;
     taxPrice: number;
     totalPrice: number;
     paymentResultStripe?: any;
+    isCancel: boolean;
     isPaid: boolean;
+    isSended: boolean;
     isDelivered: boolean;
+    isRefund: boolean;
+    cancelAt?: Date;
     paidAt?: Date;
+    sendedAt?: Date;
     deliveredAt?: Date;
+    refundAskAt?: Date;
+    refundAt?: Date;
+
     createdAt: Date;
     updatedAt: Date;
 }
