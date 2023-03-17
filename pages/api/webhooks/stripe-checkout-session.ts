@@ -129,9 +129,9 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 const order = await Order.findOne({ "stripeDetails.charge_id": session.id })
                 if (order) {
                     // verify is order is pay
-                    if (order.isPaid === true) {
+                    if (order.isRefund === true) {
                         await db.disconnect();
-                        return res.send({ message: 'This order is already paid' });
+                        return res.send({ message: 'This order is already refund' });
                     }
 
                     order.isRefund = true;
