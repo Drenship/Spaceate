@@ -54,7 +54,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     charge_id: chargeId,
                     refund_id: refund.id,
                 })
-                
+
                 // Update order with stripe
                 const orderForUpdate = await Order.findById(orderId)
                 orderForUpdate.isRefundAsked = true;
@@ -62,13 +62,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 orderForUpdate.refundAskAt = new Date();
                 orderForUpdate.cancelAt = new Date();
 
-                orderForUpdate.stripeDetails = {
-                    charge_id: chargeId,
-                    refund_id: refund.id
-                };
-
-                //orderForUpdate.stripeDetails.charge_id = chargeId
-                //orderForUpdate.stripeDetails.refund_id = refund.id
+                orderForUpdate.stripeDetails.charge_id = chargeId;
+                orderForUpdate.stripeDetails.refund_id = refund.id;
 
                 const orderUpdate = await orderForUpdate.save();
 

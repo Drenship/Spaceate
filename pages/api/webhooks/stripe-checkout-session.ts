@@ -55,11 +55,11 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     //    return res.send({ message: 'This order is already paid' });
                     //}
 
-                    order.stripeDetails = {
-                        session_id: session.id,
-                        customer_id: session.customer,
-                        payment_intent_id: session.payment_intent
-                    };
+
+                    order.stripeDetails.session_id = session.id;
+                    order.stripeDetails.customer_id = session.customer;
+                    order.stripeDetails.payment_intent_id = session.payment_intent;
+
 
                     order.shippingAddress = {
                         fullName: session.shipping_details.name,
@@ -126,7 +126,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             try {
 
                 await db.connect();
-                const order = await Order.findOne({ "stripeDetails.charge_id":  session.id })
+                const order = await Order.findOne({ "stripeDetails.charge_id": session.id })
                 if (order) {
                     // verify is order is pay
                     if (order.isPaid === true) {
@@ -144,7 +144,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 } else {
                     await db.disconnect();
-                    return res.status(404).send({ message: "Order is not found "+session.id });
+                    return res.status(404).send({ message: "Order is not found " + session.id });
                 }
             } catch (error) {
                 await db.disconnect();
