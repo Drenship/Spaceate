@@ -42,18 +42,12 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 await db.connect();
 
                 // verify is session id already existe and is pay
-                //const orderAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
-                //if (orderAlreadyUpdate && orderAlreadyUpdate.isPaid === true) {
-                //    return res.send({ message: 'This session id already pay' });
-                //}
+                const orderIsAlreadyUpdate = await Order.findOne({ stripe_pay_id: session.id });
+                if (orderIsAlreadyUpdate && orderIsAlreadyUpdate.isPaid === true) {
+                    return res.send({ message: 'This session id already pay' });
+                }
 
                 const order = await Order.findById(session.metadata.order_id)
-                //if (orderAlreadyUpdate._id === session.metadata.order_id) {
-                //    order = orderAlreadyUpdate;
-                //} else {
-                //    order = await Order.findById(session.metadata.order_id)
-                //}
-
                 if (order) {
                     // verify is order is pay
                     if (order.isPaid === true) {
