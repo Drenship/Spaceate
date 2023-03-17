@@ -40,10 +40,10 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             billing_address_collection: "auto",
             shipping_options: [
                 {
-                    shipping_rate: "shr_1MVDw5HSzwBR9D7quUkpHLd6",
+                    shipping_rate: "shr_1Mmfo5HSzwBR9D7q4zHccSGy",
                 },
                 {
-                    shipping_rate: 'shr_1MkbcxHSzwBR9D7qlsyGqMbG',
+                    shipping_rate: 'shr_1Mmfp3HSzwBR9D7qiHD5WTdY',
                 }
             ],
             shipping_address_collection: {
