@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { TypeOrder } from '@libs/typings';
 import { useEscapeListener } from '@libs/hooks';
-import { replaceURL, splitString, UTCStringToDate } from '@libs/utils';
+import { fixedPriceToCurrency, replaceURL, splitString, UTCStringToDate } from '@libs/utils';
 
 interface Props {
     order: TypeOrder,
@@ -105,7 +105,7 @@ export default function TableOrderLIne({ order, checkAll }: Props) {
                         
                 }
             </td>
-            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{order.totalPrice}€</td>
+            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{fixedPriceToCurrency(order.totalPrice)}</td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(order.createdAt)}</td>
             <td className="relative pr-8">
                 <div className={`absolute left-0 z-10 w-32 mt-8 -ml-12 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>

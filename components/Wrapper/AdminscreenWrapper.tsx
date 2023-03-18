@@ -65,7 +65,7 @@ export default function AdminscreenWrapper({ title, children }: Props) {
                     </div>
                 </div>
 
-                <div className='flex flex-col justify-start flex-1 w-full p-8'>
+                <div className='flex flex-col justify-start flex-1 w-full px-4 py-8 md:px-8'>
                     {children}
                 </div>
             </main>

@@ -3,7 +3,7 @@ import React from 'react';
 import BlurImage from './BlurImage';
 
 const ItemOfClassement = ({ item, index }) => (
-    <div className="flex items-center py-1 border-t">
+    <div className="flex items-center py-1 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap border-t">
         <div className="">{index}</div>
         <div className="relative w-8 h-8 ml-2 overflow-hidden rounded-full">
             <BlurImage
@@ -23,7 +23,7 @@ const ItemOfClassement = ({ item, index }) => (
 
 export default function ListClassement({ title, datasets }) {
     return (
-        <div className="w-full max-w-lg px-4 overflow-hidden">
+        <div className="w-full max-w-lg px-2 overflow-hidden">
             <div className="h-full rounded-lg bg-card">
                 <div className="flex flex-col h-full">
                     <div className="flex items-center justify-between mb-3">

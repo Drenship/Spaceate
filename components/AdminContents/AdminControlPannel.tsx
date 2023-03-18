@@ -11,6 +11,12 @@ interface AdminControlPannelProps {
             data: number[]
             currentValue: number
         },
+        filter?: {
+            onChange: (e: React.BaseSyntheticEvent) => void
+            labels: string[]
+            data: string[]
+            currentValue: string
+        },
         addNewItem?: {
             link: string
             title: string
@@ -123,9 +129,9 @@ export default function AdminControlPannel({ pageHandler, navigationPanel, leftP
                 {
                     rightPanel! && rightPanel.itemsByPage && (
 
-                        <div className={`flex items-center pb-3 border-gray-300 ${rightPanel! && rightPanel.addNewItem && "lg:border-r"} lg:pb-0 lg:px-6`}>
+                        <div className={`flex items-center pb-3 border-gray-300 ${rightPanel! && rightPanel.filter && "lg:border-r"} lg:pb-0 lg:px-6`}>
                             <div className="relative z-10 w-32">
-                                <div className="absolute inset-0 z-0 w-5 h-5 m-auto text-gray-600 lg:mr-2 pointer-events-nonexl:mr-4">
+                                <div className="absolute top-0 bottom-0 right-0 w-5 h-5 m-auto text-gray-600 -z-10 lg:mr-2 pointer-events-nonexl:mr-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer icon icon-tabler icon-tabler-chevron-down" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" />
                                         <polyline points="6 9 12 15 18 9" />
@@ -139,6 +145,32 @@ export default function AdminControlPannel({ pageHandler, navigationPanel, leftP
                                 >
                                     {
                                         rightPanel.itemsByPage.data.map((x, key) => <option key={key} value={x}>{x}</option>)
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    )
+                }
+
+                {
+                    rightPanel! && rightPanel.filter && (
+
+                        <div className={`flex items-center pb-3 border-gray-300 ${rightPanel! && rightPanel.addNewItem && "lg:border-r"} lg:pb-0 lg:px-6`}>
+                            <div className="relative z-10 w-32">
+                                <div className="absolute top-0 bottom-0 right-0 w-5 h-5 m-auto text-gray-600 -z-10 lg:mr-2 pointer-events-nonexl:mr-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer icon icon-tabler icon-tabler-chevron-down" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" />
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </div>
+                                <select
+                                    onChange={rightPanel.filter.onChange}
+                                    value={rightPanel.filter.currentValue}
+                                    aria-label="Selected tab"
+                                    className="z-20 block w-full px-2 py-2 text-base text-gray-600 bg-transparent border border-transparent rounded appearance-none focus:outline-none focus:border-gray-800 focus:shadow-outline-gray form-select xl:px-3"
+                                >
+                                    {
+                                        rightPanel.filter.data.map((x, key) => <option key={key} value={x}>{rightPanel.filter?.labels[key]}</option>)
                                     }
                                 </select>
                             </div>

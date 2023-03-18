@@ -12,6 +12,7 @@ import AdminControlPannel from '@components/AdminContents/AdminControlPannel';
 import Pagination from '@components/ui-ux/Pagination';
 import axios from 'axios';
 import ListClassement from '@components/ui-ux/ListClassement';
+import { formatChartDate, getLastSevenDaysDateUTC } from '@libs/utils/chart';
 
 interface Props {
     initialOrders: TypeOrder[];
@@ -23,6 +24,7 @@ interface Props {
 interface PageHandler {
     page?: number
     pageSize?: number
+    filter?: string
 }
 
 const PAGE_SIZE = 20;
@@ -34,13 +36,26 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
     const [checkAll, setcheckAll] = useState(false);
     const [chartData, setChartData] = useState([]);
     const [bestSeller, setBestSeller] = useState([]);
+    const { query }: any = router;
+
 
     const maxPages = useMemo(() => Math.ceil(totalResults / pageSize), [totalResults, pageSize]);
 
-    const pageHandler = ({ page, pageSize }: PageHandler) => {
+    const pageHandler = ({ page, pageSize, filter }: PageHandler) => {
         const { query }: any = router;
         if (page) query.page = page;
         if (pageSize) query.pageSize = pageSize;
+        if (filter) {
+            
+            query.filter = filter;
+            if (query.filterWithNot) delete query.filterWithNot;
+            if (filter === "isPaid") query.filterWithNot = ["isCancel", "isRefund"]
+            if (filter === "all") delete  query.filter
+            if(filter === "inAwait"){
+                query.filter = "isPaid"
+                query.filterWithNot = ["isSended", "isDelivered", "isCancel", "isRefund"]
+            }
+        }
 
         router.push({
             pathname: router.pathname,
@@ -54,22 +69,6 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
 
     useEffect(() => {
 
-        function formatDate(input) {
-            const monthNames = ['JANV', 'FÉVR', 'MARS', 'AVR', 'MAI', 'JUIN', 'JUIL', 'AOÛT', 'SEPT', 'OCT', 'NOV', 'DÉC'];
-        
-            const [datePart, timePart] = input.split(':');
-            const [year, month, day] = datePart.split('-').map(Number);
-        
-            // Créer un objet Date en utilisant le constructeur avec les arguments année, mois et jour
-            // Notez que les mois sont indexés à partir de zéro, donc nous soustrayons 1 du mois
-            const date = new Date(Date.UTC(year, month - 1, day));
-        
-            const formattedMonth = monthNames[date.getUTCMonth()];
-            const formattedDay = date.getUTCDate();
-        
-            return `${formattedMonth} ${formattedDay}`;
-        }
-
         function convertDataForChart(data) {
             const labels = [];
             const totalPrice = [];
@@ -78,7 +77,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
             data.sort((a, b) => a._id.localeCompare(b._id)); // Trier les données par date et heure
 
             for (const item of data) {
-                const xdate = formatDate(item._id)
+                const xdate = formatChartDate(item._id)
                 if (!labels.includes(xdate)) {
                     labels.push(xdate);
                 } else {
@@ -97,13 +96,13 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
 
         function fillMissingData(data, intervalHours, startDate, endDate) {
             const filledData = [];
-        
+
             let currentDate = new Date(startDate.getTime());
             while (currentDate <= endDate) {
                 const formattedDate = currentDate.toISOString().slice(0, 13).replace('T', ':');
-        
+
                 const existingData = data.find(item => item._id === formattedDate);
-        
+
                 if (existingData) {
                     filledData.push(existingData);
                 } else {
@@ -113,20 +112,12 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
                         numberOfOrders: NaN
                     });
                 }
-        
+
                 currentDate.setUTCHours(currentDate.getUTCHours() + intervalHours);
             }
-        
+
             return filledData;
         }
-        
-        function getLastSevenDaysDateUTC() {
-            const date = new Date();
-            date.setUTCDate(date.getUTCDate() - 7);
-            date.setUTCHours(0, 0, 0, 0); // Réinitialiser les heures, minutes, secondes et millisecondes UTC à zéro
-            return date;
-        }
-
 
         const fetchData = async () => {
 
@@ -152,10 +143,10 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
         <AdminscreenWrapper title="Orders">
             <h1 className='text-xl font-bold uppercase'>Orders</h1>
 
-            <div className='mt-5 space-y-5 md:space-y-0 md:flex md:space-x-5'>
+            <div className='mt-5 space-y-5 md:space-y-0 md:flex md:space-x-5 max-w-screen'>
                 <LineChart title="Historique des commandes en €" labels={chartData ? chartData.labels : []} datasets={chartData ? chartData.totalPrice : []} />
-                <LineChart title="Historique des commandes en volume" labels={chartData  ? chartData.labels : []} datasets={chartData ? chartData.numberOfOrders : []} ordonnee="" />
-                <ListClassement title="Produit les plus vendu" datasets={bestSeller}/>
+                <LineChart title="Historique des commandes en volume" labels={chartData ? chartData.labels : []} datasets={chartData ? chartData.numberOfOrders : []} ordonnee="" />
+                <ListClassement title="Produit les plus vendu" datasets={bestSeller} />
             </div>
 
             <AdminControlPannel
@@ -172,6 +163,12 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
                         onChange: (e) => pageHandler({ pageSize: e.currentTarget.value }),
                         data: [5, 10, 20, 30, 40, 50, 75, 100],
                         currentValue: pageSize
+                    },
+                    filter: {
+                        onChange: (e) => pageHandler({ filter: e.currentTarget.value }),
+                        labels: ["Afficher tous", "En attentes", "Payer", "Annuler", "Rembourser", "Envoyer", "Livré"],
+                        data: ["all", "isPaid", "inAwait", "isCancel", "isRefund", "isSended", "isDelivered"],
+                        currentValue: query && query.filter ? query.filter : "all"
                     }
                 }}
             />
@@ -213,6 +210,8 @@ type QuerySearch = {
     query: {
         page?: number
         pageSize?: number
+        filter?: string
+        filterWithNot?: string[]
     }
 }
 
@@ -220,10 +219,25 @@ export const getServerSideProps = async ({ query }: QuerySearch) => {
 
     const pageSize = query.pageSize ? query.pageSize : PAGE_SIZE || 20;
     const page = query.page! && query.page >= 1 ? query.page : 1;
+    const filter = query.filter! ? query.filter : "all";
+    const filterWithNot = query.filterWithNot! ? query.filterWithNot : "all";
 
     try {
+
+        const queryFilterWithNot: any = {};
+        if (filterWithNot && filterWithNot !== "all") filterWithNot.forEach(key => { queryFilterWithNot[key] = false; })
+
+        const queryFilter = filter && filter !== 'all'
+            ? {
+                [filter]: true,
+                ...queryFilterWithNot
+            }
+            : {};
+
         await db.connect();
-        const orderSearchFullQuery = {};
+        const orderSearchFullQuery = {
+            ...queryFilter
+        };
 
         const orders = await Order.find(orderSearchFullQuery, {
             _id: 1,
