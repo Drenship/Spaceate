@@ -18,11 +18,6 @@ const ItemOfClassement = ({ item, index }) => (
             <span>{item.totalQuantity}</span>
             <span>{fixedPriceToCurrency(item.totalPrice)}</span>
         </div>
-        <img
-            src="https://assets.codepen.io/3685267/res-react-dash-country-up.svg"
-            alt=""
-            className="w-4 h-4 mx-3"
-        />
     </div>
 )
 

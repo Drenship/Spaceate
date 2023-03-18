@@ -152,7 +152,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
         <AdminscreenWrapper title="Orders">
             <h1 className='text-xl font-bold uppercase'>Orders</h1>
 
-            <div className='mt-5 md:flex md:space-x-5'>
+            <div className='mt-5 space-y-5 md:space-y-0 md:flex md:space-x-5'>
                 <LineChart title="Historique des commandes en €" labels={chartData ? chartData.labels : []} datasets={chartData ? chartData.totalPrice : []} />
                 <LineChart title="Historique des commandes en volume" labels={chartData  ? chartData.labels : []} datasets={chartData ? chartData.numberOfOrders : []} ordonnee="" />
                 <ListClassement title="Produit les plus vendu" datasets={bestSeller}/>
