@@ -24,7 +24,11 @@ type Summary = {
     productsCount: number,
     usersCount: number,
     ordersPrice: number,
-    salesData: SalesData[]
+    salesData: SalesData[],
+    countNewUsers: number,
+    countNewOrders: number,
+    totalPendingPaymentValue: number,
+    totalCompletedPaymentValue: number
 }
 
 interface Props {
@@ -62,6 +66,10 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
         productsCount: 0,
         usersCount: 0,
         ordersPrice: 0,
+        countNewUsers: 0,
+        countNewOrders: 0,
+        totalPendingPaymentValue: 0,
+        totalCompletedPaymentValue: 0
     });
 
     useEffect(() => {
@@ -161,7 +169,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                                                         ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Rembourser</span>
                                                         : order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Annuler</span>
                                                             : order.isPaid ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
-                                                                : <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Payement en attente</span>
+                                                                : <span className="w-2 h-2 px-2.5 py-1 text-white bg-orange-400 rounded-full">En attente</span>
 
                                                 }
                                             </td>
@@ -179,7 +187,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                     <h2 className='w-full max-w-sm font-bold uppercase text-md'>Infos du jour</h2>
                     <StatsDashboard
                         title="Payement du jour"
-                        info={fixedPriceToCurrency(summary.ordersPrice)}
+                        info={fixedPriceToCurrency(summary.totalCompletedPaymentValue)}
                         link="/admin/orders"
                         linkLabel="Voire plus"
                     >
@@ -187,7 +195,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                     </StatsDashboard>
                     <StatsDashboard
                         title="Payement en attentes"
-                        info={fixedPriceToCurrency(summary.ordersPrice)}
+                        info={fixedPriceToCurrency(summary.totalPendingPaymentValue)}
                         link="/admin/orders"
                         linkLabel="Voire plus"
                     >
@@ -195,7 +203,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                     </StatsDashboard>
                     <StatsDashboard
                         title="Commandes du jour"
-                        info={summary.ordersCount.toString()}
+                        info={summary.countNewOrders.toString()}
                         link="/admin/orders"
                         linkLabel="Voire plus"
                     >
@@ -203,7 +211,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                     </StatsDashboard>
                     <StatsDashboard
                         title="Nouveaux utilisateurs"
-                        info={summary.usersCount.toString()}
+                        info={summary.countNewUsers.toString()}
                         link="/admin/users"
                         linkLabel="Voire plus"
                     >
@@ -212,7 +220,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                 </div>
             </div>
 
-        </AdminscreenWrapper>
+        </AdminscreenWrapper >
     );
 }
 

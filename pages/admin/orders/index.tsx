@@ -52,8 +52,8 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
             if (filter === "isPaid") query.filterWithNot = ["isCancel", "isRefund"]
             if (filter === "all") delete  query.filter
             if(filter === "inAwait"){
-                query.filter = "isPaid"
-                query.filterWithNot = ["isSended", "isDelivered", "isCancel", "isRefund"]
+                query.filter = "all"
+                query.filterWithNot = ["isCancel", "isRefund", "isPaid"]
             }
         }
 
@@ -167,7 +167,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
                     filter: {
                         onChange: (e) => pageHandler({ filter: e.currentTarget.value }),
                         labels: ["Afficher tous", "En attentes", "Payer", "Annuler", "Rembourser", "Envoyer", "Livré"],
-                        data: ["all", "isPaid", "inAwait", "isCancel", "isRefund", "isSended", "isDelivered"],
+                        data: ["all", "inAwait", "isPaid", "isCancel", "isRefund", "isSended", "isDelivered"],
                         currentValue: query && query.filter ? query.filter : "all"
                     }
                 }}
@@ -232,7 +232,9 @@ export const getServerSideProps = async ({ query }: QuerySearch) => {
                 [filter]: true,
                 ...queryFilterWithNot
             }
-            : {};
+            : {
+                ...queryFilterWithNot
+            };
 
         await db.connect();
         const orderSearchFullQuery = {

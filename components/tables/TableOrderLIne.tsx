@@ -101,7 +101,7 @@ export default function TableOrderLIne({ order, checkAll }: Props) {
                     ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Rembourser</span>
                     : order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Annuler</span>
                         : order.isPaid ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
-                        : <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Payement en attente</span>
+                        : <span className="w-2 h-2 px-2.5 py-1 text-white bg-orange-400 rounded-full">En attente</span>
                         
                 }
             </td>
