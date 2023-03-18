@@ -141,35 +141,37 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                     </div>
                     <div>
                         <h2 className='w-full max-w-sm mt-5 font-bold uppercase text-md'>Dernieres commandes</h2>
-                        <table className="min-w-full bg-white">
-                            <thead>
-                                <tr className="w-full h-12 border-b border-gray-300">
-                                    <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Commande N°</th>
-                                    <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Payement</th>
-                                    <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Total</th>
-                                    <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    orders.map((order: TypeOrder, key: any) => <tr key={key} className="h-12 border-b border-gray-300">
-                                        <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{splitString(order._id)}</td>
-                                        <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
-                                            {
-                                                order.isRefund
-                                                    ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Rembourser</span>
-                                                    : order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Annuler</span>
-                                                        : order.isPaid ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
-                                                            : <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Payement en attente</span>
+                        <div className="w-full h-full overflow-x-scroll xl:overflow-x-hidden">
+                            <table className="min-w-full bg-white">
+                                <thead>
+                                    <tr className="w-full h-12 border-b border-gray-300">
+                                        <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Commande N°</th>
+                                        <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Payement</th>
+                                        <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Total</th>
+                                        <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        orders.map((order: TypeOrder, key: any) => <tr key={key} className="h-12 border-b border-gray-300">
+                                            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{splitString(order._id)}</td>
+                                            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
+                                                {
+                                                    order.isRefund
+                                                        ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Rembourser</span>
+                                                        : order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Annuler</span>
+                                                            : order.isPaid ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
+                                                                : <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Payement en attente</span>
 
-                                            }
-                                        </td>
-                                        <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{fixedPriceToCurrency(order.totalPrice)}</td>
-                                        <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(order.createdAt)}</td>
-                                    </tr>)
-                                }
-                            </tbody>
-                        </table>
+                                                }
+                                            </td>
+                                            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{fixedPriceToCurrency(order.totalPrice)}</td>
+                                            <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(order.createdAt)}</td>
+                                        </tr>)
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 {/* r */}
