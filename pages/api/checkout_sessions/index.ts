@@ -40,10 +40,37 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             billing_address_collection: "auto",
             shipping_options: [
                 {
-                    shipping_rate: "shr_1Mmfo5HSzwBR9D7q4zHccSGy",
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: { amount: 0, currency: 'eur' },
+                        display_name: 'Livraison Locale',
+                        delivery_estimate: {
+                            minimum: { unit: 'hour', value: 2 },
+                            maximum: { unit: 'hour', value: 10 },
+                        },
+                    },
                 },
                 {
-                    shipping_rate: 'shr_1Mmfp3HSzwBR9D7qiHD5WTdY',
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: { amount: 999, currency: 'eur' },
+                        display_name: 'La poste',
+                        delivery_estimate: {
+                            minimum: { unit: 'day', value: 1 },
+                            maximum: { unit: 'day', value: 2 },
+                        },
+                    },
+                },
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: { amount: 1199, currency: 'eur' },
+                        display_name: 'Livraison Express',
+                        delivery_estimate: {
+                            minimum: { unit: 'day', value: 1 },
+                            maximum: { unit: 'day', value: 3 },
+                        },
+                    },
                 }
             ],
             shipping_address_collection: {
@@ -53,6 +80,8 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             line_items: cart_line_items,
             success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${req.headers.origin}/cart`,
+
+            customer_email: user.email,
 
             metadata: {
                 userId: user._id,

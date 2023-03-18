@@ -13,6 +13,7 @@ import {
 import { Bar } from 'react-chartjs-2';
 
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import { fixedPriceToCurrency } from '@libs/utils';
 
 type OptionsChart = any
 
@@ -90,15 +91,16 @@ function AdminDashboardScreen() {
         labels: summary.salesData.map((x: SalesData) => x._id), // 2022/01 2022/03
         datasets: [
             {
-                label: 'Sales',
-                backgroundColor: 'rgba(162, 222, 208, 1)',
+                backgroundColor: '#f26c6d',
                 data: summary.salesData.map((x: SalesData) => x.totalSales),
             },
         ],
     };
 
     const optionsChart: OptionsChart = {
-        legend: { display: true, position: 'right' },
+        plugins: {
+            legend: false
+        },
     }
 
 
@@ -115,31 +117,33 @@ function AdminDashboardScreen() {
                     <div>
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-5 m-5 card">
-                                <p className="text-3xl">${summary.ordersPrice} </p>
-                                <p>Sales</p>
-                                <Link href="/admin/orders">View sales</Link>
+                                <p className="text-3xl">{fixedPriceToCurrency(summary.ordersPrice)} </p>
+                                <p>Totals des ventes</p>
+                                <Link href="/admin/orders" className='text-[#f26c6d]'>Voire plus</Link>
                             </div>
                             <div className="p-5 m-5 card">
                                 <p className="text-3xl">{summary.ordersCount} </p>
-                                <p>Orders</p>
-                                <Link href="/admin/orders">View orders</Link>
+                                <p>Nombre de commandes</p>
+                                <Link href="/admin/orders" className='text-[#f26c6d]'>Voire plus</Link>
                             </div>
                             <div className="p-5 m-5 card">
                                 <p className="text-3xl">{summary.productsCount} </p>
-                                <p>Products</p>
-                                <Link href="/admin/products">View products</Link>
+                                <p>Nombre de produits</p>
+                                <Link href="/admin/products" className='text-[#f26c6d]'>Voire plus</Link>
                             </div>
                             <div className="p-5 m-5 card">
                                 <p className="text-3xl">{summary.usersCount} </p>
-                                <p>Users</p>
-                                <Link href="/admin/users">View users</Link>
+                                <p>Nombre de d'utilisateurs</p>
+                                <Link href="/admin/users" className='text-[#f26c6d]'>Voire plus</Link>
                             </div>
                         </div>
-                        <h2 className="text-xl">Sales Report</h2>
-                        <Bar
-                            options={optionsChart}
-                            data={data}
-                        />
+                        <h2 className="text-xl">Report des ventes</h2>
+                        <div className='w-full max-w-xl'>
+                            <Bar
+                                options={optionsChart}
+                                data={data}
+                            />
+                        </div>
                     </div>
                 )}
             </div>

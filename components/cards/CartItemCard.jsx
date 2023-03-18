@@ -23,7 +23,6 @@ export default function CartItemCard({ product }) {
                 return alert('le produit est en rupture de stock');
             }
 
-
             let newProductCart = { ...product }
             newProductCart.quantity = quantity
 
@@ -98,7 +97,7 @@ export default function CartItemCard({ product }) {
                         <div className='flex mt-5 space-x-2'>
                             <div>
                                 <InputNumber
-                                    min={1}
+                                    min={0}
                                     max={product.countInStock}
                                     defaultValue={quantity}
                                     setUpdate={setQuantity}

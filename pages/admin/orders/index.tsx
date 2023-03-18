@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import AdminControlPannel from '@components/AdminContents/AdminControlPannel';
 import Pagination from '@components/ui-ux/Pagination';
 import axios from 'axios';
+import ListClassement from '@components/ui-ux/ListClassement';
 
 interface Props {
     initialOrders: TypeOrder[];
@@ -32,6 +33,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
     const [orders, setOrders] = useState(initialOrders);
     const [checkAll, setcheckAll] = useState(false);
     const [chartData, setChartData] = useState([]);
+    const [bestSeller, setBestSeller] = useState([]);
 
     const maxPages = useMemo(() => Math.ceil(totalResults / pageSize), [totalResults, pageSize]);
 
@@ -130,6 +132,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
 
             const { data } = await axios.get(`/api/admin/orders/stats`);
 
+            setBestSeller(data.produitMostSelled)
 
             const startDate = getLastSevenDaysDateUTC();
             const endDate = new Date();
@@ -139,27 +142,11 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
             const filledData = fillMissingData(data.salesData, intervalHours, startDate, endDate);
             const chartData = convertDataForChart(filledData);
 
-            console.log(data.salesData, filledData, chartData)
             setChartData(chartData)
         };
 
         fetchData();
     }, []);
-
-
-
-    function generateRandomArray(size: number, min: number, max: number) {
-        const arr = [];
-        for (let i = 0; i < size; i++) {
-            if (Math.random() < 0.2) {
-                arr.push(NaN);
-            } else {
-                const num = Math.random() * (max - min) + min;
-                arr.push(num);
-            }
-        }
-        return arr;
-    }
 
     return (
         <AdminscreenWrapper title="Orders">
@@ -167,8 +154,8 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
 
             <div className='mt-5 md:flex md:space-x-5'>
                 <LineChart title="Historique des commandes en €" labels={chartData ? chartData.labels : []} datasets={chartData ? chartData.totalPrice : []} />
-                <LineChart title="Historique des commandes en volume" labels={chartData ? chartData.labels : []} datasets={chartData ? chartData.numberOfOrders : []} ordonnee="" />
-                <LineChart title="Historique des commandes en $" datasets={generateRandomArray(12, 12, 500)} ordonnee="$" />
+                <LineChart title="Historique des commandes en volume" labels={chartData  ? chartData.labels : []} datasets={chartData ? chartData.numberOfOrders : []} ordonnee="" />
+                <ListClassement title="Produit les plus vendu" datasets={bestSeller}/>
             </div>
 
             <AdminControlPannel
@@ -203,7 +190,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Commande N°</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Produits</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Status</th>
-                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Is pay</th>
+                            <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Payement</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Total</th>
                             <th className="pr-6 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">Date</th>
                             <td className="pr-8 text-sm font-normal leading-4 tracking-normal text-left text-gray-600 uppercase">More</td>

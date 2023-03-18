@@ -80,27 +80,29 @@ export default function TableOrderLIne({ order, checkAll }: Props) {
             </td>
             <td className="pr-6 whitespace-no-wrap">
                 {
-                    order.isCancel
-                        ? "Cancel"
-                        : order.isRefund
-                            ? "Commande rembourser"
-                            : order.isDelivered
-                                ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
-                                : order.isSended
-                                    ? "Commande envoyée"
-                                    : order.isPaid
-                                        ? "En cours de Préparation"
-                                        : "Payement en attente"
+                    order.isRefund
+                        ? "Commande rembourser"
+                        : order.isRefundAsked
+                            ? "Remboursement demander"
+                            : order.isCancel
+                                ? "Commande annuler"
+                                : order.isDelivered
+                                    ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
+                                    : order.isSended
+                                        ? "Commande envoyée"
+                                        : order.isPaid
+                                            ? "En cours de Préparation"
+                                            : <span className='text-red-600'>Payement en attente</span>
                 }
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
                 {
-                    order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Commande Annuler</span>
-                        : order.isPaid ? (
-                            <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
-                        ) : (
-                            <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Payement en attente</span>
-                        )
+                    order.isRefund
+                    ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Rembourser</span>
+                    : order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Annuler</span>
+                        : order.isPaid ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
+                        : <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Payement en attente</span>
+                        
                 }
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{order.totalPrice}€</td>

@@ -20,6 +20,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const ordersPriceGroup = await Order.aggregate([
         {
+            $match: {
+                isPaid: true,
+                isRefund: false,
+                isCancel: false
+            }
+        },
+        {
             $group: {
                 _id: null,
                 sales: { $sum: '$totalPrice' },
@@ -29,6 +36,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const ordersPrice = ordersPriceGroup.length > 0 ? ordersPriceGroup[0].sales : 0;
 
     const salesData = await Order.aggregate([
+        {
+            $match: {
+                isPaid: true,
+                isRefund: false,
+                isCancel: false
+            }
+        },
         {
             $addFields: {
                 createdAtInterval: {

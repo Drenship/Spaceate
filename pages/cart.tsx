@@ -34,23 +34,32 @@ const Cart: NextPage = () => {
     }, [cartItems]);
 
 
+
     const createCheckoutSession = async () => {
         setLoading(true);
 
-        // Put order
-        const createOrder = await fetchPostJSON("/api/order", { items: cartItems });
-        if(!createOrder || createOrder.err) {
-            setLoading(false);
-            return;
-        }
+        const itemsForCheckout = [...cartItems].filter(i => {
+            if (i.outOfQuantity === true || i.outOfStock === true) return;
+            return i;
+        })
 
+        if(itemsForCheckout.length <= 0) return;
+        
+        // init stripe
         const stripe = await getStripe();
         if (!stripe) {
             setLoading(false);
             return;
         }
+        
+        // Put order
+        const createOrder = await fetchPostJSON("/api/order", { items: itemsForCheckout });
+        if (!createOrder || createOrder.err) {
+            setLoading(false);
+            return;
+        }
 
-        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: cartItems, order_id: createOrder.data._id });
+        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: itemsForCheckout, order_id: createOrder.data._id });
         // Internal Server Error
         if ((checkoutSession).statusCode === 500) {
             console.error((checkoutSession).message);
@@ -83,16 +92,33 @@ const Cart: NextPage = () => {
             })
 
             const findItem: TypeCartItem = oldCartData.filter(i => i.slug === item.slug)[0]
+            console.log(findItem.quantity, item.countInStock)
 
-            if (findItem && findItem.price !== item.price) {
+            if (findItem && findItem.price !== item.price || findItem && findItem.quantity > item.countInStock || item.countInStock <= 0) {
                 setPriceChange(prev => {
                     if (prev.findIndex(e => e.product.slug === item.slug) !== -1) {
                         return [...prev]
                     };
+
+                    if (item.countInStock <= 0) {
+                        return [...prev, {
+                            product: findItem,
+                            text: `Le produit ${findItem.name} est en rupture de stock !`
+                        }]
+                    }
+
+                    if (findItem.quantity > item.countInStock) {
+                        return [...prev, {
+                            product: findItem,
+                            text: `La quantité demandée n'est pas disponible pour des ${findItem.name}, il en reste ${item.countInStock} en stock !`
+                        }]
+                    }
+
                     return [...prev, {
                         product: findItem,
                         text: `Le prix des ${findItem.name} passe de ${findItem.price}€ à ${item.price}€`
                     }]
+
                 })
             }
         })
@@ -100,7 +126,6 @@ const Cart: NextPage = () => {
 
     // PB double rendu de checkUpdateCart
     useEffect(() => { checkUpdateCart() }, []);
-
 
     return (
         <BasescreenWrapper title="Panier" footer={true}>

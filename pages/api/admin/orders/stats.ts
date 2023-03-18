@@ -22,14 +22,44 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const handleGetRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await db.connect();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const produitMostSelled = await Order.aggregate([
+        {
+            $match: {
+                isPaid: true,
+                isRefund: false,
+                isCancel: false,
+                createdAt: { $gte: sevenDaysAgo },
+            },
+        },
+        {
+            $unwind: '$orderItems',
+        },
+        {
+            $group: {
+                _id: '$orderItems._id',
+                name: { $first: '$orderItems.name' },
+                image: { $first: '$orderItems.image' },
+                totalQuantity: { $sum: '$orderItems.quantity' },
+                totalPrice: { $sum: { $multiply: ['$orderItems.price', '$orderItems.quantity'] } },
+            },
+        },
+        {
+          $sort: { totalPrice: -1 },
+        },{
+            $limit: 5,
+        }
+    ]).sort({ createAt: 1 });
+
 
     const salesData = await Order.aggregate([
         {
             $match: {
+                isPaid: true,
+                isRefund: false,
+                isCancel: false,
                 createdAt: {
-                    isPaid: true,
-                    isRefund: false,
-                    isCancel: false,
                     $gte: new Date((new Date()) - 7 * 24 * 60 * 60 * 1000) // 7 derniers jours
                 }
             }
@@ -72,7 +102,7 @@ const handleGetRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     ]).sort({ createAt: 1 });
 
     await db.disconnect();
-    res.send({ salesData });
+    res.send({ salesData, produitMostSelled });
 };
 
 export default handler;

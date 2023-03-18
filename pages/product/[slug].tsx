@@ -32,6 +32,9 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     const [quantity, setQuantity] = useState(1);
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
+    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
+
+
     const addItemsToCart = () => {
         if (isOutOfStock) {
             return alert('le produit est en rupture de stock');
@@ -51,8 +54,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
         router.push('/cart')
     }
-
-    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
 
     const getCommentaires = async () => {
         console.log('> getCommentaires')

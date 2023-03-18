@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { authSessionMiddleware } from '@libs/Middleware/Api.Middleware.auth-session';
 import Stripe from 'stripe';
 import Order from '@libs/models/Order';
+import Product from '@libs/models/Product';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2020-08-27',
@@ -50,11 +51,6 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                     charge: chargeId,
                 });
 
-                console.log({
-                    charge_id: chargeId,
-                    refund_id: refund.id,
-                })
-
                 // Update order with stripe
                 const orderForUpdate = await Order.findById(orderId)
                 orderForUpdate.isRefundAsked = true;
@@ -69,18 +65,32 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 res.status(200).json({ order: orderUpdate });
             } else {
+                if(order.isCancel) {
+                    return res.status(200).json({ order: order });
+                }
                 // Update order with stripe
                 order.isCancel = true;
                 order.cancelAt = new Date();
-                const orderUpdate = await order.save();
-                res.status(200).json({ order: orderUpdate });
+                const updateResult = await order.save();
+                const updateStatsAndStockProducts = async () => {
+                    for (let product of updateResult.orderItems) {
+                        await Product.updateOne({ _id: product._id }, {
+                            $inc: {
+                                countInStock: product.quantity,
+                                "stats.totalSellInAwait": product.quantity - (product.quantity * 2),
+                            }
+                        });
+                    }
+                }
+                await updateStatsAndStockProducts();
+                return res.status(200).json({ order: updateResult });
             }
         } else {
-            res.status(404).json({ statusCode: 404, message: "This order is not found" });
+            return res.status(404).json({ statusCode: 404, message: "This order is not found" });
         }
 
     } catch (error) {
-        res.status(500).json({ statusCode: 500, message: error });
+        return res.status(500).json({ statusCode: 500, message: error });
     }
 }
 

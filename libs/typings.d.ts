@@ -47,7 +47,9 @@ export interface TypeProduct {
 }
 
 export interface TypeCartItem extends TypeProduct {
-    quantity: number
+    quantity: number, 
+    outOfStock?: boolean, // rupture de stock
+    outOfQuantity?: boolean // quantité demande non disponible mais pas en rupture
 }
 
 export interface TypeCommentaire {

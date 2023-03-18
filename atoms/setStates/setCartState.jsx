@@ -11,11 +11,11 @@ export const setCartState = (props) => {
         case CART_ADD_ITEM:
 
             if (cartItem.findIndex(pro => pro.slug === product.slug) === -1) {
-                setCartItem(prevState => [...prevState, product])
+                setCartItem(prevState => [...prevState, {...product, outOfStock: false, outOfQuantity: false}])
             } else {
                 setCartItem(prevState => {
                     return prevState.map((item) => {
-                        return item.slug === product.slug ? { ...item, quantity: product.quantity } : item
+                        return item.slug === product.slug ? { ...item, quantity: product.quantity, outOfStock: false, outOfQuantity: false } : item
                     })
                 })
             }
@@ -23,8 +23,9 @@ export const setCartState = (props) => {
         case CART_UPDATE_ITEM:
             setCartItem(prevState => {
                 return prevState.map((item) => {
-                    return item.slug === product.slug ? Object.assign({ ...item }, product) : item
-
+                    if (product.countInStock <= 0 && item.slug === product.slug) return Object.assign({ ...item }, { ...product, outOfStock: true, outOfQuantity: true });
+                    if (item.quantity > product.countInStock && item.slug === product.slug) return Object.assign({ ...item }, { ...product, outOfQuantity: true, outOfStock: false });
+                    return item.slug === product.slug ? Object.assign({ ...item }, { ...product, outOfStock: false, outOfQuantity: false }) : item
                 })
             })
             return;
