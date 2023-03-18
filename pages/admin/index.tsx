@@ -12,7 +12,7 @@ import Order from '@libs/models/Order';
 import { formatChartDate } from '@libs/utils/chart';
 
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
-import BarChart from '@components/ui-ux/charts/BarCHart';
+import BarChart from '@components/ui-ux/charts/BarChart';
 
 type SalesData = {
     _id: string,
