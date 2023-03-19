@@ -1,6 +1,5 @@
 import React from 'react';
 import { NextPage } from 'next';
-import { PDFViewer } from '@react-pdf/renderer';
 import { BlobProvider } from '@react-pdf/renderer';
 import { getSession } from 'next-auth/react';
 
@@ -20,23 +19,26 @@ const InvoicePdf: NextPage<Props> = ({ order }) => {
 
     return (
         <div className='w-screen h-screen'>
-            {/*            <PDFViewer
-                width="100%"
-                height="100%"
-            >
-                <Invoice order={order} />
-    </PDFViewer>*/}
             <BlobProvider document={<Invoice order={order} />}>
                 {({ blob, url, loading, error }) =>
                     loading ? (
                         'Chargement du PDF...'
-                    ) : (
-                        <iframe
-                            src={url}
-                            title="Facture"
-                            style={{ width: '100%', height: '100vh', border: 'none' }}
-                        />
                     )
+                        : error
+                            ? (
+                                <div>
+                                    <a href={url} download={`Facture-${order._id}.pdf`}>
+                                        Télécharger la facture
+                                    </a>
+                                </div>
+                            )
+                            : (
+                                <iframe
+                                    src={url}
+                                    title="Facture"
+                                    style={{ width: '100%', height: '100vh', border: 'none' }}
+                                />
+                            )
                 }
             </BlobProvider>
         </div>
