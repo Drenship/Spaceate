@@ -1,6 +1,7 @@
 import React, { useRef, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { DotsVerticalIcon } from '@heroicons/react/solid';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
 import { TypeOrder } from '@libs/typings';
 import { fixedPriceToCurrency, replaceURL, splitString } from '@libs/utils';
@@ -9,7 +10,7 @@ import { useEscapeListener } from '@libs/hooks';
 
 import BlurImage from '@components/ui-ux/BlurImage';
 import OrderStatus from '@components/contents/orderStatus';
-
+import Invoice from '@components/ui-ux/Invoice';
 
 
 interface refundOrder {
@@ -42,9 +43,9 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
     }
 
     const enableToRefund = useMemo(() => {
-        
-        if(order.isPaid === false) return false;
-        
+
+        if (order.isPaid === false) return false;
+
         let deliveredSatusAllow = false;
         if (order?.deliveredAt) {
             const today = new Date();
@@ -82,7 +83,14 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
                                     enableToRefund && <li onClick={() => handleRefund(order)} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
                                 }
 
-                                <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Facture</li>
+                                <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">
+                                    <PDFDownloadLink
+                                        document={<Invoice order={order} />}
+                                        fileName={`facture_avancee_${splitString(order._id)}.pdf`}
+                                    >
+                                        {({ loading }) => (loading ? 'Génération en cours...' : 'Télécharger la facture')}
+                                    </PDFDownloadLink>
+                                </li>
 
                             </ul>
                         </div>

@@ -26,6 +26,11 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const order = await Order.findById(orderId)
         if (order) {
+            
+            if(order.isCancel || order.isRefund) {
+                return res.status(200).json({ order: order });
+            }
+
             if (sessionId) {
                 // Récupérer la session de paiement
                 const session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -65,9 +70,6 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 res.status(200).json({ order: orderUpdate });
             } else {
-                if(order.isCancel) {
-                    return res.status(200).json({ order: order });
-                }
                 // Update order with stripe
                 order.isCancel = true;
                 order.cancelAt = new Date();

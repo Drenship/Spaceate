@@ -8,6 +8,9 @@ import {
     Font,
 } from '@react-pdf/renderer';
 
+import { TypeOrder } from '@libs/typings';
+import { fixedPriceToCurrency } from '@libs/utils';
+
 const styles = StyleSheet.create({
     page: {
         backgroundColor: '#ffffff',
@@ -54,10 +57,42 @@ const styles = StyleSheet.create({
 });
 
 interface Props {
-    invoiceData: any
+    order: TypeOrder
 }
 
-const Invoice = ({ invoiceData }: Props) => {
+const Invoice = ({ order }: Props) => {
+
+    const convertOrderToInvoiceData = () => {
+
+    }
+
+    const invoiceData = {
+        invoiceNumber: '123',
+        date: '18/03/2023',
+        sender: {
+            name: 'John Doe',
+            address: '123 Main St',
+            city: 'Paris',
+            country: 'France',
+        },
+        recipient: {
+            name: 'Jane Smith',
+            address: '456 Oak St',
+            city: 'Lyon',
+            country: 'France',
+        },
+        items: [
+            { name: 'Produit 1', quantity: 2, unitPrice: 50 },
+            { name: 'Produit 2', quantity: 1, unitPrice: 100 },
+        ],
+        subtotal: 200,
+        taxRate: 20,
+        taxAmount: 40,
+        total: 240,
+        paymentMethod: 'Virement bancaire',
+        paymentTerms: '30 jours',
+    };
+
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -96,17 +131,17 @@ const Invoice = ({ invoiceData }: Props) => {
                 {/* Tableau des articles */}
                 <View style={styles.section}>
                     <View style={styles.tableHeader}>
-                        <Text style={styles.tableColHeader}>Description</Text>
+                        <Text style={styles.tableColHeader}>Nom</Text>
                         <Text style={styles.tableColHeader}>Quantité</Text>
                         <Text style={styles.tableColHeader}>Prix unitaire</Text>
                         <Text style={styles.tableColHeader}>Total</Text>
                     </View>
                     {invoiceData.items.map((item: any, index: any) => (
                         <View style={styles.tableRow} key={index}>
-                            <Text style={styles.tableCol}>{item.description}</Text>
+                            <Text style={styles.tableCol}>{item.name}</Text>
                             <Text style={styles.tableCol}>{item.quantity}</Text>
-                            <Text style={styles.tableCol}>{item.unitPrice.toFixed(2)} €</Text>
-                            <Text style={styles.tableCol}>{(item.quantity * item.unitPrice).toFixed(2)} €</Text>
+                            <Text style={styles.tableCol}>{fixedPriceToCurrency(item.unitPrice)}</Text>
+                            <Text style={styles.tableCol}>{fixedPriceToCurrency(item.quantity * item.unitPrice)}</Text>
                         </View>
                     ))}
                 </View>
@@ -119,9 +154,9 @@ const Invoice = ({ invoiceData }: Props) => {
                         <Text>Total:</Text>
                     </View>
                     <View style={styles.value}>
-                        <Text>{invoiceData.subtotal.toFixed(2)} €</Text>
-                        <Text>{invoiceData.taxAmount.toFixed(2)} €</Text>
-                        <Text>{invoiceData.total.toFixed(2)} €</Text>
+                        <Text>{fixedPriceToCurrency(invoiceData.subtotal)}</Text>
+                        <Text>{fixedPriceToCurrency(invoiceData.taxAmount)}</Text>
+                        <Text>{fixedPriceToCurrency(invoiceData.total)}</Text>
                     </View>
                 </View>
 

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { getSession } from 'next-auth/react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
@@ -12,6 +13,7 @@ import OrderItemCard from '@components/cards/OrderItemCard';
 import { getStripe } from '@libs/utils/stripe-helpers';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
 import OrderStatus from '@components/contents/orderStatus';
+import Invoice from '@components/ui-ux/Invoice';
 
 interface Props {
     order: TypeOrder,
@@ -21,8 +23,6 @@ interface Props {
 }
 
 const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err }) => {
-
-    console.log(order, countOrders, orderNotFound, err)
 
     const [loading, setLoading] = useState(false)
 
@@ -38,7 +38,6 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
 
 
     const enableCheckout = useMemo(() => order.isPaid === true || order.isCancel === true || order.isRefund === true, [order])
-    console.log(order._id, enableCheckout)
 
     const createCheckoutSession = async () => {
         if (enableCheckout) return;
@@ -93,6 +92,14 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
                             <div className="flex flex-col items-stretch w-full space-y-4 xl:flex-row jusitfy-center xl:space-x-8 md:space-y-6 xl:space-y-0">
                                 <div className="flex flex-col items-start justify-start w-full space-y-4 md:space-y-6 xl:space-y-8">
                                     <div className="flex flex-col items-start justify-start w-full px-4 py-4 bg-gray-50 md:py-6 md:p-6 xl:p-8">
+                                        <div className='flex items-center justify-end w-full font-semibold underline'>
+                                            <PDFDownloadLink
+                                                document={<Invoice order={order} />}
+                                                fileName={`facture_avancee_${splitString(order._id)}.pdf`}
+                                            >
+                                                {({ loading }) => (loading ? 'Génération en cours...' : 'Télécharger la facture')}
+                                            </PDFDownloadLink>
+                                        </div>
                                         <div className='w-full py-2 border-b'>
                                             <h2 className="font-semibold text-md">N° DE COMMANDE: {splitString(order._id)}</h2>
                                             <div className='flex items-center justify-between'>
