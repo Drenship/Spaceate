@@ -166,7 +166,7 @@ export const getServerSideProps = async (context: any) => {
 
         await db.connect();
 
-        const orders = await Order.find(ordersQueryFilter, { paymentResultStripe: 0 }).sort({ createdAt: -1 }).skip(pageSize * (page - 1)).limit(10).lean();
+        const orders = await Order.find(ordersQueryFilter, { paymentResultStripe: 0 }).populate('user').sort({ createdAt: -1 }).skip(pageSize * (page - 1)).limit(10).lean();
         const countOrder = await Order.countDocuments(ordersQueryFilter);
 
         await db.disconnect();
