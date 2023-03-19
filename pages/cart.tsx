@@ -6,12 +6,13 @@ import { useRecoilState } from 'recoil';
 
 import { CART_UPDATE_ITEM, setCartState } from '@atoms/setStates/setCartState';
 import { cartState } from '@atoms/cartState';
-import { TypeCartItem } from '@libs/typings'
+import { TypeCartItem, TypeUser } from '@libs/typings'
 import { fetchPostJSON } from "@libs/utils/api-helpers";
 import { getStripe } from "@libs/utils/stripe-helpers";
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CartItemCard from '@components/cards/CartItemCard';
+import { useSession } from 'next-auth/react';
 
 
 interface Update {
@@ -21,6 +22,8 @@ interface Update {
 
 const Cart: NextPage = () => {
     const [loading, setLoading] = useState(false)
+    const { data: session } = useSession();
+    const user: TypeUser | null = session?.user ?? null;
     const [priceChange, setPriceChange] = useState<Update[]>([])
     const [cartItems, setCartItem] = useRecoilState<TypeCartItem[]>(cartState)
 
@@ -36,6 +39,9 @@ const Cart: NextPage = () => {
 
 
     const createCheckoutSession = async () => {
+
+        if(!user) return;
+
         setLoading(true);
 
         const itemsForCheckout = [...cartItems].filter(i => {
@@ -73,6 +79,9 @@ const Cart: NextPage = () => {
 
         setLoading(false);
     };
+
+    const disabledCheckoutButton = useMemo(() => loading || cartItems.length === 0 || !user, [user, cartItems, loading]);
+
 
     const checkUpdateCart = async () => {
         const ids: string[] = []
@@ -182,7 +191,7 @@ const Cart: NextPage = () => {
                                 role="link"
                                 className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100'
                                 onClick={createCheckoutSession}
-                                disabled={loading || cartItems.length === 0}
+                                disabled={disabledCheckoutButton}
                             >{loading ? "Chargement..." : "Paiement"}</button>
                         </div>
 
