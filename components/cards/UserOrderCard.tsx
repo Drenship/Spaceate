@@ -10,7 +10,7 @@ import { useEscapeListener } from '@libs/hooks';
 
 import BlurImage from '@components/ui-ux/BlurImage';
 import OrderStatus from '@components/contents/orderStatus';
-import Invoice from '@components/ui-ux/Invoice';
+import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
 
 
 interface refundOrder {
@@ -83,10 +83,16 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
                                     enableToRefund && <li onClick={() => handleRefund(order)} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
                                 }
 
+
+                                <Link href={`/documents/download/${splitString(order._id)}/invoice.pdf`}>
+                                    <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire la facture</li>
+                                </Link>
+                                
                                 <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">
                                     <PDFDownloadLink
                                         document={<Invoice order={order} />}
                                         fileName={`facture_avancee_${splitString(order._id)}.pdf`}
+                                        className="hover:text-white"
                                     >
                                         {({ loading }) => (loading ? 'Génération en cours...' : 'Télécharger la facture')}
                                     </PDFDownloadLink>

@@ -13,7 +13,8 @@ import OrderItemCard from '@components/cards/OrderItemCard';
 import { getStripe } from '@libs/utils/stripe-helpers';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
 import OrderStatus from '@components/contents/orderStatus';
-import Invoice from '@components/ui-ux/Invoice';
+import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
+import Link from 'next/link';
 
 interface Props {
     order: TypeOrder,
@@ -92,10 +93,12 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
                             <div className="flex flex-col items-stretch w-full space-y-4 xl:flex-row jusitfy-center xl:space-x-8 md:space-y-6 xl:space-y-0">
                                 <div className="flex flex-col items-start justify-start w-full space-y-4 md:space-y-6 xl:space-y-8">
                                     <div className="flex flex-col items-start justify-start w-full px-4 py-4 bg-gray-50 md:py-6 md:p-6 xl:p-8">
-                                        <div className='flex items-center justify-end w-full font-semibold underline'>
+                                        <div className='flex items-center justify-end w-full space-x-5 font-semibold'>
+                                            <Link href={`/documents/download/${splitString(order._id)}/invoice.pdf`} className="hover:underline">Voire la facture</Link>
                                             <PDFDownloadLink
                                                 document={<Invoice order={order} />}
                                                 fileName={`facture_avancee_${splitString(order._id)}.pdf`}
+                                                className="hover:underline"
                                             >
                                                 {({ loading }) => (loading ? 'Génération en cours...' : 'Télécharger la facture')}
                                             </PDFDownloadLink>
