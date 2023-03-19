@@ -8,6 +8,7 @@ import { fetchPostJSON } from '@libs/utils/api-helpers';
 import { useEscapeListener } from '@libs/hooks';
 
 import BlurImage from '@components/ui-ux/BlurImage';
+import OrderStatus from '@components/contents/orderStatus';
 
 
 
@@ -45,23 +46,7 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
             <div className="flex items-center justify-between p-4">
                 <div>
                     <h2 className="text-sm font-semibold">N° DE COMMANDE: {splitString(order._id)}</h2>
-                    <p className='text-sm text-gray-500'>
-                        {
-                            order.isRefund
-                                ? "Commande rembourser"
-                                : order.isRefundAsked
-                                    ? "Remboursement demander"
-                                    : order.isCancel
-                                        ? "Commande annuler"
-                                        : order.isDelivered
-                                            ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
-                                            : order.isSended
-                                                ? "Commande envoyée"
-                                                : order.isPaid
-                                                    ? "En cours de Préparation"
-                                                    : <span className='text-red-600'>Payement en attente</span>
-                        }
-                    </p>
+                    <OrderStatus order={order} />
                 </div>
                 <div className='mx-4'>
                     <h2 className="text-sm font-semibold">Total</h2>
@@ -80,9 +65,8 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
 
                                 <li onClick={() => handleRefund(order)} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
 
-                                <Link href={`/admin/products/edit?slug=${order._id}`}>
-                                    <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Facture</li>
-                                </Link>
+                                <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Facture</li>
+
                             </ul>
                         </div>
 
@@ -98,7 +82,7 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
             </div>
             <div className='px-4 border-t '>
                 {order.orderItems.map((item: any, index: number) => (
-                    <div key={index} className="flex items-start mt-2">
+                    <div key={index} className="flex items-start py-2 mt-2 border-t first:border-none">
                         <div className="relative flex-grow w-full max-w-[74px] text-gray-600">
                             <div className='relative object-cover overflow-hidden rounded-lg aspect-square'>
                                 <BlurImage
@@ -106,12 +90,24 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
                                 />
                             </div>
                         </div>
-                        <div className="ml-2">
+                        <div className="w-full ml-2">
                             <Link href={`/product/${item.slug}`}>
                                 <p className='text-lg font-semibold'>{item.name}</p>
                             </Link>
-                            <p className='ml-2'>Quantité: {item.quantity}</p>
-                            <p className='mt-1 ml-2'>Prix: {fixedPriceToCurrency(item.price)}</p>
+                            <div className="flex flex-col w-full">
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-sm font-semibold'>Prix de l'article</p>
+                                    <p className="text-base leading-4 xl:text-lg">{fixedPriceToCurrency(item.price)}</p>
+                                </div>
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-sm font-semibold'>Quantité</p>
+                                    <p className="text-base leading-4 text-gray-800 xl:text-lg">{item.quantity <= 9 ? `0${item.quantity}` : item.quantity}</p>
+                                </div>
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-sm font-semibold'>Sous-total</p>
+                                    <p className="text-base leading-4 text-gray-800 xl:text-lg">{fixedPriceToCurrency(item.quantity * item.price)}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ))}

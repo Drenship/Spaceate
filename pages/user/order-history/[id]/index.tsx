@@ -4,13 +4,14 @@ import { getSession } from 'next-auth/react';
 
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
-import { fixedPriceToCurrency } from '@libs/utils';
+import { fixedPriceToCurrency, splitString } from '@libs/utils';
 import { TypeOrder } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import OrderItemCard from '@components/cards/OrderItemCard';
 import { getStripe } from '@libs/utils/stripe-helpers';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
+import OrderStatus from '@components/contents/orderStatus';
 
 interface Props {
     order: TypeOrder,
@@ -68,16 +69,16 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
 
     return (
         <BasescreenWrapper title="Mes commandes" footer={false}>
-            <div className="py-8 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
+            <div className="md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
                 {
                     orderNotFound ? (
                         <h1 className='text-2xl font-bold'>Commande introuvable !</h1>
                     ) : (
-                        <div className='w-screen overflow-x-hidden sm:w-full max-w-screen'>
+                        <div className='w-screen pt-8 overflow-x-hidden sm:w-full max-w-screen'>
 
                             {
                                 enableCheckout === false && (
-                                    <div className='flex flex-col items-start justify-start w-full p-8 space-y-4 bg-red-200 border-2 border-red-600 md:items-center md:justify-between md:flex-row md:space-y-0'>
+                                    <div className='flex flex-col items-start justify-start w-full p-8 mb-8 space-y-4 bg-red-200 border-2 border-red-600 md:items-center md:justify-between md:flex-row md:space-y-0'>
                                         <p className='font-semibold'>La commande n'a pas encore été réglée. Vous pouvez régler la commande en utilisant le bouton ci-joint.</p>
                                         <button
                                             role="link"
@@ -89,13 +90,17 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
                                 )
                             }
 
-                            <div className="flex flex-col items-stretch w-full mt-10 space-y-4 xl:flex-row jusitfy-center xl:space-x-8 md:space-y-6 xl:space-y-0">
+                            <div className="flex flex-col items-stretch w-full space-y-4 xl:flex-row jusitfy-center xl:space-x-8 md:space-y-6 xl:space-y-0">
                                 <div className="flex flex-col items-start justify-start w-full space-y-4 md:space-y-6 xl:space-y-8">
                                     <div className="flex flex-col items-start justify-start w-full px-4 py-4 bg-gray-50 md:py-6 md:p-6 xl:p-8">
-                                        <div>
-                                            status: {order.isPaid ? "paid" : "not paid"}
+                                        <div className='w-full py-2 border-b'>
+                                            <h2 className="font-semibold text-md">N° DE COMMANDE: {splitString(order._id)}</h2>
+                                            <div className='flex items-center justify-between'>
+                                                <OrderStatus order={order} />
+                                                <p className="text-base leading-6 text-gray-800 xl:text-lg">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                            </div>
                                         </div>
-                                        <p className="text-lg font-semibold leading-6 text-gray-800 md:text-xl xl:leading-5">Produits commander</p>
+                                        <p className="mt-3 font-semibold leading-6 text-gray-800 ext-base md:text-xl xl:leading-5">Articles commander</p>
 
                                         {
                                             order.orderItems.map((item, key) => <OrderItemCard key={key} item={item} />)

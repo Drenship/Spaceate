@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { TypeOrder } from '@libs/typings';
 import { useEscapeListener } from '@libs/hooks';
 import { fixedPriceToCurrency, replaceURL, splitString, UTCStringToDate } from '@libs/utils';
+import OrderStatus from '@components/contents/orderStatus';
 
 interface Props {
     order: TypeOrder,
@@ -79,30 +80,16 @@ export default function TableOrderLIne({ order, checkAll }: Props) {
                 </div>
             </td>
             <td className="pr-6 whitespace-no-wrap">
-                {
-                    order.isRefund
-                        ? "Commande rembourser"
-                        : order.isRefundAsked
-                            ? "Remboursement demander"
-                            : order.isCancel
-                                ? "Commande annuler"
-                                : order.isDelivered
-                                    ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
-                                    : order.isSended
-                                        ? "Commande envoyée"
-                                        : order.isPaid
-                                            ? "En cours de Préparation"
-                                            : <span className='text-red-600'>Payement en attente</span>
-                }
+                <OrderStatus order={order} />
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">
                 {
                     order.isRefund
-                    ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Rembourser</span>
-                    : order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Annuler</span>
-                        : order.isPaid ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
-                        : <span className="w-2 h-2 px-2.5 py-1 text-white bg-orange-400 rounded-full">En attente</span>
-                        
+                        ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-red-600 rounded-full">Rembourser</span>
+                        : order.isCancel ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-yellow-500 rounded-full">Annuler</span>
+                            : order.isPaid ? <span className="w-2 h-2 px-2.5 py-1 text-white bg-green-600 rounded-full">Payer</span>
+                                : <span className="w-2 h-2 px-2.5 py-1 text-white bg-orange-400 rounded-full">En attente</span>
+
                 }
             </td>
             <td className="pr-6 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{fixedPriceToCurrency(order.totalPrice)}</td>
