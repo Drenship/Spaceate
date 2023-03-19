@@ -170,7 +170,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
         await db.connect();
-        const order = await Order.findOne({ _id: id, user: user._id }, { paymentResultStripe: 0 }).populate('user').lean();
+        const order = await Order.findOne({ _id: id, user: user._id }, { paymentResultStripe: 0 }).lean();
+        //.populate('user')
         const countOrders = await Order.countDocuments({ _id: id, user: user._id });
         await db.disconnect();
 
