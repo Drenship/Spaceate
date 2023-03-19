@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from './User';
 
 const orderSchema = new mongoose.Schema(
     {
@@ -83,7 +84,15 @@ orderSchema.pre('find', function () {
     findstart = Date.now();
 });
 
-orderSchema.post('find', async function () {
+orderSchema.post('find', async function (result) {
+        // Populate the categorie field
+        const user = await User.findById(result.user);
+
+        if (user) {
+            result.user = user;
+        } else {
+            console.log(`Could not find Categorie with id ${result.user}`)
+        }
     console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds');
 });
 
