@@ -18,10 +18,6 @@ const InvoicePdf: NextPage<Props> = ({ order }) => {
 
     const [error, setError] = useState(false);
 
-    const handleError = () => {
-        setError(true);
-    };
-
     if (!order) return <div className='flex items-center justify-center w-screen h-screen'>Invoice does not exist</div>;
 
     return (
@@ -42,8 +38,8 @@ const InvoicePdf: NextPage<Props> = ({ order }) => {
                                 src={url}
                                 title="Facture"
                                 style={{ width: '100%', height: '100vh', border: 'none' }}
-                                onError={handleError}
-                            ></iframe>
+                                onError={() => setError(true)}
+                            />
                         );
                     } else {
                         return (

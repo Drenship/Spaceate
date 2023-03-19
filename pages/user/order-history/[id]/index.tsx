@@ -94,7 +94,7 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
                                 <div className="flex flex-col items-start justify-start w-full space-y-4 md:space-y-6 xl:space-y-8">
                                     <div className="flex flex-col items-start justify-start w-full px-4 py-4 bg-gray-50 md:py-6 md:p-6 xl:p-8">
                                         <div className='flex items-center justify-end w-full space-x-5 font-semibold'>
-                                            <Link href={`/documents/download/${splitString(order._id)}/invoice.pdf`} className="hover:underline">Voire la facture</Link>
+                                            <Link href={`/documents/download/${splitString(order._id)}/invoice.pdf`} className="hidden md:block hover:underline">Voire la facture</Link>
                                             <PDFDownloadLink
                                                 document={<Invoice order={order} />}
                                                 fileName={`facture_avancee_${splitString(order._id)}.pdf`}
