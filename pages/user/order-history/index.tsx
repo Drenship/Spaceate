@@ -11,7 +11,9 @@ import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import Pagination from '@components/ui-ux/Pagination';
 import UserOrderCard from '@components/cards/UserOrderCard';
 
+// default params
 const PAGE_SIZE = 20;
+const DEFAULT_TIMEFRAME = "30days";
 
 interface RouterQueryParams {
     timeframe?: string;
@@ -31,12 +33,10 @@ const OrderHistory: NextPage<Props> = ({ initialOrders, countOrder, pages }) => 
     const { data: session } = useSession();
     const user: TypeUser | null = session?.user ?? null;
 
-
     const {
-        timeframe = "30days",
+        timeframe = DEFAULT_TIMEFRAME,
         page = 1,
     }: RouterQueryParams = router.query;
-
 
     const ordersOptionsTimeframe = useMemo(() => {
         if (!user) return [];
@@ -81,9 +81,9 @@ const OrderHistory: NextPage<Props> = ({ initialOrders, countOrder, pages }) => 
                     <p className='font-semibold'>{countOrder} commandes passées</p>
 
                     <select
-                        onChange={(e) => pageHandler({ timeframe: e.target.value })}
+                        onChange={(e) => pageHandler({ timeframe: e.target.value, page: 1 })}
                         defaultValue={timeframe}
-                        className="text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap"
+                        className="px-2 py-1 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap bg-white border rounded-md"
                     >
                         {ordersOptionsTimeframe.map((option, key) => (
                             <option
@@ -114,7 +114,7 @@ export const getServerSideProps = async (context: any) => {
 
     const pageSize = PAGE_SIZE;
     const page = query.page >= 1 ? query.page : 1;
-    const timeframe = query.timeframe ? query.timeframe : '30days'
+    const timeframe = query.timeframe ? query.timeframe : DEFAULT_TIMEFRAME
 
     const defaultReturn = {
         props: {
