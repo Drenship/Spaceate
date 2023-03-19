@@ -74,7 +74,7 @@ const OrderHistory: NextPage<Props> = ({ initialOrders, countOrder, pages }) => 
     return (
         <BasescreenWrapper title="Mes commandes" footer={true}>
 
-            <div className='flex flex-col w-full max-w-3xl px-2 py-5 md:px-0'>
+            <div className='flex flex-col w-full max-w-3xl px-2 py-5 overflow-x-hidden md:px-0'>
                 <h1 className='text-2xl font-bold'>Mes commandes</h1>
 
                 <div className='flex items-center justify-between space-x-5 md:justify-start'>
