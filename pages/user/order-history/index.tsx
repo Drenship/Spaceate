@@ -1,150 +1,107 @@
-import React, { useRef, useState } from 'react';
-import Link from 'next/link';
+import React, { useEffect, useState, useMemo } from 'react';
+import { getSession, useSession } from 'next-auth/react';
 import { NextPage } from 'next';
-import { getSession } from 'next-auth/react';
-import { DotsVerticalIcon } from '@heroicons/react/solid';
+import { useRouter } from 'next/router';
 
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
-import { TypeOrder } from '@libs/typings';
-import { fixedPriceToCurrency, replaceURL, splitString } from '@libs/utils';
-import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { useEscapeListener } from '@libs/hooks';
+import { TypeUser, TypeOrder } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
-import BlurImage from '@components/ui-ux/BlurImage';
+import Pagination from '@components/ui-ux/Pagination';
+import UserOrderCard from '@components/cards/UserOrderCard';
 
+const PAGE_SIZE = 20;
 
-interface ItemOrderProps {
-    order: TypeOrder,
-    setOrders: void
+interface RouterQueryParams {
+    timeframe?: string;
+    page?: number;
 }
 
-interface refundOrder {
-    order: TypeOrder,
-    message?: string,
-}
-
-const OrderCard = ({ order, setOrders }: ItemOrderProps) => {
-
-    const seeMenuRef = useRef(null);
-    const [seeMenu, setSeeMenu] = useState(false);
-
-    useEscapeListener(seeMenuRef, () => setSeeMenu(false))
-
-    async function handleRefund(orderForUpdate: TypeOrder) {
-        console.log(orderForUpdate?.stripeDetails?.session_id ? orderForUpdate.stripeDetails.session_id : null)
-        const { order: updateOrder, message }: refundOrder = await fetchPostJSON("/api/checkout_sessions/refund", {
-            sessionId: orderForUpdate?.stripeDetails?.session_id ? orderForUpdate.stripeDetails.session_id : null,
-            orderId: orderForUpdate._id
-        });
-
-        console.log(updateOrder, message)
-
-        if (updateOrder) {
-            setOrders(prev => [...prev].map(o => o._id === updateOrder._id ? updateOrder : o))
-        } else {
-            console.error(message)
-        }
-    }
-
-
-    return (
-        <div className="py-4 mt-3 bg-white border rounded shadow-md">
-            <div className="flex items-center justify-between p-4">
-                <div>
-                    <h2 className="text-sm font-semibold">N° DE COMMANDE: {splitString(order._id)}</h2>
-                    <p className='text-sm text-gray-500'>
-                        {
-                            order.isRefund
-                                ? "Commande rembourser"
-                                : order.isRefundAsked
-                                    ? "Remboursement demander"
-                                    : order.isCancel
-                                        ? "Commande annuler"
-                                        : order.isDelivered
-                                            ? `Livré : ${new Date(order.deliveredAt!).toLocaleDateString()}`
-                                            : order.isSended
-                                                ? "Commande envoyée"
-                                                : order.isPaid
-                                                    ? "En cours de Préparation"
-                                                    : <span className='text-red-600'>Payement en attente</span>
-                        }
-                    </p>
-                </div>
-                <div className='mx-4'>
-                    <h2 className="text-sm font-semibold">Total</h2>
-                    <p className='text-sm text-gray-500'>{fixedPriceToCurrency(order.totalPrice)}</p>
-                </div>
-                <div className='flex items-center justify-center ml-auto space-x-5'>
-                    <div className="text-sm text-gray-500">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                    </div>
-                    <div className='relative'>
-                        <div className={`absolute left-0 z-10 mt-8 -ml-36 md:-ml-24 w-52 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
-                            <ul className="py-1 bg-white rounded shadow ">
-                                <Link href={`/user/order-history/${order._id}`}>
-                                    <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire</li>
-                                </Link>
-
-                                <li onClick={() => handleRefund(order)} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
-
-                                <Link href={`/admin/products/edit?slug=${order._id}`}>
-                                    <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Facture</li>
-                                </Link>
-                            </ul>
-                        </div>
-
-                        <button
-                            ref={seeMenuRef}
-                            onClick={() => setSeeMenu(prev => !prev)}
-                            className='flex items-center justify-center w-8 transition-opacity duration-300 rounded-md shadow-none hover:bg-gray-100 aspect-square button-click-effect'
-                        >
-                            <DotsVerticalIcon className='w-5' />
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div className='px-4 border-t '>
-                {order.orderItems.map((item: any, index: number) => (
-                    <div key={index} className="flex items-start mt-2">
-                        <div className="relative flex-grow w-full max-w-[74px] text-gray-600">
-                            <div className='relative object-cover overflow-hidden rounded-lg aspect-square'>
-                                <BlurImage
-                                    src={replaceURL(item.image)}
-                                />
-                            </div>
-                        </div>
-                        <div className="ml-2">
-                            <Link href={`/product/${item.slug}`}>
-                                <p className='text-lg font-semibold'>{item.name}</p>
-                            </Link>
-                            <p className='ml-2'>Quantité: {item.quantity}</p>
-                            <p className='mt-1 ml-2'>Prix: {fixedPriceToCurrency(item.price)}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
-}
 interface Props {
-    initialOrders: TypeOrder[]
+    initialOrders: TypeOrder[],
+    countOrder: number,
+    pages: number,
 }
 
-const OrderHistory: NextPage<Props> = ({ initialOrders }) => {
-
+const OrderHistory: NextPage<Props> = ({ initialOrders, countOrder, pages }) => {
+    const router = useRouter()
     const [orders, setOrders] = useState(initialOrders)
-    console.log(orders)
+
+    const { data: session } = useSession();
+    const user: TypeUser | null = session?.user ?? null;
+
+
+    const {
+        timeframe = "30days",
+        page = 1,
+    }: RouterQueryParams = router.query;
+
+
+    const ordersOptionsTimeframe = useMemo(() => {
+        if (!user) return [];
+        const createdAt = new Date(user?.createdAt);
+        let options = [];
+
+        // Les 30 derniers jours
+        options.push({ value: "30days", label: 'Dans les 30 derniers jours' });
+        options.push({ value: '3months', label: 'Les 3 derniers mois' });
+
+        // Ajouter une option pour chaque année depuis la création du compte
+        const currentYear = new Date().getFullYear();
+        const accountYear = createdAt.getFullYear();
+        for (let year = currentYear; year >= accountYear; year--) {
+            options.push({ value: year, label: `Année ${year}` });
+        }
+
+        return options || []
+    }, [user])
+
+
+    const pageHandler = ({ timeframe, page }: RouterQueryParams) => {
+        const { query }: any = router;
+        if (page) query.page = page ? page : 1;
+        if (timeframe) query.timeframe = timeframe ? timeframe : null;
+
+        router.push({
+            pathname: router.pathname,
+            query: query,
+        });
+    };
+
+    useEffect(() => setOrders(initialOrders), [initialOrders]);
 
     return (
         <BasescreenWrapper title="Mes commandes" footer={true}>
 
-            <div className='flex flex-col w-full max-w-3xl py-5'>
+            <div className='flex flex-col w-full max-w-3xl px-2 py-5 md:px-0'>
                 <h1 className='text-2xl font-bold'>Mes commandes</h1>
+
+                <div className='flex items-center justify-between space-x-5 md:justify-start'>
+                    <p className='font-semibold'>{countOrder} commandes passées</p>
+
+                    <select
+                        onChange={(e) => pageHandler({ timeframe: e.target.value })}
+                        defaultValue={timeframe}
+                        className="text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap"
+                    >
+                        {ordersOptionsTimeframe.map((option, key) => (
+                            <option
+                                key={key}
+                                value={option.value}
+                            >{option.label}</option>
+                        ))}
+                    </select>
+                </div>
+
                 {
-                    orders.map((order, key) => <OrderCard key={key} order={order} setOrders={setOrders} />)
+                    orders.map((order, key) => <UserOrderCard key={key} order={order} setOrders={setOrders} />)
                 }
+                <Pagination
+                    current={page}
+                    pages={pages}
+                    pageHandler={(x: number) => pageHandler({ page: x })}
+                />
             </div>
 
         </BasescreenWrapper >
@@ -153,9 +110,17 @@ const OrderHistory: NextPage<Props> = ({ initialOrders }) => {
 
 export const getServerSideProps = async (context: any) => {
 
+    const { query } = context;
+
+    const pageSize = PAGE_SIZE;
+    const page = query.page >= 1 ? query.page : 1;
+    const timeframe = query.timeframe ? query.timeframe : '30days'
+
     const defaultReturn = {
         props: {
-            initialOrders: []
+            initialOrders: [],
+            countOrder: 0,
+            pages: 1,
         },
     }
 
@@ -163,13 +128,54 @@ export const getServerSideProps = async (context: any) => {
         const { user } = await getSession(context);
         if (!user) return defaultReturn
 
+
+
+        let timeframefilter = {}
+        if (timeframe) {
+            let startOfMonth, endOfMonth;
+            switch (timeframe) {
+                case '30days':
+                    const currentDate = new Date();
+                    startOfMonth = currentDate.setDate(currentDate.getDate() - 30);
+                    endOfMonth = new Date();
+                    break;
+                case '3months':
+                    const threeMonthsAgo = new Date();
+                    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 2);
+                    startOfMonth = new Date(threeMonthsAgo.getFullYear(), threeMonthsAgo.getMonth(), 1);
+                    endOfMonth = new Date();
+                    break;
+                default:
+                    startOfMonth = new Date(Number(timeframe), 0, 1);
+                    endOfMonth = new Date(Number(timeframe), 11, 31);
+                    break;
+            }
+            console.log({
+                startOfMonth,
+                endOfMonth
+            })
+            timeframefilter = {
+                createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+            }
+        }
+
+        const ordersQueryFilter = {
+            user: user._id,
+            ...timeframefilter
+        }
+
         await db.connect();
-        const orders = await Order.find({ user: user._id }, { paymentResultStripe: 0 }).sort({ _id: -1 }).limit(10).lean();
+
+        const orders = await Order.find(ordersQueryFilter, { paymentResultStripe: 0 }).sort({ createdAt: -1 }).skip(pageSize * (page - 1)).limit(10).lean();
+        const countOrder = await Order.countDocuments(ordersQueryFilter);
+
         await db.disconnect();
 
         return {
             props: {
-                initialOrders: JSON.parse(JSON.stringify(orders)) || []
+                initialOrders: JSON.parse(JSON.stringify(orders)) || [],
+                countOrder: countOrder,
+                pages: Math.ceil(countOrder / pageSize),
             },
         }
     } catch (err) {

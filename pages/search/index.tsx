@@ -13,7 +13,7 @@ import { BsSliders } from 'react-icons/bs';
 import { RxEyeClosed } from 'react-icons/rx';
 import Pagination from '@components/ui-ux/Pagination';
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 20;
 const ratings = [1, 2, 3, 4, 5];
 const prices = [
     {
@@ -285,7 +285,7 @@ export async function getServerSideProps({ query }: QuerySearch) {
     const price = query.price || '';
     const rating = query.rating || '';
     const sort = query.sort || '';
-    const [searchQuery] = querySecurMongoDB(query.query) || '';
+    const [searchQuery] = query && query.query ? querySecurMongoDB(query.query) : [''];
 
     const queryFilter =
         searchQuery && searchQuery !== 'all'
