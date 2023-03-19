@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NextPage } from 'next';
 import { BlobProvider } from '@react-pdf/renderer';
 import { getSession } from 'next-auth/react';
@@ -8,6 +8,7 @@ import Order from '@libs/models/Order';
 import { TypeOrder } from '@libs/typings';
 
 import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
+import { splitString } from '@libs/utils';
 
 interface Props {
     order: TypeOrder | null
@@ -15,31 +16,46 @@ interface Props {
 
 const InvoicePdf: NextPage<Props> = ({ order }) => {
 
+    const [error, setError] = useState(false);
+
+    const handleError = () => {
+        setError(true);
+    };
+
     if (!order) return <div className='flex items-center justify-center w-screen h-screen'>Invoice does not exist</div>;
 
     return (
         <div className='w-screen h-screen'>
             <BlobProvider document={<Invoice order={order} />}>
-                {({ blob, url, loading, error }) =>
-                    loading ? (
-                        'Chargement du PDF...'
-                    )
-                        : error
-                            ? (
-                                <div>
-                                    <a href={url} download={`Facture-${order._id}.pdf`}>
-                                        Télécharger la facture
-                                    </a>
-                                </div>
-                            )
-                            : (
-                                <iframe
-                                    src={url}
-                                    title="Facture"
-                                    style={{ width: '100%', height: '100vh', border: 'none' }}
-                                />
-                            )
-                }
+                {({ blob, url, loading, error: blobError }) => {
+                    if (loading) {
+                        return 'Chargement du PDF...';
+                    }
+
+                    if (blobError) {
+                        return 'Erreur lors de la génération du PDF';
+                    }
+
+                    if (!error) {
+                        return (
+                            <iframe
+                                src={url}
+                                title="Facture"
+                                style={{ width: '100%', height: '100vh', border: 'none' }}
+                                onError={handleError}
+                            ></iframe>
+                        );
+                    } else {
+                        return (
+                            <div>
+                                <p>Impossible d'afficher le PDF, veuillez le télécharger :</p>
+                                <a href={url} download={`Facture-${splitString(order._id)}.pdf`}>
+                                    Télécharger la facture
+                                </a>
+                            </div>
+                        );
+                    }
+                }}
             </BlobProvider>
         </div>
     );
