@@ -73,7 +73,7 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
                     orderNotFound ? (
                         <h1 className='text-2xl font-bold'>Commande introuvable !</h1>
                     ) : (
-                        <div className='w-full overflow-x-hidden max-w-screen'>
+                        <div className='w-screen overflow-x-hidden sm:w-full max-w-screen'>
 
                             {
                                 enableCheckout === false && (
@@ -100,7 +100,6 @@ const OrderSummary: NextPage<Props> = ({ order, countOrders, orderNotFound, err 
                                         {
                                             order.orderItems.map((item, key) => <OrderItemCard key={key} item={item} />)
                                         }
-
                                     </div>
 
                                     <div className="flex flex-col items-stretch justify-center w-full space-y-4 md:flex-row md:space-y-0 md:space-x-6 xl:space-x-8">
