@@ -1,13 +1,14 @@
 import React from 'react';
 import { NextPage } from 'next';
 import { PDFViewer } from '@react-pdf/renderer';
+import { BlobProvider } from '@react-pdf/renderer';
+import { getSession } from 'next-auth/react';
 
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
 import { TypeOrder } from '@libs/typings';
 
 import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
-import { getSession } from 'next-auth/react';
 
 interface Props {
     order: TypeOrder | null
@@ -19,12 +20,25 @@ const InvoicePdf: NextPage<Props> = ({ order }) => {
 
     return (
         <div className='w-screen h-screen'>
-            <PDFViewer
+            {/*            <PDFViewer
                 width="100%"
                 height="100%"
             >
                 <Invoice order={order} />
-            </PDFViewer>
+    </PDFViewer>*/}
+            <BlobProvider document={<Invoice order={order} />}>
+                {({ blob, url, loading, error }) =>
+                    loading ? (
+                        'Chargement du PDF...'
+                    ) : (
+                        <iframe
+                            src={url}
+                            title="Facture"
+                            style={{ width: '100%', height: '100vh', border: 'none' }}
+                        />
+                    )
+                }
+            </BlobProvider>
         </div>
     );
 }
@@ -46,7 +60,6 @@ export const getServerSideProps = async (context: any) => {
         if (!user) return defaultReturn;
 
         let orderId = pdfId.replace(/-/g, "");
-
 
         await db.connect();
         const order = await Order.findOne({ _id: orderId, user: user._id }, { paymentResultStripe: 0 });
