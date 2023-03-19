@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { DotsVerticalIcon } from '@heroicons/react/solid';
 
@@ -41,6 +41,21 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
         }
     }
 
+    const enableToRefund = useMemo(() => {
+        
+        if(order.isPaid === false) return false;
+        
+        let deliveredSatusAllow = false;
+        if (order?.deliveredAt) {
+            const today = new Date();
+            const diffTime = today.getTime() - new Date(order?.deliveredAt).getTime();
+            const diffDays = diffTime / (1000 * 3600 * 24);
+            deliveredSatusAllow = diffDays > 7
+        }
+
+        return order.isCancel || order.isRefund || deliveredSatusAllow ? false : true
+    }, [order]);
+
     return (
         <div className="py-4 mt-3 bg-white border rounded shadow-md">
             <div className="flex items-center justify-between p-4">
@@ -63,7 +78,9 @@ const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
                                     <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire</li>
                                 </Link>
 
-                                <li onClick={() => handleRefund(order)} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
+                                {
+                                    enableToRefund && <li onClick={() => handleRefund(order)} className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Annuler la commande</li>
+                                }
 
                                 <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Facture</li>
 
