@@ -89,7 +89,7 @@ const Invoice = ({ order }: Props) => {
             country: 'France',
         },
         items: [
-            { name: 'Produit 1', quantity: 2, unitPrice: 50, unitTva: 5.5 },
+            { name: 'Produit 1', quantity: 4, unitPrice: 50, unitTva: 5.5 },
             { name: 'Produit 2', quantity: 1, unitPrice: 100, unitTva: 5.5 },
         ],
         subtotal: 200,
@@ -136,17 +136,19 @@ const Invoice = ({ order }: Props) => {
                     <View style={styles.tableHeader}>
                         <Text style={styles.tableColHeader}>Nom</Text>
                         <Text style={styles.tableColHeader}>Quantité</Text>
-                        <Text style={styles.tableColHeader}>Prix unitaire</Text>
+                        <Text style={styles.tableColHeader}>Prix unit. HT</Text>
+                        <Text style={styles.tableColHeader}>Total HT</Text>
                         <Text style={styles.tableColHeader}>TVA</Text>
-                        <Text style={styles.tableColHeader}>Total</Text>
+                        <Text style={styles.tableColHeader}>Total TTC</Text>
                     </View>
                     {invoiceData.items.map((item: any, index: any) => (
                         <View style={styles.tableRow} key={index}>
                             <Text style={styles.tableCol}>{item.name}</Text>
                             <Text style={styles.tableCol}>{item.quantity}</Text>
                             <Text style={styles.tableCol}>{fixedPriceToCurrency(item.unitPrice)}</Text>
-                            <Text style={styles.tableCol}>{item.unitTva}%</Text>
                             <Text style={styles.tableCol}>{fixedPriceToCurrency(item.quantity * item.unitPrice)}</Text>
+                            <Text style={styles.tableCol}>{item.unitTva}%</Text>
+                            <Text style={styles.tableCol}>{fixedPriceToCurrency((item.quantity * item.unitPrice) + (item.quantity * item.unitPrice) * (item.unitTva / 100))}</Text>
                         </View>
                     ))}
                 </View>

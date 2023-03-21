@@ -8,13 +8,17 @@ import Productcard from '@components/cards/product-card'
 import ServiceCard from '@components/cards/ServiceCard'
 import Carousel from '@components/contents/Carousel'
 
-import database from "@devasset/database.json"
+import { fetchGetJSON, fetchPostJSON } from '@libs/utils/api-helpers'
+import db from '@libs/database/dbConnect'
+import Product from '@libs/models/Product'
 
 type Props = {
   products: TypeProduct[];
 }
 
 const Home: NextPage<Props> = ({ products }) => {
+
+  console.log(products)
 
   const services = [
     {
@@ -69,7 +73,7 @@ const Home: NextPage<Props> = ({ products }) => {
               <Carousel slidesData={slidesData} />
             </div>
           </div>
-          
+
           <div className='absolute bottom-0 z-0 w-full h-32 bg-gradient-to-t from-white to-transparent' />
           <img src="https://blog.liebherr.com/electromenager/fr/wp-content/uploads/sites/13/2020/10/harvestedfood-min-1-1920x800.png" className='w-screen max-h-[100vh] h-full min-h-[50vh] object-cover' alt="" />
         </div>
@@ -80,24 +84,74 @@ const Home: NextPage<Props> = ({ products }) => {
         </div>
       </div>
 
-      <div className="max-w-2xl px-4 py-16 mx-auto sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-        <div className="grid grid-cols-2 gap-y-10 gap-x-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-x-8">
-          {
-            products.map((data, key) => <Productcard product={data} key={key} />)
-          }
-        </div>
+      <div className="max-w-[1400px] py-10 mx-auto space-y-8 px-4">
+
+        {
+          products.map((categorie, key) => (
+            <div>
+              <h2 className='mb-3 text-2xl font-bold'>{categorie.categorie.name}</h2>
+              <div key={key} className="grid grid-cols-1 gap-y-10 gap-x-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+                {
+                  categorie.items.map((data, key) => <Productcard product={data} key={key} />)
+                }
+              </div>
+            </div>
+          ))
+        }
       </div>
 
     </BasescreenWrapper>
   )
 }
 
-export const getServerSideProps = async () => {
+export const getStaticProps = async () => {
+  try {
+    await db.connect();
 
-  return {
-    props: {
-      products: database.products
-    },
+    const results = await Product.aggregate([
+      {
+        $lookup: {
+          from: 'categories', // Remplacez par le nom de votre collection de catégories
+          localField: 'categorie', // Remplacez par le nom de champ qui fait référence à la catégorie dans votre modèle de produit
+          foreignField: '_id',
+          as: 'category',
+        },
+      },
+      {
+        $unwind: '$category', // "Dérouler" le tableau des catégories pour accéder aux sous-catégories
+      },
+      {
+        $group: {
+          _id: '$category',
+          items: {
+            $push: '$$ROOT', // Ajouter l'objet du produit complet au groupe
+          },
+        },
+      },
+      {
+        $project: {
+          categorie: '$_id',
+          items: {
+            $slice: ['$items', 20],
+          },
+        },
+      },
+    ]);
+
+    return {
+      props: {
+        products: JSON.parse(JSON.stringify(results)),
+      },
+      revalidate: 300, // => 5 minutes
+    }
+  } catch (err) {
+    return {
+      props: {
+        products: []
+      },
+    }
+  } finally {
+    await db.disconnect();
   }
 }
 

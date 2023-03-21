@@ -76,7 +76,11 @@ export const getServerSideProps = async (context: any) => {
         let orderId = pdfId.replace(/-/g, "");
 
         await db.connect();
-        const order = await Order.findOne({ _id: orderId, user: user._id }, { paymentResultStripe: 0 });
+
+        const order = user.isAdmin === true 
+            ? await Order.findOne({ _id: orderId }, { paymentResultStripe: 0 })
+            : await Order.findOne({ _id: orderId, user: user._id }, { paymentResultStripe: 0 });
+
         await db.disconnect();
 
         return {

@@ -29,10 +29,12 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 countInStock: 1
             }
         )
-        await db.disconnect();
-        res.send({ message: 'Successfully finded', data: products });
-    } catch (error) {
 
+        return res.send({ message: 'Successfully finded', data: products });
+    } catch (error) {
+        return res.status(500).send({ message: 'Error finded', data: [] });
+    } finally {
+        await db.disconnect();
     }
 };
 
