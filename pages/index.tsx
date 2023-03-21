@@ -1,7 +1,7 @@
 import type { NextPage } from 'next/types'
 import React from 'react'
 
-import { TypeProduct } from '@libs/typings'
+import { TypeCategorie, TypeProduct } from '@libs/typings'
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
 import Productcard from '@components/cards/product-card'
@@ -13,12 +13,14 @@ import db from '@libs/database/dbConnect'
 import Product from '@libs/models/Product'
 
 type Props = {
-  products: TypeProduct[];
+  homePageDetails: {
+    _id: TypeCategorie
+    categorie: TypeCategorie
+    items: TypeProduct[]
+  }[];
 }
 
-const Home: NextPage<Props> = ({ products }) => {
-
-  console.log(products)
+const Home: NextPage<Props> = ({ homePageDetails }) => {
 
   const services = [
     {
@@ -85,12 +87,11 @@ const Home: NextPage<Props> = ({ products }) => {
       </div>
 
       <div className="max-w-[1400px] py-10 mx-auto space-y-8 px-4">
-
         {
-          products.map((categorie, key) => (
-            <div>
+          homePageDetails.map((categorie, key) => (
+            <div key={key}>
               <h2 className='mb-3 text-2xl font-bold'>{categorie.categorie.name}</h2>
-              <div key={key} className="grid grid-cols-1 gap-y-10 gap-x-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+              <div className="grid grid-cols-1 gap-y-10 gap-x-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                 {
                   categorie.items.map((data, key) => <Productcard product={data} key={key} />)
                 }
@@ -111,20 +112,20 @@ export const getStaticProps = async () => {
     const results = await Product.aggregate([
       {
         $lookup: {
-          from: 'categories', // Remplacez par le nom de votre collection de catégories
-          localField: 'categorie', // Remplacez par le nom de champ qui fait référence à la catégorie dans votre modèle de produit
+          from: 'categories',
+          localField: 'categorie',
           foreignField: '_id',
           as: 'category',
         },
       },
       {
-        $unwind: '$category', // "Dérouler" le tableau des catégories pour accéder aux sous-catégories
+        $unwind: '$category',
       },
       {
         $group: {
           _id: '$category',
           items: {
-            $push: '$$ROOT', // Ajouter l'objet du produit complet au groupe
+            $push: '$$ROOT',
           },
         },
       },
@@ -140,14 +141,14 @@ export const getStaticProps = async () => {
 
     return {
       props: {
-        products: JSON.parse(JSON.stringify(results)),
+        homePageDetails: JSON.parse(JSON.stringify(results)),
       },
       revalidate: 300, // => 5 minutes
     }
   } catch (err) {
     return {
       props: {
-        products: []
+        homePageDetails: []
       },
     }
   } finally {

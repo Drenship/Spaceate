@@ -36,7 +36,7 @@ export default function AdminscreenWrapper({ title, children }: Props) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Navbar />
+            <Navbar leftButton={true} />
 
             <main className="flex w-full h-full mt-16">
                 <div className='sidebar w-[280px] h-[calc(100vh-64px)] border-r shadow-lg sticky top-16 bg-gray-100 hidden lg:block z-40'>

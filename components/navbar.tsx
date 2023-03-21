@@ -16,10 +16,15 @@ import { BsPersonPlusFill } from 'react-icons/bs';
 import { TypeCartItem } from '@libs/typings';
 
 interface NavbarProps {
+    leftButton?: boolean
     placeholderSearch?: string;
 }
- 
-function Navbar({ placeholderSearch }: NavbarProps) {
+
+Navbar.defaultProps = {
+    leftButton: false,
+}
+
+function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     const router = useRouter()
     const { status, data: session } = useSession();
     const [cartItem, setCartItem] = useRecoilState(cartState)
@@ -82,10 +87,13 @@ function Navbar({ placeholderSearch }: NavbarProps) {
     return (
         <nav className="fixed top-0 z-50 justify-between h-16 space-x-0.5 shadow-lg md:space-x-4 navbar bg-base-100 md:px-8">
             <div className='flex-none'>
-
-                <button ref={ref} className="btn btn-square btn-ghost lg:hidden" onClick={handleToggleSidebar}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
+                {
+                    leftButton && (
+                        <button ref={ref} className="btn btn-square btn-ghost lg:hidden" onClick={handleToggleSidebar}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </button>
+                    )
+                }
 
                 <Link href='/' className="hidden text-xl font-black text-transparent uppercase sm:block bg-clip-text bg-gradient-to-r via-sky-500 from-blue-700 to-purple-500" >
                     Spaceate
@@ -102,9 +110,9 @@ function Navbar({ placeholderSearch }: NavbarProps) {
                         setSearchBarFocus(true);
                         const [value, allow] = querySecurMongoDB(e.currentTarget.value.trim());
 
-                        if(allow){
+                        if (allow) {
                             setQuery(value);
-                        } 
+                        }
 
                         if (e.key === "Enter") {
                             handleRedirectSearch()

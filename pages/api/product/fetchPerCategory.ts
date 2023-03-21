@@ -4,8 +4,6 @@ import Product from '@libs/models/Product';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
-        case 'POST':
-            return handlePostRequest(req, res);
         case 'GET':
             return handlePostRequest(req, res);
         default:

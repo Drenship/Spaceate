@@ -179,5 +179,4 @@ const Invoice = ({ order }: Props) => {
     );
 };
 
-
 export default Invoice;
