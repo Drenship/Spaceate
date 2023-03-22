@@ -9,6 +9,7 @@ import { TypeOrder } from '@libs/typings';
 
 import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
 import { splitString } from '@libs/utils';
+import Head from 'next/head';
 
 interface Props {
     order: TypeOrder | null
@@ -22,6 +23,9 @@ const InvoicePdf: NextPage<Props> = ({ order }) => {
 
     return (
         <div className='w-screen h-screen'>
+            <Head>
+                <title>{`Facture n°${splitString(order._id)}`}</title>
+            </Head>
             <BlobProvider document={<Invoice order={order} />}>
                 {({ blob, url, loading, error: blobError }) => {
                     if (loading) {
@@ -77,7 +81,7 @@ export const getServerSideProps = async (context: any) => {
 
         await db.connect();
 
-        const order = user.isAdmin === true 
+        const order = user.isAdmin === true
             ? await Order.findOne({ _id: orderId }, { paymentResultStripe: 0 })
             : await Order.findOne({ _id: orderId, user: user._id }, { paymentResultStripe: 0 });
 

@@ -232,13 +232,10 @@ export const getServerSideProps = async () => {
 
         const orders = await Order.find(orderSearchFullQuery, {
             _id: 1,
-
             totalPrice: 1,
-
             isCancel: 1,
             isRefund: 1,
             isPaid: 1,
-
             deliveredAt: 1,
             createdAt: 1
         })
