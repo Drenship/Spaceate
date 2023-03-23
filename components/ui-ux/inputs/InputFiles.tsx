@@ -8,7 +8,8 @@ type Props = {
         values: string[]
         imageClass: string
     },
-    onChange: (formData: FormData) => void;
+    onChange: (files: FileList | File | string) => void;
+    setRemoveItem?: (file: string) => void
 }
 
 const defaultProps: Props = {
@@ -18,26 +19,30 @@ const defaultProps: Props = {
         values: [],
         imageClass: ""
     },
-    onChange: (formData: FormData) => {}
+    onChange: (files: FileList | File | string) => { },
+    setRemoveItem: (file: string) => { }
 };
 
 type SIProps = {
     image: string
     imageClass: string
-    setRemove: (x: any) => void
+    setRemoveItem: (x: string) => void
+    setUrls: (x: string[]) => void
 }
 
-const ShowImage = ({ image, imageClass, setRemove }: SIProps) => {
-    const removeHandler = () => {
-        setRemove(prev => prev.filter(c => c !== image))
+const ShowImage = ({ image, imageClass, setRemoveItem, setUrls }: SIProps) => {
+    const removeHandler = (e: React.BaseSyntheticEvent) => {
+        e.preventDefault();
+        setRemoveItem(image)
+        setUrls(prev => prev.filter(c => c !== image))
     }
 
     return (
-        <img className={`rounded-lg cursor-pointer ${imageClass}`} alt="" src={replaceURL(image)} onDoubleClick={removeHandler}/>
+        <img className={`rounded-lg cursor-pointer ${imageClass}`} alt="" src={replaceURL(image)} onDoubleClick={removeHandler} />
     )
 }
 
-export default function InputFiles({ multiple, input, onChange }: Props = defaultProps) {
+export default function InputFiles({ multiple, input, onChange, setRemoveItem }: Props = defaultProps) {
 
     const { name, values, imageClass } = input;
 
@@ -57,7 +62,7 @@ export default function InputFiles({ multiple, input, onChange }: Props = defaul
     useEffect(() => {
         if (files.length === 0) return;
         document.getElementById(uuid)!.innerHTML = "";
-        if(multiple === true){
+        if (multiple === true) {
             for (let index = 0; index < urls.length; index++) {
                 document.getElementById(uuid)!.innerHTML += `<img class="rounded-lg ${imageClass}" alt="" src="${replaceURL(urls[index])}"/>`;
             }
@@ -72,26 +77,25 @@ export default function InputFiles({ multiple, input, onChange }: Props = defaul
     }, [files]);
 
     const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
         if (!event.target.files?.length) {
             return;
         }
-
         _ShowMiniature(event);
-
-        const formData = new FormData();
-
-        Array.from(event.target.files).forEach((file) => {
-            formData.append(event.target.name, file);
-        });
-
-        onChange(formData);
+        onChange(event.target.files);
     };
 
     return (
         <div className='flex flex-col w-full'>
             <div id={uuid} className="grid self-center w-full grid-cols-5 gap-5">
                 {
-                    urls?.map((data, key) =><ShowImage key={key} imageClass={imageClass} image={data} setRemove={setUrls}/>)
+                    urls?.map((data, key) => <ShowImage
+                        key={key}
+                        imageClass={imageClass}
+                        image={data}
+                        setRemoveItem={setRemoveItem}
+                        setUrls={setUrls}
+                    />)
                 }
             </div>
             <input

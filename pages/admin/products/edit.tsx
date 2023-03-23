@@ -17,9 +17,9 @@ import InputTextarea from '@components/ui-ux/inputs/InputTextarea';
 import { InputNumber } from '@components/ui-ux/inputs/InputNumber';
 import InputCheckbox from '@components/ui-ux/inputs/InputCheckbox';
 
-import PrintObject from '@components/PrintObject';
 import { useNotifys } from '@libs/hooks/notify';
 import { fetchPostJSON, fetchPutJSON } from '@libs/utils/api-helpers';
+import { uploadFile } from '@libs/firebase/storage';
 
 type Props = {
     slug: string | null
@@ -33,13 +33,13 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
     const [currentSubCategorie, setCurrentSubCategorie] = useState<TypeCategorie>();
-    const [mainImage, setMainImage] = useState<FileInfo[] | string | null>(productFind ? initialProduct.main_image : null);
+    const [mainImage, setMainImage] = useState<string | null>(productFind ? initialProduct.main_image : null);
     const [newMainImageURL, setNewMainImageURL] = useState<string | null>(null);
-    const [images, setImages] = useState<FileInfo[] | string[] | null>(productFind ? initialProduct.images : null);
+    const [images, setImages] = useState<string[] | null>(productFind ? initialProduct.images : null);
 
     const { pushNotify } = useNotifys();
 
-    const onChangeUploadHandler = async (formData: FormData, callback: any) => {
+    /* const onChangeUploadHandler = async (formData: FormData, callback: any) => {
         try {
             const config: any = {
                 headers: { 'content-type': 'multipart/form-data' },
@@ -57,6 +57,19 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
             console.log(error);
             throw new Error('Error uploading file');
         }
+    }; */
+
+    const onChangeUploadHandler = async (files: FileList, callback: any) => {
+        Array.from(files).forEach(async (file) => {
+            if (file == null) return;
+            const result = await uploadFile({
+                file: file,
+                path: "products"
+            })
+            if (!result) return;
+            callback(result)
+        })
+
     };
 
     const handleSubmitProduct = async (e: React.BaseSyntheticEvent) => {
@@ -68,18 +81,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                 formDataObject[key] = value;
             }
 
-
-            formDataObject.main_image = mainImage && mainImage[0] && mainImage[0]?.url
-                ? mainImage[0].url : mainImage
-                    ? mainImage : newMainImageURL
-                        ? newMainImageURL : ""
-
-            formDataObject.images = []
-            if (images) {
-                let imagesForm: string[] = []
-                images.forEach((i: FileInfo) => imagesForm.push(i?.url ? i.url : i))
-                formDataObject.images = imagesForm
-            }
+            formDataObject.main_image = mainImage;
+            formDataObject.images = images
 
             formDataObject.marge = Number(formDataObject.marge)
             formDataObject.isFeatured = formDataObject.isFeatured === "on" ? true : false
@@ -163,7 +166,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                         values: [product?.main_image],
                                         imageClass: "col-span-full mx-auto max-w-[350px] object-cover rounded-lg aspect-square"
                                     }}
-                                    onChange={(formData: FormData) => onChangeUploadHandler(formData, setMainImage)}
+                                    onChange={(file: any) => onChangeUploadHandler(file, (next: string) => setMainImage(next))}
+                                    setRemoveItem={() => setMainImage(null)}
                                 />
                                 <InputText
                                     title="Url de l'image"
@@ -243,15 +247,16 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 input={{
                                     name: "images",
                                     values: product?.images || [],
-                                    imageClass: "mx-auto max-w-[280px] object-cover rounded-lg aspect-square"
+                                    imageClass: "mx-auto max-w-[280px] object-cover rounded-lg aspect-square shadow-lg"
                                 }}
-                                onChange={(formData: FormData) => onChangeUploadHandler(formData, (next: FileInfo[]) => {
+                                onChange={(files: any) => onChangeUploadHandler(files, (next: string) => {
                                     if (images !== null) {
-                                        setImages([...images, ...next])
+                                        setImages(prev => [...prev, next])
                                     } else {
-                                        setImages(next)
+                                        setImages([next])
                                     }
                                 })}
+                                setRemoveItem={(imageUrl) => setImages(prevImages => prevImages ? prevImages.filter(image => image !== imageUrl) : null)}
                             />
                         </div>
                     </div>

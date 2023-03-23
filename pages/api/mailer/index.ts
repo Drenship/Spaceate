@@ -1,29 +1,42 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { isSameOrigin } from '@libs/Middleware/Api.Middleware.cross-origin';
+import { sendMail } from '@libs/utils/email-sendgrid';
 
-import sgMail from '@sendgrid/mail';
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+  const requestOrigin = req.headers.origin;
+  const targetUrl = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://lodcalhost:3000';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST' || req.method === 'GET') {
-    // Configurez les options de l'email
+  //if (!requestOrigin || isSameOrigin(requestOrigin, targetUrl) === false) {
+  //  return res.status(405).send({ message: 'L\'origine de la requête n\'est pas autorisée.' });
+  //}
 
-    const msg = {
-      from: req.body.from || 'automatically@spaceate.vercel.app',
+  switch (req.method) {
+    case 'GET':
+      return handlePostRequest(req, res);
+    default:
+      return res.status(405).send({ message: 'Method not allowed' });
+  }
+};
+
+const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+
+  try {
+
+    const result = await sendMail({
+      from: req.body.from || 'florentin.greneche@gmail.com',
       to: req.body.to || 'onyxx61@gmail.com',
       subject: req.body.subject || 'Sujet par défaut',
       text: req.body.text || 'Ceci est un message par défaut.',
-      html: req.body.html || '<p>Ceci est un message par défaut.</p>',
-    };
+      html: req.body.html || '<p style={{text-color: "blue"}}">Ceci est un message par défaut.</p>',
+    })
 
-    // Envoyez l'email
-    try {
-      await sgMail.send(msg);
-      res.status(200).json({ message: 'Email envoyé avec succès.' });
-    } catch (error) {
-      res.status(500).json({ message: `Erreur lors de l'envoi de l'email: ${error}` });
-    }
-  } else {
-    res.status(405).json({ message: 'Méthode non autorisée.' });
+    res.status(result.status).json({ message: result.message });
+
+  } catch (error) {
+    res.status(500).json({ message: `Erreur lors de l'envoi de l'email: ${error}` });
+
   }
 }
+
+export default handler;

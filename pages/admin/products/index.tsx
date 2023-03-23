@@ -154,6 +154,7 @@ export const getServerSideProps = async ({ query }: QuerySearch) => {
             createdAt: 1
         })
             .skip(pageSize * (page - 1))
+            .sort({ createdAt: -1 })
             .limit(pageSize)
             .lean();
 
