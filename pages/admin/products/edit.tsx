@@ -30,6 +30,8 @@ type Props = {
 
 const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, categories }) => {
 
+    console.log(initialProduct)
+
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
     const [currentSubCategorie, setCurrentSubCategorie] = useState<TypeCategorie>();
@@ -354,7 +356,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                         {
                             price && buyPrice && marge && tva && (
                                 <div className='col-span-full'>
-                                    <div className='grid w-full grid-cols-1 md:grid-cols-2 gap-7 mt-7 '>
+                                    <div className='grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 mt-7 '>
                                         <div className='space-y-2'>
                                             <h4 className='font-bold'>Details du prix:</h4>
                                             <div className='flex items-center justify-between w-full md:max-w-sm'>
@@ -398,8 +400,32 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                                 <span>{fixedPriceToCurrency(stock * tva)}</span>
                                             </div>
                                             <div className='flex items-center justify-between w-full md:max-w-sm'>
-                                                <span>bénéfice net estimer:</span>
+                                                <span>Bénéfice net estimer:</span>
                                                 <span>{fixedPriceToCurrency((stock * marge) - (stock * tva))}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className='space-y-2'>
+                                            <h4 className='font-bold'>Gains réaliser:</h4>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Totals vendu</span>
+                                                <span>{product.stats.totalSelled}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Prix achat total:</span>
+                                                <span>{fixedPriceToCurrency(product.stats.totalSelled * buyPrice)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Marge total:</span>
+                                                <span>{fixedPriceToCurrency(product.stats.totalSelled * marge)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>TVA total:</span>
+                                                <span>{fixedPriceToCurrency(product.stats.totalSelled * tva)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Bénéfice net:</span>
+                                                <span>{fixedPriceToCurrency((product.stats.totalSelled * marge) - (product.stats.totalSelled * tva))}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -459,7 +485,7 @@ export const getServerSideProps = async ({ query }: any) => {
         await db.connect();
         const categories = await Categorie.find().lean();
         if (slug) {
-            product = await Product.findOne({ slug }).populate('categorie').lean();
+            product = await Product.findOne({ slug }, { reviews: 0 }).populate('categorie').lean();
         }
         await db.disconnect()
 
