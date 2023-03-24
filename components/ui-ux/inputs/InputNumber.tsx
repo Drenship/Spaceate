@@ -14,6 +14,7 @@ type InputNumber = {
         name: string,
         placeholder: string
         defaultValue: number | 0,
+        forceValue?: number | 0,
         min: number | 0,
         max: number | '',
         step?: number
@@ -24,7 +25,7 @@ type InputNumber = {
 
 
 export const InputNumber: React.FC<InputNumber> = ({ title, description, input, onChange }) => {
-    const { name, defaultValue, min, max, step, placeholder } = input;
+    const { name, defaultValue, forceValue, min, max, step, placeholder } = input;
 
     return (
         <div>
@@ -34,6 +35,7 @@ export const InputNumber: React.FC<InputNumber> = ({ title, description, input, 
                 type="number"
                 name={name}
                 defaultValue={defaultValue}
+                value={forceValue}
                 min={min}
                 max={max}
                 step={step}

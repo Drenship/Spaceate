@@ -7,7 +7,7 @@ import { TypeCategorie, TypeProduct, FileInfo } from '@libs/typings';
 import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
 import Categorie from '@libs/models/Categorie';
-import { textToSLug } from '@libs/utils';
+import { fixedPriceToCurrency, textToSLug } from '@libs/utils';
 
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 import InputText from '@components/ui-ux/inputs/InputText';
@@ -34,30 +34,10 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
     const [currentSubCategorie, setCurrentSubCategorie] = useState<TypeCategorie>();
     const [mainImage, setMainImage] = useState<string | null>(productFind ? initialProduct.main_image : null);
-    const [newMainImageURL, setNewMainImageURL] = useState<string | null>(null);
     const [images, setImages] = useState<string[] | null>(productFind ? initialProduct.images : null);
 
     const { pushNotify } = useNotifys();
 
-    /* const onChangeUploadHandler = async (formData: FormData, callback: any) => {
-        try {
-            const config: any = {
-                headers: { 'content-type': 'multipart/form-data' },
-                onUploadProgress: (event: ProgressEvent) => {
-                    console.log(`Current progress:`, Math.round((event.loaded * 100) / event.total));
-                },
-            };
-
-            const response = await axios.post('/api/admin/uploader', formData, config);
-            const { data: { files } } = response;
-
-            console.log('response', files);
-            callback(files);
-        } catch (error) {
-            console.log(error);
-            throw new Error('Error uploading file');
-        }
-    }; */
 
     const onChangeUploadHandler = async (files: FileList, callback: any) => {
         Array.from(files).forEach(async (file) => {
@@ -136,6 +116,27 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
     }, [newName, product]);
 
 
+    const [price, setPrice] = useState<number | null>(initialProduct ? initialProduct.price : null);
+    const [buyPrice, setBuyPrice] = useState<number | null>(initialProduct ? initialProduct.advancePrice.initialCost : null);
+    const [tvaRate, setTvaRate] = useState<number | null>(initialProduct ? initialProduct.advancePrice.tva : null);
+    const [stock, setStock] = useState<number>(initialProduct ? initialProduct.countInStock : 0);
+
+    const [marge, prixHT, tva] = useMemo(() => {
+
+        let xPrice: number = price ? price : product.price;
+        let xBuyPrice: number = buyPrice ? buyPrice : product.advancePrice.initialCost;
+        let xTva: number = tvaRate ? tvaRate : product.advancePrice.tva;
+
+
+        const marge: number = Number((xPrice - xBuyPrice).toFixed(2));
+        const prixHT: number = Number((xPrice / (1 + (xTva / 100))).toFixed(2));
+        const tva: number = Number((xPrice - prixHT).toFixed(2));
+
+
+        return [marge, prixHT, tva]
+    }, [price, buyPrice, tvaRate, product]);
+
+
     useEffect(() => {
         if (!productFind) return;
         if (typeof initialProduct.subCategorie === "object") return;
@@ -164,20 +165,10 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                     input={{
                                         name: "main_image",
                                         values: [product?.main_image],
-                                        imageClass: "col-span-full mx-auto max-w-[350px] object-cover rounded-lg aspect-square"
+                                        imageClass: "col-span-full w-full sm:mx-auto sm:max-w-[350px] object-cover rounded-lg aspect-square"
                                     }}
                                     onChange={(file: any) => onChangeUploadHandler(file, (next: string) => setMainImage(next))}
                                     setRemoveItem={() => setMainImage(null)}
-                                />
-                                <InputText
-                                    title="Url de l'image"
-                                    description="Lien de l'image"
-                                    input={{
-                                        name: "mainImageUrl",
-                                        defaultValue: product?.main_image || "",
-                                        placeholder: "entrer une url ...",
-                                    }}
-                                    onChange={(e: React.BaseSyntheticEvent) => setNewMainImageURL(e.target.value)}
                                 />
                             </div>
 
@@ -274,7 +265,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 step: 0.01,
                                 placeholder: "entrer un prix ...",
                             }}
-                            onChange={() => { }}
+                            onChange={(e: React.BaseSyntheticEvent) => setPrice(e.target.value)}
                         />
 
                         <InputSelect
@@ -299,9 +290,12 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 step: 1,
                                 placeholder: "entrer votre stock ...",
                             }}
-                            onChange={() => { }}
+                            onChange={(e: React.BaseSyntheticEvent) => setStock(e.target.value)}
                         />
+                    </div>
 
+                    <p className="block mt-10 text-xl font-semibold leading-tight text-gray-800">Details avancer du prix</p>
+                    <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7 ">
                         <InputNumber
                             title="Prix d'achat du produit"
                             description="Prix d'achat"
@@ -313,18 +307,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 step: 0.01,
                                 placeholder: "entrer le prix d'achat ...",
                             }}
-                            onChange={() => { }}
-                        />
-
-                        <InputSelect
-                            title="Tva produit"
-                            description="5,5% pour l'alimentaire"
-                            input={{
-                                name: 'tva',
-                                defaultValue: { name: product?.advancePrice?.marge.toString() || '5.5' },
-                            }}
-                            options={[{ name: '0' }, { name: '5.5' }, { name: '10' }, { name: '20' }]}
-                            setChange={() => { }}
+                            onChange={(e: React.BaseSyntheticEvent) => setBuyPrice(e.target.value)}
                         />
 
                         <InputNumber
@@ -333,6 +316,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                             input={{
                                 name: "marge",
                                 defaultValue: product?.advancePrice?.marge || 0,
+                                forceValue: marge,
                                 min: 0,
                                 max: "",
                                 step: 0.01,
@@ -340,6 +324,88 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                             }}
                             onChange={() => { }}
                         />
+
+                        <InputSelect
+                            title="Tva applicable"
+                            description="5,5% pour l'alimentaire"
+                            input={{
+                                name: 'tva',
+                                defaultValue: { name: product?.advancePrice?.tva.toString() || '5.5' },
+                            }}
+                            options={[{ name: '5.5' }, { name: '10' }, { name: '20' }]}
+                            setChange={(value) => setTvaRate(Number(value.name))}
+                        />
+
+                        <InputNumber
+                            title="Tva du produit €"
+                            description="Marge sur le produit"
+                            input={{
+                                name: "marge",
+                                defaultValue: product?.advancePrice?.tva || 0,
+                                forceValue: tva,
+                                min: 0,
+                                max: "",
+                                step: 0.01,
+                                placeholder: "entrer la marge ...",
+                            }}
+                            onChange={() => { }}
+                        />
+
+                        {
+                            price && buyPrice && marge && tva && (
+                                <div className='col-span-full'>
+                                    <div className='grid w-full grid-cols-1 md:grid-cols-2 gap-7 mt-7 '>
+                                        <div className='space-y-2'>
+                                            <h4 className='font-bold'>Details du prix:</h4>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Prix achat:</span>
+                                                <span>{fixedPriceToCurrency(buyPrice)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Marge:</span>
+                                                <span>{fixedPriceToCurrency(marge)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Prix ht:</span>
+                                                <span>{fixedPriceToCurrency(prixHT)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>TVA ({tvaRate}%):</span>
+                                                <span>{fixedPriceToCurrency(tva)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Prix TTC:</span>
+                                                <span>{fixedPriceToCurrency(price)}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className='space-y-2'>
+                                            <h4 className='font-bold'>Perspective de gains:</h4>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Stock disponible:</span>
+                                                <span>{stock}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Prix achat total:</span>
+                                                <span>{fixedPriceToCurrency(stock * buyPrice)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>Marge total:</span>
+                                                <span>{fixedPriceToCurrency(stock * marge)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>TVA total:</span>
+                                                <span>{fixedPriceToCurrency(stock * tva)}</span>
+                                            </div>
+                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                <span>bénéfice net estimer:</span>
+                                                <span>{fixedPriceToCurrency((stock * marge) - (stock * tva))}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
 
                         <div className='space-y-5 col-span-full'>
                             <InputCheckbox
@@ -380,7 +446,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                     </button>
                 </div>
             </form>
-        </AdminscreenWrapper>
+        </AdminscreenWrapper >
     );
 }
 

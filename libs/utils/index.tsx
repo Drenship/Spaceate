@@ -106,7 +106,8 @@ export function querySecurMongoDB(str: string): [string, boolean] {
 }
 
 export const fixedPriceToCurrency = (price: number) => {
-    return `${price.toFixed(2)}${CURRENCY_SYMBOL}`
+    if(!price) return price;
+    return `${Number(price).toFixed(2)}${CURRENCY_SYMBOL}`
 }
 
 export function splitString(input: string, chunkSize: number = 5, separator: string = '-'): string {

@@ -8,6 +8,7 @@ import { TypeProduct } from '@libs/typings';
 import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 import TableProductLine from '@components/tables/TableProductLine';
 import AdminControlPannel from '@components/AdminContents/AdminControlPannel';
+import Pagination from '@components/ui-ux/Pagination';
 
 const PAGE_SIZE = 20;
 
@@ -45,6 +46,8 @@ function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: 
             query: query,
         });
     }
+
+    const changePage = (page: number) => pageHandler({ page });
 
     useEffect(() => setProducts(initialProducts), [initialProducts]);
 
@@ -119,6 +122,7 @@ function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: 
                         }
                     </tbody>
                 </table>
+                <Pagination current={page} pages={maxPages} pageHandler={(x) => changePage(x)} />
             </div>
 
         </AdminscreenWrapper>
