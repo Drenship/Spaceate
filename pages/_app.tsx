@@ -6,7 +6,6 @@ import { RecoilRoot, RecoilEnv } from 'recoil';
 import { NotifyContextProvider } from '@libs/hooks/notify';
 import { Analytics } from '@vercel/analytics/react';
 import '../styles/globals.css'
-import '../styles/index.css'
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 

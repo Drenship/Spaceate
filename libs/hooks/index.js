@@ -89,3 +89,27 @@ export function useEscapeListener(ref, callback) {
         }
     }, [clickListener, escapeListener, ref])
 }
+
+export const useEscapeGallery = (isOpenLightboxGallery, setIsOpenLightboxGallery) => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsOpenLightboxGallery(false);
+      }
+    };
+  
+    const handleBackButton = () => {
+      setIsOpenLightboxGallery(false);
+    };
+  
+    useEffect(() => {
+      if (isOpenLightboxGallery) {
+        document.body.classList.add("no-scroll");
+        document.addEventListener("keydown", handleEscape);
+        window.addEventListener("popstate", handleBackButton);
+      } else {
+        document.body.classList.remove("no-scroll");
+        document.removeEventListener("keydown", handleEscape);
+        window.removeEventListener("popstate", handleBackButton);
+      }
+    }, [isOpenLightboxGallery, setIsOpenLightboxGallery]);
+  };
