@@ -30,8 +30,6 @@ type Props = {
 
 const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, categories }) => {
 
-    console.log(initialProduct)
-
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [currentCategorie, setCurrentCategorie] = useState<TypeCategorie>(productFind ? initialProduct.categorie : categories[0]);
     const [currentSubCategorie, setCurrentSubCategorie] = useState<TypeCategorie>();
@@ -240,7 +238,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 input={{
                                     name: "images",
                                     values: product?.images || [],
-                                    imageClass: "mx-auto max-w-[280px] object-cover rounded-lg aspect-square shadow-lg"
+                                    imageClass: "mx-auto w-full md:max-w-[280px] object-cover rounded-lg aspect-square shadow-lg"
                                 }}
                                 onChange={(files: any) => onChangeUploadHandler(files, (next: string) => {
                                     if (images !== null) {
@@ -458,6 +456,12 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                 </div>
                 <hr className="h-[1px] bg-gray-100 my-14" />
                 <div className="flex flex-col flex-wrap items-center justify-center w-full px-7 lg:flex-row lg:justify-end md:justify-end gap-x-4 gap-y-4">
+                    <Link
+                        href={`/product/${product.slug}`}
+                        className="bg-white text-center border-green-700 rounded hover:bg-gray-50 transform duration-300 ease-in-out text-sm font-medium px-6 py-4 text-green-700 border lg:max-w-[95px] w-full"
+                    >
+                        Voire
+                    </Link>
                     <Link
                         href='/admin/products'
                         className="bg-white text-center border-indigo-700 rounded hover:bg-gray-50 transform duration-300 ease-in-out text-sm font-medium px-6 py-4 text-indigo-700 border lg:max-w-[95px] w-full"

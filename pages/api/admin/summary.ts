@@ -93,6 +93,18 @@ const handleGetRequest = async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }
         ]).sort({ createAt: 1 });
+
+        salesData.sort((a, b) => {
+            const toDate = (dateString: string) => {
+                const [datePart, hourPart] = dateString.split(':');
+                return new Date(`${datePart}T${hourPart}:00:00`);
+            };
+        
+            const dateA = toDate(a._id);
+            const dateB = toDate(b._id);
+        
+            return dateA.getTime() - dateB.getTime();
+        });
     
     
         const countNewUsers = await User.countDocuments({ createdAt: last24Hours() });

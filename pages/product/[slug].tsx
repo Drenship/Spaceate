@@ -106,21 +106,31 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
             <BasescreenWrapper title={product.name} footer={true}>
                 <div className='flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100 '>
                     { /* left */}
-                    <div className='flex flex-row md:block md:space-x-0 space-x-4 md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 md:p-9 lg:p-12 h-full md:sticky top-16 bg-gray-100'>
-                        <div style={{ boxShadow: `0px 0px 20px 5px ${color}` }} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square max-w-[30vw]'>
+                    <div className='block space-x-0 flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 lg:p-9 h-full md:sticky top-16 bg-gray-100'>
+                        <div style={{ boxShadow: `0px 0px 20px 5px ${color}` }} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                             <BlurImage
                                 src={replaceURL(product.main_image)}
                             />
                         </div>
-                        <div className='grid w-full grid-cols-2 gap-4 md:mt-4 xl:grid-cols-4'>
+                        <div className='grid w-full grid-cols-4 gap-2 mt-2 lg:mt-4 lg:gap-4'>
                             {
-                                product.images?.map((img, key) => <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
+                                [...product.images].slice(0, 4)?.map((img, key) => <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                                     <BlurImage
                                         key={key}
                                         src={replaceURL(img)}
                                     />
+                                    {
+                                        product.images.length > 4 && key === 3 && (
+                                            <div className="absolute inset-0 w-full select-none avatar placeholder">
+                                                <div className="w-full bg-neutral-focus/30 text-neutral-content">
+                                                    <span>+{product.images.length - 4}</span>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
                                 </div>)
                             }
+
                         </div>
                     </div>
 
@@ -224,7 +234,7 @@ export const getServerSideProps = async ({ query }: any) => {
         let sameProducts: any = []
 
         if (slug) {
-            
+
             await db.connect();
             product = await Product.findOne({ slug: slug, isPublished: true }).populate("categorie").lean();
             const find = product ? true : false

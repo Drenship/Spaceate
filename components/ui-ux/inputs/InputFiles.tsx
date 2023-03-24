@@ -87,7 +87,7 @@ export default function InputFiles({ multiple, input, onChange, setRemoveItem }:
 
     return (
         <div className='flex flex-col w-full'>
-            <div id={uuid} className="grid self-center w-full grid-cols-5 gap-5">
+            <div id={uuid} className="grid self-center w-full grid-cols-3 gap-5 md:grid-cols-5">
                 {
                     urls?.map((data, key) => <ShowImage
                         key={key}
