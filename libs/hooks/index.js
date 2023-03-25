@@ -133,33 +133,38 @@ export const useClickOutside = (ref, onClose) => {
 export const useSwipeUp = (setIsOpenLightboxGallery) => {
     const startY = useRef(null);
     const endY = useRef(null);
-
+    const screenHeight = window.innerHeight;
+  
     const handleTouchStart = (event) => {
-        startY.current = event.touches[0].clientY;
+      startY.current = event.touches[0].clientY;
     };
-
+  
     const handleTouchMove = (event) => {
-        endY.current = event.touches[0].clientY;
+      endY.current = event.touches[0].clientY;
     };
-
+  
     const handleTouchEnd = () => {
-        if (startY.current && endY.current && startY.current > endY.current) {
-            setIsOpenLightboxGallery(false);
-        }
-
-        startY.current = null;
-        endY.current = null;
+      if (
+        startY.current &&
+        endY.current &&
+        startY.current - endY.current > screenHeight / 10
+      ) {
+        setIsOpenLightboxGallery(false);
+      }
+  
+      startY.current = null;
+      endY.current = null;
     };
-
+  
     useEffect(() => {
-        document.addEventListener("touchstart", handleTouchStart);
-        document.addEventListener("touchmove", handleTouchMove);
-        document.addEventListener("touchend", handleTouchEnd);
-
-        return () => {
-            document.removeEventListener("touchstart", handleTouchStart);
-            document.removeEventListener("touchmove", handleTouchMove);
-            document.removeEventListener("touchend", handleTouchEnd);
-        };
+      document.addEventListener("touchstart", handleTouchStart);
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
+  
+      return () => {
+        document.removeEventListener("touchstart", handleTouchStart);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+      };
     }, [setIsOpenLightboxGallery]);
-};
+  };
