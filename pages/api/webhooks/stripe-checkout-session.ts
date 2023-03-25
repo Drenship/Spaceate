@@ -109,15 +109,15 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
                 await updateStatsAndStockProducts();
                 await db.disconnect();
 
-                await sendMail({
+                const result = await sendMail({
                     from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
                     to: session.metadata.userEmail,
                     subject: 'Confirmation de commande',
-                    text: req.body.text || 'Votre commande a bien était payer !',
-                    html: req.body.html || '<p style={{text-color: "blue"}}">Votre commande a bien était payer.</p>',
+                    text: 'Votre commande a bien était payer !',
+                    html: '<p style={{text-color: "blue"}}">Votre commande a bien était payer.</p>',
                 })
 
-                return res.send({ message: 'Order update successfully' });
+                return res.send({ message: 'Order update successfully', email: result.message });
 
             } catch (err) {
                 await db.disconnect();
@@ -165,21 +165,21 @@ const handleStripeChargeRefunded = async (req: NextApiRequest, res: NextApiRespo
             }
             await updateStatsAndStockProducts();
 
-            const user: TypeUser | null = User.findById(order.user)
+            const user = User.findById(order.user, { email: 1 })
 
             await db.disconnect();
 
-            if (user) {
-
-                await sendMail({
+            if (user && user?.email) {
+                const result = await sendMail({
                     from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
                     to: user.email,
                     subject: 'Confirmation de remboursement',
-                    text: req.body.text || 'Votre commande a bien été remboursé !',
-                    html: req.body.html || '<p style={{text-color: "blue"}}">Votre commande a bien été remboursé .</p>',
+                    text: 'Votre commande a bien été remboursé !',
+                    html: '<p style={{text-color: "blue"}}">Votre commande a bien été remboursé .</p>',
                 })
+                return res.send({ message: "Order refund is successfully updated", email: result.message });
             }
-            
+
             return res.send({ message: "Order refund is successfully updated" });
 
         } else {

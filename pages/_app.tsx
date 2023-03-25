@@ -20,7 +20,7 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
   return (
     <SessionProvider session={session}>
       <RecoilRoot>
@@ -42,7 +42,12 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   )
 }
 
-function Auth({ children, adminOnly }) {
+interface AuthProps {
+  children: ReactNode;
+  adminOnly?: boolean;
+}
+
+const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
   const router = useRouter();
   const { status, data: session } = useSession({
     required: true,

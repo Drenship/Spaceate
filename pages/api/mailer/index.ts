@@ -24,14 +24,14 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
 
     const result = await sendMail({
-      from: req.body.from || 'florentin.greneche@gmail.com',
-      to: req.body.to || 'onyxx61@gmail.com',
-      subject: req.body.subject || 'Sujet par défaut',
-      text: req.body.text || 'Ceci est un message par défaut.',
-      html: req.body.html || '<p style={{text-color: "blue"}}">Ceci est un message par défaut.</p>',
+      from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
+      to: 'florentin.greneche@gmail.com',
+      subject: 'Confirmation de commande',
+      text: 'Votre commande a bien était payer !',
+      html: '<p style={{text-color: "blue"}}">Votre commande a bien était payer.</p>',
     })
 
-    res.status(result.status).json({ message: result.message });
+    res.status(result.status).json({ message: result.message, result: result });
 
   } catch (error) {
     res.status(500).json({ message: `Erreur lors de l'envoi de l'email: ${error}` });
