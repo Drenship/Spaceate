@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil"
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard } from "swiper";
 import "swiper/css";
-import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 import { cartState } from "@atoms/cartState"
 import { setCartState, CART_ADD_ITEM } from "@atoms/setStates/setCartState"
@@ -111,9 +111,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     }, [router.query])
 
 
+    const closeGallery = () => setIsOpenGallery(false)
 
     useEscapeGallery(isOpenGallery, setIsOpenGallery)
-    useClickOutside(refGallery, () => setIsOpenGallery(false))
+    useClickOutside(refGallery, closeGallery)
     useSwipeAndDoubleTap(setIsOpenGallery);
 
 
@@ -255,40 +256,42 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                 </div>
                             </div>
 
-                            <div
-                                className={`fixed inset-0 z-50 px-4 py-16 overflow-hidden md:px-8 bg-black/20 ${!isOpenGallery && "hidden"}`}
-                                onDoubleClick={() => setIsOpenGallery(false)}
-                            >
-                                <Swiper
-                                    slidesPerView={1}
-                                    spaceBetween={30}
-                                    loop={true}
-                                    keyboard={{
-                                        enabled: true,
-                                    }}
-                                    navigation={true}
-                                    modules={[Navigation, Keyboard]}
-                                    className="mySwiper"
-                                    ref={refGallery}
-                                >
-                                    {
-                                        Gallery.map(img => (
-                                            <SwiperSlide key={img}>
-                                                <div className='relative flex h-full'>
-                                                    <BlurImage
-                                                        src={replaceURL(img)}
-                                                        objectFit="contain"
-                                                        hoverOpacity={false}
-                                                        className='opacity-100 group-hover:opacity-100'
-                                                    />
-                                                </div>
-                                            </SwiperSlide>
-                                        ))
-                                    }
-                                </Swiper>
-
-
-                            </div>
+                            {
+                                isOpenGallery === true && (
+                                    <div
+                                        className="fixed inset-0 z-50 px-4 py-16 overflow-hidden md:px-8 bg-black/20"
+                                        onDoubleClick={closeGallery}
+                                    >
+                                        <Swiper
+                                            slidesPerView={1}
+                                            spaceBetween={30}
+                                            loop={true}
+                                            keyboard={{
+                                                enabled: true,
+                                            }}
+                                            navigation={true}
+                                            modules={[Navigation, Keyboard]}
+                                            className="cursor-pointer"
+                                            ref={refGallery}
+                                        >
+                                            {
+                                                Gallery.map(img => (
+                                                    <SwiperSlide key={img}>
+                                                        <div className='relative flex h-full'>
+                                                            <BlurImage
+                                                                src={replaceURL(img)}
+                                                                objectFit="contain"
+                                                                hoverOpacity={false}
+                                                                className='opacity-100 group-hover:opacity-100 active:cursor-grab'
+                                                            />
+                                                        </div>
+                                                    </SwiperSlide>
+                                                ))
+                                            }
+                                        </Swiper>
+                                    </div>
+                                )
+                            }
                         </>
                     )
             }
