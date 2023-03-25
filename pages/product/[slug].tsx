@@ -47,6 +47,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     const [cartItem, setCartItem] = useRecoilState(cartState)
     const [color, setColor] = useState<string>("");
 
+    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
+
     const refGallery = useRef(null);
     const [Gallery, setGallery] = useState<string[]>([
         product.main_image,
@@ -54,10 +56,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     ])
     const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
     const [canOpenGallery, setCanOpenGallery] = useState<boolean>(true);
-
-
-
-    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
 
 
     const addItemsToCart = () => {
@@ -130,7 +128,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         setIsOpenGallery(false);
         if (isMobile() && canOpenGallery) {
             setCanOpenGallery(false);
-            setTimeout(() => setCanOpenGallery(true), 400);
+            setTimeout(() => setCanOpenGallery(true), 200);
         }
     };
 
