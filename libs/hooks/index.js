@@ -227,7 +227,6 @@ export const useLeftSwipe = (onSwipe) => {
                 const absDeltaY = Math.abs(deltaY);
 
                 if (absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY && deltaX < 0) {
-                    console.log("swiper left")
                     onSwipe();
                 }
 
@@ -247,7 +246,6 @@ export const useLeftSwipe = (onSwipe) => {
 
     return {};
 };
-
 
 export const useRightSwipe = (onSwipe) => {
     const [touchStartX, setTouchStartX] = useState(null);
@@ -270,7 +268,6 @@ export const useRightSwipe = (onSwipe) => {
                 const absDeltaY = Math.abs(deltaY);
 
                 if (absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY && deltaX > 0) {
-                    console.log("swiper right")
                     onSwipe();
                 }
 
@@ -287,6 +284,51 @@ export const useRightSwipe = (onSwipe) => {
             document.removeEventListener("touchend", handleTouchEnd);
         };
     }, [touchStartX, touchStartY, onSwipe]);
+
+    return {};
+};
+
+export const useSwipeAxeX = (onSwipeLeft, onSwipeRight) => {
+    const [touchStartX, setTouchStartX] = useState(null);
+    const [touchStartY, setTouchStartY] = useState(null);
+
+    useEffect(() => {
+        const handleTouchStart = (event) => {
+            const touch = event.touches[0];
+
+            setTouchStartX(touch.clientX);
+            setTouchStartY(touch.clientY);
+        };
+
+        const handleTouchEnd = (event) => {
+            if (touchStartX !== null && touchStartY !== null) {
+                const touch = event.changedTouches[0];
+                const deltaX = touch.clientX - touchStartX;
+                const deltaY = touch.clientY - touchStartY;
+                const absDeltaX = Math.abs(deltaX);
+                const absDeltaY = Math.abs(deltaY);
+
+                if (absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY) {
+                    if (deltaX < 0) {
+                        onSwipeLeft();
+                    } else {
+                        onSwipeRight();
+                    }
+                }
+
+                setTouchStartX(null);
+                setTouchStartY(null);
+            }
+        };
+
+        document.addEventListener("touchstart", handleTouchStart);
+        document.addEventListener("touchend", handleTouchEnd);
+
+        return () => {
+            document.removeEventListener("touchstart", handleTouchStart);
+            document.removeEventListener("touchend", handleTouchEnd);
+        };
+    }, [touchStartX, touchStartY, onSwipeLeft, onSwipeRight]);
 
     return {};
 };

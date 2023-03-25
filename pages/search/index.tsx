@@ -12,7 +12,7 @@ import { TypeCategorie, TypeProduct } from '@libs/typings';
 import { BsSliders } from 'react-icons/bs';
 import { RxEyeClosed } from 'react-icons/rx';
 import Pagination from '@components/ui-ux/Pagination';
-import { useLeftSwipe, useRightSwipe } from '@libs/hooks';
+import { useLeftSwipe, useRightSwipe, useSwipeAxeX } from '@libs/hooks';
 
 const PAGE_SIZE = 20;
 const ratings = [1, 2, 3, 4, 5];
@@ -127,8 +127,10 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
     const ratingHandler = (e: React.BaseSyntheticEvent) => filterSearch({ rating: e.target.value });
 
     // toggle filter panel on mobile
-    useRightSwipe(() => setToggleFiltersPannel(0)) // add
-    useLeftSwipe(() => setToggleFiltersPannel(fixeValueFiltersPannel)) // remove
+    useSwipeAxeX(
+        () => setToggleFiltersPannel(fixeValueFiltersPannel), 
+        () => setToggleFiltersPannel(0)
+    )
 
     useEffect(() => {
         if (toggleFiltersPannel) {
