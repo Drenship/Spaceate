@@ -37,7 +37,7 @@ export default function BestsellerCard({ product }) {
     }
 
     return (
-        <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
+        <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center w-full overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
             <div className="relative">
                 
                 <div className='relative aspect-[3/2] overflow-hidden'>

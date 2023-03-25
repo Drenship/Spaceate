@@ -25,6 +25,7 @@ import Product from '@libs/models/Product';
 import { replaceURL, teinteDeLimage } from '@libs/utils';
 import Link from 'next/link';
 import { useClickOutside, useEscapeGallery } from '@libs/hooks';
+import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct';
 
 type Props = {
     productFind: boolean
@@ -43,7 +44,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     const refGallery = useRef(null);
     const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
     const [Gallery, setGallery] = useState<string[]>([product.main_image, ...product.images])
-    const [currentSlideGallery, setcurrentSlideGallery] = useState<number>(0)
+    const [currentSlideGallery, setcurrentSlideGallery] = useState(null)
 
 
 
@@ -126,7 +127,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                         <>
                             <div className='flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100 '>
                                 { /* left */}
-                                <div className='block space-x-0 flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 lg:p-9 h-full md:sticky top-16 bg-gray-100'>
+                                <div className='block space-x-0 flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 lg:p-9 h-full md:sticky bg-gray-100'>
                                     <div style={{ boxShadow: `0px 0px 20px 5px ${color}` }} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                                         <BlurImage
                                             src={replaceURL(product.main_image)}
@@ -164,7 +165,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     { /* Product info */}
                                     <section>
                                         <p>Accueil &gt; {product?.categorie?.name} &gt; {product?.subCategorie?.name}</p>
-                                        <h1 className='text-3xl font-bold uppercase'>{product.name}</h1>
+                                        <h1 className='mt-5 text-3xl font-bold uppercase'>{product.name}</h1>
                                         <div className='flex items-center justify-start mt-5 space-x-2'>
                                             <Rating rating={product.rating === 0 ? 5 : product.rating} />
                                             <p className='space-x-1'>
@@ -208,13 +209,11 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     </section>
 
                                     { /* Product associate */}
-                                    <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
-                                        <h2 className='text-xl font-bold uppercase'>Produits similaire</h2>
-                                        <div className="grid grid-cols-1 mt-5 sm:grid-cols-2 lg:grid-cols-3 justify-items-between gap-x-6 gap-y-5">
-                                            {
-                                                sameProducts?.map((data, key) => <BestsellerCard product={data} key={key} />)
-                                            }
-                                        </div>
+                                    <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
+                                        <h2 className='mb-5 text-xl font-bold uppercase'>Produits similaire</h2>
+                                        {
+                                            sameProducts && <CarouselProduct overflow="hidden" products={sameProducts} /> 
+                                        }
                                     </section>
 
                                     { /* Commentaire section */}
@@ -245,7 +244,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                 </div>
                             </div>
 
-                            <div className={`fixed inset-0 z-50 w-screen h-screen px-4 py-16 overflow-hidden md:px-8 bg-black/20 ${!isOpenGallery && "hidden"}`}>
+                            <div className={`fixed inset-0 z-50 px-4 py-16 overflow-hidden md:px-8 bg-black/20 ${!isOpenGallery && "hidden"}`}>
                                 <Swiper
                                     slidesPerView={1}
                                     spaceBetween={30}

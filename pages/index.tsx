@@ -4,13 +4,12 @@ import React from 'react'
 import { TypeCategorie, TypeProduct } from '@libs/typings'
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
-import Productcard from '@components/cards/product-card'
 import ServiceCard from '@components/cards/ServiceCard'
 import Carousel from '@components/contents/Carousel'
 
-import { fetchGetJSON, fetchPostJSON } from '@libs/utils/api-helpers'
 import db from '@libs/database/dbConnect'
 import Product from '@libs/models/Product'
+import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct'
 
 type Props = {
   homePageDetails: {
@@ -91,11 +90,7 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
           homePageDetails.map((categorie, key) => (
             <div key={key}>
               <h2 className='mb-3 text-2xl font-bold'>{categorie.categorie.name}</h2>
-              <div className="grid grid-cols-1 gap-y-10 gap-x-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                {
-                  categorie.items.map((data, key) => <Productcard product={data} key={key} />)
-                }
-              </div>
+              <CarouselProduct products={categorie.items} />
             </div>
           ))
         }

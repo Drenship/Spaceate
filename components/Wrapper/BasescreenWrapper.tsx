@@ -16,7 +16,7 @@ export default function BasescreenWrapper({ title, placeholderSearch, footer = t
     const needFooter = footer === false ? false : true
 
     return (
-        <div data-theme="light" className="flex flex-col items-center justify-center w-full min-h-screen ">
+        <div data-theme="light" className="flex flex-col items-center justify-center w-full min-h-screen">
             <Head>
                 <title>{titleHead}</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -25,7 +25,7 @@ export default function BasescreenWrapper({ title, placeholderSearch, footer = t
 
             <Navbar placeholderSearch={placeholderSearch} />
 
-            <main className="flex flex-col items-center justify-start flex-1 w-full mt-16">
+            <main className="flex flex-col items-center justify-start flex-1 w-full mt-16 overflow-x-hidden">
                 {children}
             </main>
 
