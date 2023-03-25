@@ -121,18 +121,26 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
     // Gallery
     const openGallery = () => {
+        console.log("openGallery called",canOpenGallery)
         if (canOpenGallery) {
             setIsOpenGallery(true);
-            if(isMobile()) setCanOpenGallery(false);
         }
-    }
-    const closeGallery = () => {
-        setIsOpenGallery(false)
-        setTimeout(() => setCanOpenGallery(true), 500);
-    }
+    };
 
-    useEscapeGallery(isOpenGallery, closeGallery)
-    useClickOutside(refGallery, closeGallery)
+    const closeGallery = () => {
+        console.log("closeGallery called")
+        setIsOpenGallery(false);
+        if (isMobile() && canOpenGallery) {
+            setCanOpenGallery(false);
+            setTimeout(() => { 
+                setCanOpenGallery(true) 
+                console.log("setCanOpenGallery", true)
+            }, 700);
+        }
+    };
+
+    useEscapeGallery(isOpenGallery, () => setIsOpenGallery(false))
+    useClickOutside(refGallery, () => setIsOpenGallery(false))
     useSwipeAndDoubleTap(closeGallery);
 
     // Admin menu

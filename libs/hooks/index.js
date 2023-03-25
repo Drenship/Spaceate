@@ -93,12 +93,12 @@ export function useEscapeListener(ref, callback) {
 export const useEscapeGallery = (isOpenLightboxGallery, setIsOpenLightboxGallery) => {
     const handleEscape = (event) => {
         if (event.key === "Escape") {
-            setIsOpenLightboxGallery(false);
+            setIsOpenLightboxGallery();
         }
     };
 
     const handleBackButton = () => {
-        setIsOpenLightboxGallery(false);
+        setIsOpenLightboxGallery();
     };
 
     useEffect(() => {
@@ -149,7 +149,7 @@ export const useSwipeUp = (setIsOpenLightboxGallery) => {
             endY.current &&
             startY.current - endY.current > screenHeight / 10
         ) {
-            setIsOpenLightboxGallery(false);
+            setIsOpenLightboxGallery();
         }
 
         startY.current = null;
@@ -191,7 +191,7 @@ export const useSwipeAndDoubleTap = (setIsOpenLightboxGallery) => {
     useSwipeUp(setIsOpenLightboxGallery);
 
     const { onTouchEnd } = useDoubleTap(() => {
-        setIsOpenLightboxGallery(false);
+        setIsOpenLightboxGallery();
     });
 
     useEffect(() => {
@@ -334,4 +334,4 @@ export const useSwipeAxeX = (onSwipeLeft, onSwipeRight) => {
     }, [touchStartX, touchStartY, onSwipeLeft, onSwipeRight]);
   
     return {};
-  };;
+};
