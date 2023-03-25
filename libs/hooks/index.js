@@ -177,7 +177,7 @@ export const useDoubleTap = (onDoubleTap) => {
     const handleTouchEnd = () => {
         const now = Date.now();
 
-        if (lastTapRef.current && now - lastTapRef.current <= 500) {
+        if (lastTapRef.current && now - lastTapRef.current <= 200) {
             onDoubleTap();
         }
 
