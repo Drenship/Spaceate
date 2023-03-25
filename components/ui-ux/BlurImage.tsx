@@ -33,7 +33,7 @@ export default function BlurImage({ src, className, hoverOpacity, onClick, objec
                     alt="spaceate fruit & legume"
                     className={cn(
                         'duration-700 ease-in-out object-cover',
-                        hoverOpacity ? "group-hover:opacity-80" : "",
+                        hoverOpacity ? "group-hover:opacity-80 active:opacity-100 focus:opacity-100" : "",
                         className,
                         isLoading
                             ? 'blur-sm'

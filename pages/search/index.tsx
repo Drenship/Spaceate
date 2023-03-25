@@ -12,6 +12,7 @@ import { TypeCategorie, TypeProduct } from '@libs/typings';
 import { BsSliders } from 'react-icons/bs';
 import { RxEyeClosed } from 'react-icons/rx';
 import Pagination from '@components/ui-ux/Pagination';
+import { useLeftSwipe, useRightSwipe } from '@libs/hooks';
 
 const PAGE_SIZE = 20;
 const ratings = [1, 2, 3, 4, 5];
@@ -59,6 +60,7 @@ type Props = {
     categories: TypeCategorie[],
     pages: number
 }
+
 
 const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categories, pages }) => {
     const router = useRouter()
@@ -124,6 +126,10 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
     const ratingHandler = (e: React.BaseSyntheticEvent) => filterSearch({ rating: e.target.value });
 
+
+    useLeftSwipe(() => setToggleFiltersPannel(fixeValueFiltersPannel))
+    useRightSwipe(() => setToggleFiltersPannel(0))
+
     return (
         <BasescreenWrapper placeholderSearch={searchQuery} title={searchQuery} footer={false}>
             <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100">
@@ -140,14 +146,14 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                 >
                     <div className='flex items-center justify-between mb-3 space-x-3 md:hidden'>
                         <h1 className='flex items-center w-full h-12 px-3 uppercase bg-white border rounded-lg font-500'>Filtres</h1>
-                        <button 
+                        <button
                             className='flex items-center justify-center flex-shrink-0 w-12 h-12 bg-white border rounded-lg button-click-effect'
                             onClick={() => setToggleFiltersPannel(fixeValueFiltersPannel)}
                         >
                             <RxEyeClosed />
                         </button>
                     </div>
-                    
+
                     <div className="p-2 mb-3 bg-white border rounded-lg">
                         <select
                             className="w-full bg-white outline-none"
@@ -252,10 +258,10 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                                 />
                             ))}
                         </div>
-                        <Pagination 
+                        <Pagination
                             current={page}
                             pages={pages}
-                            pageHandler={(x) => pageHandler(x)}  
+                            pageHandler={(x) => pageHandler(x)}
                         />
                     </div>
                 </div>
