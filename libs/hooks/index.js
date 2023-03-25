@@ -173,52 +173,35 @@ export const useSwipeUp = (setIsOpenLightboxGallery) => {
 };
 
 export const useDoubleTap = (onDoubleTap) => {
-    const timerRef = useRef(null);
     const lastTapRef = useRef(null);
-
-    const handleTouchStart = () => {
-        if (timerRef.current !== null) {
-            clearTimeout(timerRef.current);
-
-            const now = Date.now();
-
-            if (now - lastTapRef.current <= 1000) {
-                onDoubleTap();
-            }
-        }
-
-        lastTapRef.current = Date.now();
-        timerRef.current = setTimeout(() => {
-            timerRef.current = null;
-        }, 300);
-    };
-
+  
     const handleTouchEnd = () => {
-        if (timerRef.current !== null) {
-            clearTimeout(timerRef.current);
-            timerRef.current = null;
-        }
+      const now = Date.now();
+  
+      if (lastTapRef.current && now - lastTapRef.current <= 500) {
+        onDoubleTap();
+      }
+  
+      lastTapRef.current = now;
     };
-
-    return { onTouchStart: handleTouchStart, onTouchEnd: handleTouchEnd };
-};
+  
+    return { onTouchEnd: handleTouchEnd };
+  };
 
 export const useSwipeAndDoubleTap = (setIsOpenLightboxGallery) => {
     useSwipeUp(setIsOpenLightboxGallery);
 
-    const { onTouchStart, onTouchEnd } = useDoubleTap(() => {
+    const { onTouchEnd } = useDoubleTap(() => {
         setIsOpenLightboxGallery(false);
     });
 
     useEffect(() => {
         if (typeof window !== "undefined" && isMobile()) {
-            document.addEventListener("touchstart", onTouchStart);
             document.addEventListener("touchend", onTouchEnd);
 
             return () => {
-                document.removeEventListener("touchstart", onTouchStart);
                 document.removeEventListener("touchend", onTouchEnd);
             };
         }
-    }, [onTouchStart, onTouchEnd, setIsOpenLightboxGallery]);
+    }, [onTouchEnd, setIsOpenLightboxGallery]);
 };
