@@ -45,7 +45,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         ...(product?.images || [])
     ])
     const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
-    const [currentSlideGallery, setcurrentSlideGallery] = useState<number | null>(null)
 
 
 
@@ -137,7 +136,9 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                         <BlurImage
                                             src={replaceURL(product.main_image)}
                                             className="cursor-pointer"
-                                            onClick={() => { setIsOpenGallery(true), setcurrentSlideGallery(0) }}
+                                            onClick={() => {
+                                                setIsOpenGallery(true);
+                                            }}
                                         />
                                     </div>
                                     <div className='grid w-full grid-cols-4 gap-2 mt-2 lg:mt-4 lg:gap-4'>
@@ -149,7 +150,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                     className="cursor-pointer"
                                                     onClick={() => {
                                                         setIsOpenGallery(true);
-                                                        setcurrentSlideGallery(key + 1);
                                                     }}
                                                 />
                                                 {
@@ -157,7 +157,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                         <div className="absolute inset-0 w-full cursor-pointer select-none avatar placeholder"
                                                             onClick={() => {
                                                                 setIsOpenGallery(true);
-                                                                setcurrentSlideGallery(key + 1);
                                                             }}>
                                                             <div className="w-full bg-neutral-focus/30 text-neutral-content">
                                                                 <span>+{product.images.length - 4}</span>

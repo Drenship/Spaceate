@@ -180,7 +180,6 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                                 }
                             </div>
 
-
                             <span className="text-info">Total: {(totalCartValue).toFixed(2)}€</span>
                             <div className="card-actions">
                                 <Link href='/cart' className="border-none btn bg-sky-500 hover:bg-sky-600 btn-block">Voir le panier</Link>
@@ -197,6 +196,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                                 </div>
                             </label>
                             <ul tabIndex={0} className="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+                                <li><Link href="/">Accueil</Link></li>
                                 <li><Link href="/user">Profil</Link></li>
                                 <li><Link href="/user/order-history">Mes commandes</Link></li>
                                 {
