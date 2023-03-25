@@ -126,7 +126,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
     const ratingHandler = (e: React.BaseSyntheticEvent) => filterSearch({ rating: e.target.value });
 
-
+    // toggle filter panel on mobile
     useLeftSwipe(() => setToggleFiltersPannel(fixeValueFiltersPannel))
     useRightSwipe(() => setToggleFiltersPannel(0))
 
