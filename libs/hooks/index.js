@@ -290,44 +290,48 @@ export const useRightSwipe = (onSwipe) => {
 export const useSwipeAxeX = (onSwipeLeft, onSwipeRight) => {
     const [touchStartX, setTouchStartX] = useState(null);
     const [touchStartY, setTouchStartY] = useState(null);
-
+  
     useEffect(() => {
-        const handleTouchStart = (event) => {
-            const touch = event.touches[0];
-
-            setTouchStartX(touch.clientX);
-            setTouchStartY(touch.clientY);
-        };
-
-        const handleTouchEnd = (event) => {
-            if (touchStartX !== null && touchStartY !== null) {
-                const touch = event.changedTouches[0];
-                const deltaX = touch.clientX - touchStartX;
-                const deltaY = touch.clientY - touchStartY;
-                const absDeltaX = Math.abs(deltaX);
-                const absDeltaY = Math.abs(deltaY);
-
-                if (absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY) {
-                    if (deltaX < 0) {
-                        onSwipeLeft();
-                    } else {
-                        onSwipeRight();
-                    }
-                }
-
-                setTouchStartX(null);
-                setTouchStartY(null);
+      const handleTouchStart = (event) => {
+        const touch = event.touches[0];
+  
+        setTouchStartX(touch.clientX);
+        setTouchStartY(touch.clientY);
+      };
+  
+      const handleTouchEnd = (event) => {
+        if (touchStartX !== null && touchStartY !== null) {
+          const touch = event.changedTouches[0];
+          const deltaX = touch.clientX - touchStartX;
+          const deltaY = touch.clientY - touchStartY;
+          const absDeltaX = Math.abs(deltaX);
+          const absDeltaY = Math.abs(deltaY);
+  
+          // Vérifier si le swipe est effectué sur un élément qui n'est pas un tableau
+          const target = event.target;
+          const isTable = target.tagName === "TABLE" || !!target.closest("table");
+  
+          if (!isTable && absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY) {
+            if (deltaX < 0) {
+              onSwipeLeft();
+            } else {
+              onSwipeRight();
             }
-        };
-
-        document.addEventListener("touchstart", handleTouchStart);
-        document.addEventListener("touchend", handleTouchEnd);
-
-        return () => {
-            document.removeEventListener("touchstart", handleTouchStart);
-            document.removeEventListener("touchend", handleTouchEnd);
-        };
+          }
+  
+          setTouchStartX(null);
+          setTouchStartY(null);
+        }
+      };
+  
+      document.addEventListener("touchstart", handleTouchStart);
+      document.addEventListener("touchend", handleTouchEnd);
+  
+      return () => {
+        document.removeEventListener("touchstart", handleTouchStart);
+        document.removeEventListener("touchend", handleTouchEnd);
+      };
     }, [touchStartX, touchStartY, onSwipeLeft, onSwipeRight]);
-
+  
     return {};
-};
+  };;
