@@ -11,11 +11,11 @@ import "swiper/css/navigation";
 
 import { cartState } from "@atoms/cartState"
 import { setCartState, CART_ADD_ITEM } from "@atoms/setStates/setCartState"
-import { TypeCartItem, TypeProduct, TypeCommentaire } from '@libs/typings';
+import { TypeCartItem, TypeProduct, TypeCommentaire, TypeUser } from '@libs/typings';
 import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
 import { replaceURL, teinteDeLimage } from '@libs/utils';
-import { useClickOutside, useEscapeGallery, useSwipeAndDoubleTap } from '@libs/hooks';
+import { useClickOutside, useEscapeGallery, useEscapeListener, useSwipeAndDoubleTap } from '@libs/hooks';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
 import CommentaireCard from '@components/cards/CommentaireCard'
@@ -23,6 +23,7 @@ import BlurImage from '@components/ui-ux/BlurImage'
 import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct';
 import Rating from "@components/ui-ux/Rating"
+import { getSession, useSession } from 'next-auth/react';
 
 
 type Props = {
@@ -32,7 +33,13 @@ type Props = {
 }
 
 const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProducts }) => {
-    const router = useRouter()
+    const router = useRouter();
+
+    const { data: session } = useSession();
+    const user: TypeUser | null = session?.user ?? null;
+    const seeMenuRef = useRef(null);
+    const [seeMenu, setSeeMenu] = useState<boolean>(false);
+
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [commentaires, setCommentaires] = useState<TypeCommentaire[]>([]);
     const [quantity, setQuantity] = useState(1);
@@ -110,11 +117,14 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     }, [router.query])
 
 
+    // Gallery
     const closeGallery = () => setIsOpenGallery(false)
-
     useEscapeGallery(isOpenGallery, setIsOpenGallery)
     useClickOutside(refGallery, closeGallery)
     useSwipeAndDoubleTap(setIsOpenGallery);
+
+    // Admin menu
+    useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
 
     return (
@@ -176,7 +186,30 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     { /* Product info */}
                                     <section>
                                         <p>Accueil &gt; {product?.categorie?.name} &gt; {product?.subCategorie?.name}</p>
-                                        <h1 className='mt-5 text-3xl font-bold uppercase'>{product.name}</h1>
+                                        <div className='flex items-center justify-between'>
+                                            <h1 className='mt-5 text-3xl font-bold uppercase'>{product.name}</h1>
+                                            {
+                                                user && user.isAdmin && (
+                                                    <div className="relative pr-8">
+                                                        <div className={`absolute left-0 z-10 w-32 mt-8 -ml-24 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
+                                                            <ul className="py-1 bg-white rounded shadow ">
+                                                                <Link href={`/admin/products/edit?slug=${product.slug}`}>
+                                                                    <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Modifier</li>
+                                                                </Link>
+                                                            </ul>
+                                                        </div>
+                                                        <button className="text-gray-500 border border-transparent rounded cursor-pointer focus:outline-none" ref={seeMenuRef}>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" onClick={() => setSeeMenu(prev => !prev)} className="icon icon-tabler icon-tabler-dots-vertical dropbtn" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" />
+                                                                <circle cx={12} cy={12} r={1} />
+                                                                <circle cx={12} cy={19} r={1} />
+                                                                <circle cx={12} cy={5} r={1} />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
                                         <div className='flex items-center justify-start mt-5 space-x-2'>
                                             <Rating rating={product.rating === 0 ? 5 : product.rating} />
                                             <p className='space-x-1'>
@@ -298,14 +331,30 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     )
 }
 
-export const getServerSideProps = async ({ query }: any) => {
+export const getServerSideProps = async (context: any) => {
+
+    const defaultReturn = {
+        props: {
+            productFind: false,
+            initialProduct: {},
+            sameProducts: []
+        },
+    }
     try {
+        const { query } = context;
         const slug = query.slug || null;
         let product: any = {}
         let sameProducts: any = []
 
         if (slug) {
 
+            const { user } = await getSession(context);
+
+            const querySearch = user && user.isAdmin
+                ? { slug: slug }
+                : { slug: slug, isPublished: true }
+
+            console.log(querySearch)
             await db.connect();
             product = await Product.findOne({ slug: slug, isPublished: true }).populate("categorie").lean();
             const find = product ? true : false
@@ -333,7 +382,6 @@ export const getServerSideProps = async ({ query }: any) => {
             await db.disconnect()
         }
 
-
         return {
             props: {
                 productFind: product ? true : false,
@@ -343,13 +391,7 @@ export const getServerSideProps = async ({ query }: any) => {
         }
 
     } catch (error) {
-        return {
-            props: {
-                productFind: false,
-                initialProduct: {},
-                sameProducts: []
-            },
-        }
+        return defaultReturn;
     }
 }
 
