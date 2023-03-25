@@ -141,7 +141,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                         <>
                             <div className='flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100 '>
                                 { /* left */}
-                                <div className='block space-x-0 flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 lg:p-9 h-full md:sticky bg-gray-100'>
+                                <div className='block space-x-0 flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 lg:p-9 h-full md:sticky top-0 bg-gray-100'>
                                     <div style={{ boxShadow: `0px 0px 20px 5px ${color}` }} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                                         <BlurImage
                                             src={replaceURL(product.main_image)}
@@ -262,7 +262,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                                     { /* Commentaire section */}
                                     <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
-                                        <h3 className='flex text-xl font-bold'><AnnotationIcon className='w-5 mr-2' /> 2 commentaires</h3>
+                                        <h3 className='flex space-x-2 text-xl font-bold'><AnnotationIcon className='w-5' />
+                                            <span>{product.numReviews}</span>
+                                            <span>{product.numReviews <= 1 ? "commentaire" : "commentaires"}</span>
+                                        </h3>
                                         { /* Commentaires container */}
                                         <div className='grid grid-cols-1 space-x-3 lg:grid-cols-2'>
                                             { /* Commentaires */}
@@ -333,13 +336,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
 export const getServerSideProps = async (context: any) => {
 
-    const defaultReturn = {
-        props: {
-            productFind: false,
-            initialProduct: {},
-            sameProducts: []
-        },
-    }
     try {
         const { query } = context;
         const slug = query.slug || null;
@@ -350,7 +346,7 @@ export const getServerSideProps = async (context: any) => {
 
             const session = await getSession(context);
 
-            const querySearch = session && session.user && session.user.isAdmin
+            const querySearch = session && session?.user && session?.user?.isAdmin
                 ? { slug: slug }
                 : { slug: slug, isPublished: true }
 
@@ -391,9 +387,13 @@ export const getServerSideProps = async (context: any) => {
         }
 
     } catch (error) {
-        
-        console.log("err", error)
-        return defaultReturn;
+        return {
+            props: {
+                productFind: false,
+                initialProduct: {},
+                sameProducts: []
+            },
+        };
     }
 }
 

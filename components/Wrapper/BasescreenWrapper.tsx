@@ -19,8 +19,8 @@ export default function BasescreenWrapper({ title, placeholderSearch, footer = t
         <div data-theme="light" className="flex flex-col items-center justify-center w-full min-h-screen">
             <Head>
                 <title>{titleHead}</title>
-                <link rel="icon" href="/favicon.ico" />
-                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.min.js"></script>
+                <link rel="icon" href="/favicons/favicon.ico" />
+                <link rel="manifest" href="/site.webmanifest" />
             </Head>
 
             <Navbar placeholderSearch={placeholderSearch} />

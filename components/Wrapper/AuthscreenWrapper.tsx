@@ -12,7 +12,8 @@ export default function AuthscreenWrapper({ title, children }: AuthscreenWrapper
     <div data-theme="light" className="flex flex-col items-center justify-center w-full min-h-screen ">
       <Head>
         <title>{titleHead}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicons/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
       </Head>
 
       <main className="flex flex-col items-center justify-start flex-1 w-full">
