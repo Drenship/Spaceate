@@ -85,7 +85,7 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
         </div>
       </div>
 
-      <div className="max-w-[1400px] py-10 mx-auto space-y-8 px-4">
+      <div className="max-w-screen md:max-w-[1400px] w-full py-10 mx-auto space-y-8 px-4">
         {
           homePageDetails.map((categorie, key) => (
             <div key={key}>

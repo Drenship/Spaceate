@@ -5,10 +5,9 @@ import { useRouter } from 'next/router';
 import { AnnotationIcon } from '@heroicons/react/solid';
 import { useRecoilState } from "recoil"
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation, Keyboard, HashNavigation } from "swiper";
+import { Navigation, Keyboard } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
 
 import { cartState } from "@atoms/cartState"
 import { setCartState, CART_ADD_ITEM } from "@atoms/setStates/setCartState"
@@ -41,8 +40,11 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     const [color, setColor] = useState<string>("");
 
     const refGallery = useRef(null);
+    const [Gallery, setGallery] = useState<string[]>([
+        product.main_image,
+        ...product.images
+    ])
     const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
-    const [Gallery, setGallery] = useState<string[]>([product.main_image, ...product.images])
     const [currentSlideGallery, setcurrentSlideGallery] = useState(null)
 
 
@@ -86,7 +88,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     useEffect(() => {
         setProduct(initialProduct);
         setQuantity(1);
-        setGallery([initialProduct.main_image, ...initialProduct.images])
+        setGallery([
+            initialProduct.main_image,
+            ...initialProduct.images
+        ])
         setCommentaires([]);
         teinteDeLimage(replaceURL(initialProduct.main_image)).then((RGBcolor) => {
             setColor(RGBcolor)
@@ -254,11 +259,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     keyboard={{
                                         enabled: true,
                                     }}
-                                    hashNavigation={{
-                                        watchState: true,
-                                    }}
                                     navigation={true}
-                                    modules={[Navigation, Keyboard, HashNavigation]}
+                                    modules={[Navigation, Keyboard]}
                                     className="mySwiper"
                                     ref={refGallery}
                                 >
