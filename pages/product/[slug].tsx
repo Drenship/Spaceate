@@ -190,7 +190,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                             <h1 className='mt-5 text-3xl font-bold uppercase'>{product.name}</h1>
                                             {
                                                 user && user.isAdmin && (
-                                                    <div className="relative pr-8">
+                                                    <div className="relative">
                                                         <div className={`absolute left-0 z-10 w-32 mt-8 -ml-24 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
                                                             <ul className="py-1 bg-white rounded shadow ">
                                                                 <Link href={`/admin/products/edit?slug=${product.slug}`}>
@@ -348,9 +348,9 @@ export const getServerSideProps = async (context: any) => {
 
         if (slug) {
 
-            const { user } = await getSession(context);
+            const session = await getSession(context);
 
-            const querySearch = user && user.isAdmin
+            const querySearch = session && session.user && session.user.isAdmin
                 ? { slug: slug }
                 : { slug: slug, isPublished: true }
 
@@ -391,6 +391,8 @@ export const getServerSideProps = async (context: any) => {
         }
 
     } catch (error) {
+        
+        console.log("err", error)
         return defaultReturn;
     }
 }
