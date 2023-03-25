@@ -60,7 +60,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
             for (const [key, value] of data.entries()) {
                 formDataObject[key] = value;
             }
-
+            formDataObject.description = formDataObject.description.replace(/\r\n|\r|\n/g, '<br>');
             formDataObject.main_image = mainImage;
             formDataObject.images = images
 
@@ -238,7 +238,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                             description="Description du produit"
                             input={{
                                 name: "description",
-                                defaultValue: product?.description || "",
+                                defaultValue: product?.description.replace(/<br>/g, '\n') || "",
                                 placeholder: "entrer une description ...",
                             }}
                             onChange={() => { }}

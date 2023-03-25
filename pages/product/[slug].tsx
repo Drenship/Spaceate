@@ -224,8 +224,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                             </p>
                                         </div>
 
-                                        <p className='mt-5 text-gray-600'>{product.description}</p>
-
+                                        <p key={product._id} className='mt-5 text-gray-600' dangerouslySetInnerHTML={{ __html: product.description }} />
+                                   
                                         <div className='mt-5 space-x-1'>
                                             <span className='text-2xl font-bold'>{product.price}€</span>
                                             <span className='text-xl'>/</span>

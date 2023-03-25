@@ -2,8 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { buffer } from "micro";
 import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
-import { TypeOrder } from '@libs/typings';
+import { TypeOrder, TypeUser } from '@libs/typings';
 import Product from '@libs/models/Product';
+import { sendMail } from '@libs/utils/email-sendgrid';
+import User from '@libs/models/User';
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
@@ -106,6 +108,15 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
                 }
                 await updateStatsAndStockProducts();
                 await db.disconnect();
+
+                await sendMail({
+                    from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
+                    to: session.metadata.userEmail,
+                    subject: 'Confirmation de commande',
+                    text: req.body.text || 'Votre commande a bien était payer !',
+                    html: req.body.html || '<p style={{text-color: "blue"}}">Votre commande a bien était payer.</p>',
+                })
+
                 return res.send({ message: 'Order update successfully' });
 
             } catch (err) {
@@ -154,8 +165,21 @@ const handleStripeChargeRefunded = async (req: NextApiRequest, res: NextApiRespo
             }
             await updateStatsAndStockProducts();
 
+            const user: TypeUser | null = User.findById(order.user)
+
             await db.disconnect();
 
+            if (user) {
+
+                await sendMail({
+                    from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
+                    to: user.email,
+                    subject: 'Confirmation de remboursement',
+                    text: req.body.text || 'Votre commande a bien été remboursé !',
+                    html: req.body.html || '<p style={{text-color: "blue"}}">Votre commande a bien été remboursé .</p>',
+                })
+            }
+            
             return res.send({ message: "Order refund is successfully updated" });
 
         } else {

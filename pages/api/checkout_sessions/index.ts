@@ -85,6 +85,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
             metadata: {
                 userId: user._id,
+                userEmail: user.email,
                 order_id: order_id
             }
         });
