@@ -123,9 +123,21 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
 
     const [marge, prixHT, tva] = useMemo(() => {
 
-        let xPrice: number = price ? price : product.price;
-        let xBuyPrice: number = buyPrice ? buyPrice : product.advancePrice.initialCost;
-        let xTva: number = tvaRate ? tvaRate : product.advancePrice.tva;
+        let xPrice: number = price
+            ? price
+            : product
+                ? product.price
+                : 0;
+        let xBuyPrice: number = buyPrice
+            ? buyPrice
+            : product
+                ? product.advancePrice.initialCost
+                : 0;
+        let xTva: number = tvaRate
+            ? tvaRate
+            : product
+                ? product.advancePrice.tva
+                : 0;
 
 
         const marge: number = Number((xPrice - xBuyPrice).toFixed(2));
@@ -164,7 +176,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                     multiple={false}
                                     input={{
                                         name: "main_image",
-                                        values: [product?.main_image],
+                                        values: product?.main_image ? [product?.main_image] : [],
                                         imageClass: "col-span-full w-full sm:mx-auto sm:max-w-[350px] object-cover rounded-lg aspect-square"
                                     }}
                                     onChange={(file: any) => onChangeUploadHandler(file, (next: string) => setMainImage(next))}
@@ -402,30 +414,31 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                                 <span>{fixedPriceToCurrency((stock * marge) - (stock * tva))}</span>
                                             </div>
                                         </div>
-
-                                        <div className='space-y-2'>
-                                            <h4 className='font-bold'>Gains réaliser:</h4>
-                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
-                                                <span>Totals vendu</span>
-                                                <span>{product.stats.totalSelled}</span>
+                                        {product && product?.slug && (
+                                            <div className='space-y-2'>
+                                                <h4 className='font-bold'>Gains réaliser:</h4>
+                                                <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                    <span>Totals vendu</span>
+                                                    <span>{product.stats.totalSelled}</span>
+                                                </div>
+                                                <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                    <span>Prix achat total:</span>
+                                                    <span>{fixedPriceToCurrency(product.stats.totalSelled * buyPrice)}</span>
+                                                </div>
+                                                <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                    <span>Marge total:</span>
+                                                    <span>{fixedPriceToCurrency(product.stats.totalSelled * marge)}</span>
+                                                </div>
+                                                <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                    <span>TVA total:</span>
+                                                    <span>{fixedPriceToCurrency(product.stats.totalSelled * tva)}</span>
+                                                </div>
+                                                <div className='flex items-center justify-between w-full md:max-w-sm'>
+                                                    <span>Bénéfice net:</span>
+                                                    <span>{fixedPriceToCurrency((product.stats.totalSelled * marge) - (product.stats.totalSelled * tva))}</span>
+                                                </div>
                                             </div>
-                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
-                                                <span>Prix achat total:</span>
-                                                <span>{fixedPriceToCurrency(product.stats.totalSelled * buyPrice)}</span>
-                                            </div>
-                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
-                                                <span>Marge total:</span>
-                                                <span>{fixedPriceToCurrency(product.stats.totalSelled * marge)}</span>
-                                            </div>
-                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
-                                                <span>TVA total:</span>
-                                                <span>{fixedPriceToCurrency(product.stats.totalSelled * tva)}</span>
-                                            </div>
-                                            <div className='flex items-center justify-between w-full md:max-w-sm'>
-                                                <span>Bénéfice net:</span>
-                                                <span>{fixedPriceToCurrency((product.stats.totalSelled * marge) - (product.stats.totalSelled * tva))}</span>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
                             )
@@ -456,12 +469,15 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                 </div>
                 <hr className="h-[1px] bg-gray-100 my-14" />
                 <div className="flex flex-col flex-wrap items-center justify-center w-full px-7 lg:flex-row lg:justify-end md:justify-end gap-x-4 gap-y-4">
-                    <Link
-                        href={`/product/${product.slug}`}
-                        className="bg-white text-center border-green-700 rounded hover:bg-gray-50 transform duration-300 ease-in-out text-sm font-medium px-6 py-4 text-green-700 border lg:max-w-[95px] w-full"
-                    >
-                        Voire
-                    </Link>
+
+                    {product && product?.slug && (
+                        <Link
+                            href={`/product/${product.slug}`}
+                            className="bg-white text-center border-green-700 rounded hover:bg-gray-50 transform duration-300 ease-in-out text-sm font-medium px-6 py-4 text-green-700 border lg:max-w-[95px] w-full"
+                        >
+                            Voire
+                        </Link>
+                    )}
                     <Link
                         href='/admin/products'
                         className="bg-white text-center border-indigo-700 rounded hover:bg-gray-50 transform duration-300 ease-in-out text-sm font-medium px-6 py-4 text-indigo-700 border lg:max-w-[95px] w-full"

@@ -21,6 +21,7 @@
     "framer-motion": "^8.5.2",
     "fs": "^0.0.1-security",
     "gsap": "^3.11.4",
+    "is-mobile": "^4.0.0",
     "micro": "^10.0.1",
     "micro-cors": "^0.1.1",
     "mongoose": "^6.8.4",

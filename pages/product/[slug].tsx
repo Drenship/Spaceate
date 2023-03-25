@@ -15,7 +15,7 @@ import { TypeCartItem, TypeProduct, TypeCommentaire } from '@libs/typings';
 import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
 import { replaceURL, teinteDeLimage } from '@libs/utils';
-import { useClickOutside, useEscapeGallery, useSwipeUp } from '@libs/hooks';
+import { useClickOutside, useEscapeGallery, useSwipeAndDoubleTap } from '@libs/hooks';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
 import CommentaireCard from '@components/cards/CommentaireCard'
@@ -42,10 +42,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     const refGallery = useRef(null);
     const [Gallery, setGallery] = useState<string[]>([
         product.main_image,
-        ...product.images
+        ...(product?.images || [])
     ])
     const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
-    const [currentSlideGallery, setcurrentSlideGallery] = useState(null)
+    const [currentSlideGallery, setcurrentSlideGallery] = useState<number | null>(null)
 
 
 
@@ -90,7 +90,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         setQuantity(1);
         setGallery([
             initialProduct.main_image,
-            ...initialProduct.images
+            ...(initialProduct?.images || [])
         ])
         setCommentaires([]);
         teinteDeLimage(replaceURL(initialProduct.main_image)).then((RGBcolor) => {
@@ -114,11 +114,11 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
     useEscapeGallery(isOpenGallery, setIsOpenGallery)
     useClickOutside(refGallery, () => setIsOpenGallery(false))
-    useSwipeUp(setIsOpenGallery);
+    useSwipeAndDoubleTap(setIsOpenGallery);
 
 
     return (
-        <BasescreenWrapper title={product.name} footer={true}>
+        <BasescreenWrapper title={product.name} footer>
             {
                 productFind === false
                     ? (
@@ -141,16 +141,23 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     </div>
                                     <div className='grid w-full grid-cols-4 gap-2 mt-2 lg:mt-4 lg:gap-4'>
                                         {
-                                            [...product.images].slice(0, 4)?.map((img, key) => <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
+                                            [...(product.images || [])].slice(0, 4)?.map((img, key) => <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                                                 <BlurImage
                                                     key={key}
                                                     src={replaceURL(img)}
                                                     className="cursor-pointer"
-                                                    onClick={() => { setIsOpenGallery(true), setcurrentSlideGallery(key + 1) }}
+                                                    onClick={() => {
+                                                        setIsOpenGallery(true);
+                                                        setcurrentSlideGallery(key + 1);
+                                                    }}
                                                 />
                                                 {
                                                     product.images.length > 4 && key === 3 && (
-                                                        <div className="absolute inset-0 w-full cursor-pointer select-none avatar placeholder" onClick={() => { setIsOpenGallery(true), setcurrentSlideGallery(key + 1) }}>
+                                                        <div className="absolute inset-0 w-full cursor-pointer select-none avatar placeholder"
+                                                            onClick={() => {
+                                                                setIsOpenGallery(true);
+                                                                setcurrentSlideGallery(key + 1);
+                                                            }}>
                                                             <div className="w-full bg-neutral-focus/30 text-neutral-content">
                                                                 <span>+{product.images.length - 4}</span>
                                                             </div>
@@ -265,8 +272,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     ref={refGallery}
                                 >
                                     {
-                                        Gallery.map((img, key) => (
-                                            <SwiperSlide key={key}>
+                                        Gallery.map(img => (
+                                            <SwiperSlide key={img}>
                                                 <div className='relative flex h-full'>
                                                     <BlurImage
                                                         src={replaceURL(img)}
