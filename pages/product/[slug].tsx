@@ -356,7 +356,7 @@ export const getServerSideProps = async (context: any) => {
 
             console.log(querySearch)
             await db.connect();
-            product = await Product.findOne({ slug: slug, isPublished: true }).populate("categorie").lean();
+            product = await Product.findOne(querySearch).populate("categorie").lean();
             const find = product ? true : false
             if (find) {
                 sameProducts = await Product.find({
