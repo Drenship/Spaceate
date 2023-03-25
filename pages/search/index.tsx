@@ -128,7 +128,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
     // toggle filter panel on mobile
     useSwipeAxeX(
-        () => setToggleFiltersPannel(fixeValueFiltersPannel), 
+        () => setToggleFiltersPannel(fixeValueFiltersPannel),
         () => setToggleFiltersPannel(0)
     )
 
@@ -140,6 +140,19 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
         }
     }, [toggleFiltersPannel]);
 
+
+
+    const [filterPositionY, setFilterPositionY] = useState<number>(80);
+
+    const getTouchY = (event: TouchEvent) => {
+        const touch = event.touches[0];
+        const screenHeight = window.innerHeight - 80;
+
+        if (touch && touch.clientY && touch.clientY >= 80 && touch.clientY <= screenHeight) {
+            setFilterPositionY(touch.clientY);
+        }
+    };
+
     return (
         <BasescreenWrapper placeholderSearch={searchQuery} title={searchQuery} footer={false}>
             <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100">
@@ -147,6 +160,19 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                 <button
                     className='fixed left-0 z-40 flex items-center justify-center w-12 h-12 bg-white border border-l-0 border-black rounded-r-lg top-20 md:hidden button-click-effect'
                     onClick={() => setToggleFiltersPannel(prev => prev === 0 ? fixeValueFiltersPannel : 0)}
+                    onTouchStart={(e) => {
+                        getTouchY(e);
+                        document.body.classList.add('no-scroll');
+                    }}
+                    onTouchMove={getTouchY}
+
+                    onTouchEnd={(e) => {
+                        getTouchY(e)
+                        document.body.classList.remove('no-scroll')
+                    }}
+                    style={{
+                        top: filterPositionY
+                    }}
                 >
                     <BsSliders className='rotate-90' />
                 </button>
