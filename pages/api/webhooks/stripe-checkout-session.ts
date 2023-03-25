@@ -165,7 +165,7 @@ const handleStripeChargeRefunded = async (req: NextApiRequest, res: NextApiRespo
             }
             await updateStatsAndStockProducts();
 
-            const user = User.findById(order.user, { email: 1 })
+            const user = await User.findById(order.user, { email: 1 })
 
             await db.disconnect();
 
