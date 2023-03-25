@@ -86,13 +86,12 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     useEffect(() => {
         setProduct(initialProduct);
         setQuantity(1);
+        setGallery([initialProduct.main_image, ...initialProduct.images])
         setCommentaires([]);
         teinteDeLimage(replaceURL(initialProduct.main_image)).then((RGBcolor) => {
             setColor(RGBcolor)
         })
-    }, [router.query]);
 
-    useEffect(() => {
         if (!productFind) return;
         if (typeof initialProduct.subCategorie === "object") return;
         let x = {
