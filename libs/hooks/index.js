@@ -227,6 +227,7 @@ export const useLeftSwipe = (onSwipe) => {
                 const absDeltaY = Math.abs(deltaY);
 
                 if (absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY && deltaX < 0) {
+                    console.log("swiper left")
                     onSwipe();
                 }
 
@@ -269,6 +270,7 @@ export const useRightSwipe = (onSwipe) => {
                 const absDeltaY = Math.abs(deltaY);
 
                 if (absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY && deltaX > 0) {
+                    console.log("swiper right")
                     onSwipe();
                 }
 

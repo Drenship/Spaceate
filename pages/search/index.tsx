@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { NextPage } from 'next/types'
 import { useRouter } from 'next/router'
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
@@ -127,8 +127,16 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
     const ratingHandler = (e: React.BaseSyntheticEvent) => filterSearch({ rating: e.target.value });
 
     // toggle filter panel on mobile
-    useLeftSwipe(() => setToggleFiltersPannel(fixeValueFiltersPannel))
-    useRightSwipe(() => setToggleFiltersPannel(0))
+    useRightSwipe(() => setToggleFiltersPannel(0)) // add
+    useLeftSwipe(() => setToggleFiltersPannel(fixeValueFiltersPannel)) // remove
+
+    useEffect(() => {
+        if (toggleFiltersPannel) {
+            document.body.classList.remove("no-scroll");
+        } else {
+            document.body.classList.add("no-scroll");
+        }
+    }, [toggleFiltersPannel]);
 
     return (
         <BasescreenWrapper placeholderSearch={searchQuery} title={searchQuery} footer={false}>

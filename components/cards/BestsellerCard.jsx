@@ -14,8 +14,6 @@ export default function BestsellerCard({ product }) {
 
     const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
 
-    console.log(product)
-
     const addItemsToCart = (e) => {
         e.preventDefault();
 
