@@ -121,21 +121,16 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
     // Gallery
     const openGallery = () => {
-        console.log("openGallery called",canOpenGallery)
         if (canOpenGallery) {
             setIsOpenGallery(true);
         }
     };
 
     const closeGallery = () => {
-        console.log("closeGallery called")
         setIsOpenGallery(false);
         if (isMobile() && canOpenGallery) {
             setCanOpenGallery(false);
-            setTimeout(() => { 
-                setCanOpenGallery(true) 
-                console.log("setCanOpenGallery", true)
-            }, 700);
+            setTimeout(() => setCanOpenGallery(true), 400);
         }
     };
 
