@@ -174,12 +174,20 @@ export const useSwipeUp = (setIsOpenLightboxGallery) => {
 
 export const useDoubleTap = (onDoubleTap) => {
     const timerRef = useRef(null);
+    const lastTapRef = useRef(null);
 
     const handleTouchStart = () => {
         if (timerRef.current !== null) {
             clearTimeout(timerRef.current);
+
+            const now = Date.now();
+
+            if (now - lastTapRef.current <= 1000) {
+                onDoubleTap();
+            }
         }
 
+        lastTapRef.current = Date.now();
         timerRef.current = setTimeout(() => {
             timerRef.current = null;
         }, 300);
@@ -189,7 +197,6 @@ export const useDoubleTap = (onDoubleTap) => {
         if (timerRef.current !== null) {
             clearTimeout(timerRef.current);
             timerRef.current = null;
-            onDoubleTap();
         }
     };
 
