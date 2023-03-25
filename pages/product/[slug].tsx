@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AnnotationIcon } from '@heroicons/react/solid';
 import { useRecoilState } from "recoil"
+import isMobile from "is-mobile";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard } from "swiper";
 import "swiper/css";
@@ -52,6 +53,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         ...(product?.images || [])
     ])
     const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
+    const [canOpenGallery, setCanOpenGallery] = useState<boolean>(true);
 
 
 
@@ -118,14 +120,23 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
 
     // Gallery
-    const closeGallery = () => setIsOpenGallery(false)
+    const openGallery = () => {
+        if (canOpenGallery) {
+            setIsOpenGallery(true);
+            if(isMobile()) setCanOpenGallery(false);
+        }
+    }
+    const closeGallery = () => {
+        setIsOpenGallery(false)
+        setTimeout(() => setCanOpenGallery(true), 500);
+    }
+
     useEscapeGallery(isOpenGallery, setIsOpenGallery)
     useClickOutside(refGallery, closeGallery)
     useSwipeAndDoubleTap(setIsOpenGallery);
 
     // Admin menu
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
-
 
     return (
         <BasescreenWrapper title={product.name} footer>
@@ -146,9 +157,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                         <BlurImage
                                             src={replaceURL(product.main_image)}
                                             className="cursor-pointer"
-                                            onClick={() => {
-                                                setIsOpenGallery(true);
-                                            }}
+                                            onClick={openGallery}
                                         />
                                     </div>
                                     <div className='grid w-full grid-cols-4 gap-2 mt-2 lg:mt-4 lg:gap-4'>
@@ -158,16 +167,12 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                     key={key}
                                                     src={replaceURL(img)}
                                                     className="cursor-pointer"
-                                                    onClick={() => {
-                                                        setIsOpenGallery(true);
-                                                    }}
+                                                    onClick={openGallery}
                                                 />
                                                 {
                                                     product.images.length > 4 && key === 3 && (
                                                         <div className="absolute inset-0 w-full cursor-pointer select-none avatar placeholder"
-                                                            onClick={() => {
-                                                                setIsOpenGallery(true);
-                                                            }}>
+                                                            onClick={openGallery}>
                                                             <div className="w-full bg-neutral-focus/30 text-neutral-content">
                                                                 <span>+{product.images.length - 4}</span>
                                                             </div>

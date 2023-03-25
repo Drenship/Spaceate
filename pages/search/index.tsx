@@ -144,7 +144,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
     const [filterPositionY, setFilterPositionY] = useState<number>(80);
 
-    const getTouchY = (event: TouchEvent) => {
+    const getTouchY = (event: TouchEvent<HTMLButtonElement>) => {
         const touch = event.touches[0];
         const screenHeight = window.innerHeight - 80;
 
@@ -160,19 +160,19 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                 <button
                     className='fixed left-0 z-40 flex items-center justify-center w-12 h-12 bg-white border border-l-0 border-black rounded-r-lg top-20 md:hidden button-click-effect'
                     onClick={() => setToggleFiltersPannel(prev => prev === 0 ? fixeValueFiltersPannel : 0)}
+
                     onTouchStart={(e) => {
                         getTouchY(e);
                         document.body.classList.add('no-scroll');
                     }}
-                    onTouchMove={getTouchY}
+
+                    onTouchMove={(e) => getTouchY(e)}
 
                     onTouchEnd={(e) => {
                         getTouchY(e)
                         document.body.classList.remove('no-scroll')
                     }}
-                    style={{
-                        top: filterPositionY
-                    }}
+                    style={{ top: filterPositionY }}
                 >
                     <BsSliders className='rotate-90' />
                 </button>
