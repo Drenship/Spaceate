@@ -131,9 +131,9 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         setTimeout(() => setCanOpenGallery(true), 500);
     }
 
-    useEscapeGallery(isOpenGallery, setIsOpenGallery)
+    useEscapeGallery(isOpenGallery, closeGallery)
     useClickOutside(refGallery, closeGallery)
-    useSwipeAndDoubleTap(setIsOpenGallery);
+    useSwipeAndDoubleTap(closeGallery);
 
     // Admin menu
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
