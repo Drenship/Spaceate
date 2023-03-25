@@ -92,24 +92,40 @@ export function useEscapeListener(ref, callback) {
 
 export const useEscapeGallery = (isOpenLightboxGallery, setIsOpenLightboxGallery) => {
     const handleEscape = (event) => {
-      if (event.key === "Escape") {
-        setIsOpenLightboxGallery(false);
-      }
+        if (event.key === "Escape") {
+            setIsOpenLightboxGallery(false);
+        }
     };
-  
+
     const handleBackButton = () => {
-      setIsOpenLightboxGallery(false);
+        setIsOpenLightboxGallery(false);
     };
-  
+
     useEffect(() => {
-      if (isOpenLightboxGallery) {
-        document.body.classList.add("no-scroll");
-        document.addEventListener("keydown", handleEscape);
-        window.addEventListener("popstate", handleBackButton);
-      } else {
-        document.body.classList.remove("no-scroll");
-        document.removeEventListener("keydown", handleEscape);
-        window.removeEventListener("popstate", handleBackButton);
-      }
+        if (isOpenLightboxGallery) {
+            document.body.classList.add("no-scroll");
+            document.addEventListener("keydown", handleEscape);
+            window.addEventListener("popstate", handleBackButton);
+        } else {
+            document.body.classList.remove("no-scroll");
+            document.removeEventListener("keydown", handleEscape);
+            window.removeEventListener("popstate", handleBackButton);
+        }
     }, [isOpenLightboxGallery, setIsOpenLightboxGallery]);
-  };
+};
+
+export const useClickOutside = (ref, onClose) => {
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (ref.current && !ref.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref, onClose]);
+};

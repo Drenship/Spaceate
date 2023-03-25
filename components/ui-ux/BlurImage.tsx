@@ -5,16 +5,18 @@ interface Props {
     src: string
     className?: string
     objectFit?: "contain" | ""
+    hoverOpacity?: boolean
     onClick?: () => void
 }
 
 BlurImage.defaultProps = {
     className: "",
+    hoverOpacity: true,
     objectFit: "",
-    onClick: () => {}
+    onClick: () => { }
 }
 
-export default function BlurImage({ src, className, onClick, objectFit }: Props) {
+export default function BlurImage({ src, className, hoverOpacity, onClick, objectFit }: Props) {
     const [isLoading, setIsLoading] = useState(true);
 
     function cn(...classes: any) {
@@ -30,7 +32,8 @@ export default function BlurImage({ src, className, onClick, objectFit }: Props)
                     objectFit={objectFit}
                     alt="spaceate fruit & legume"
                     className={cn(
-                        'duration-700 ease-in-out group-hover:opacity-75 object-cover',
+                        'duration-700 ease-in-out object-cover',
+                        hoverOpacity ? "group-hover:opacity-80" : "",
                         className,
                         isLoading
                             ? 'blur-sm'

@@ -1,7 +1,13 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useRouter } from 'next/router';
 import { AnnotationIcon } from '@heroicons/react/solid';
 import { useRecoilState } from "recoil"
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Navigation, Keyboard, HashNavigation } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
 import { cartState } from "@atoms/cartState"
 import { setCartState, CART_ADD_ITEM } from "@atoms/setStates/setCartState"
 
@@ -18,7 +24,7 @@ import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
 import { replaceURL, teinteDeLimage } from '@libs/utils';
 import Link from 'next/link';
-import { useEscapeGallery } from '@libs/hooks';
+import { useClickOutside, useEscapeGallery } from '@libs/hooks';
 
 type Props = {
     productFind: boolean
@@ -32,10 +38,12 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     const [commentaires, setCommentaires] = useState<TypeCommentaire[]>([]);
     const [quantity, setQuantity] = useState(1);
     const [cartItem, setCartItem] = useRecoilState(cartState)
-
-    const [isOpenLightboxGallery, setIsOpenLightboxGallery] = useState<boolean>(false)
-    const [lightboxGallery, setLightboxGallery] = useState<string[]>([product.main_image, ...product.images])
     const [color, setColor] = useState<string>("");
+
+    const refGallery = useRef(null);
+    const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
+    const [Gallery, setGallery] = useState<string[]>([product.main_image, ...product.images])
+    const [currentSlideGallery, setcurrentSlideGallery] = useState<number>(0)
 
 
 
@@ -100,7 +108,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
 
 
-    useEscapeGallery(isOpenLightboxGallery, setIsOpenLightboxGallery)
+    useEscapeGallery(isOpenGallery, setIsOpenGallery)
+    useClickOutside(refGallery, () => setIsOpenGallery(false))
 
 
     return (
@@ -122,7 +131,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                         <BlurImage
                                             src={replaceURL(product.main_image)}
                                             className="cursor-pointer"
-                                            onClick={() => setIsOpenLightboxGallery(true)}
+                                            onClick={() => { setIsOpenGallery(true), setcurrentSlideGallery(0) }}
                                         />
                                     </div>
                                     <div className='grid w-full grid-cols-4 gap-2 mt-2 lg:mt-4 lg:gap-4'>
@@ -132,11 +141,11 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                     key={key}
                                                     src={replaceURL(img)}
                                                     className="cursor-pointer"
-                                                    onClick={() => setIsOpenLightboxGallery(true)}
+                                                    onClick={() => { setIsOpenGallery(true), setcurrentSlideGallery(key + 1) }}
                                                 />
                                                 {
                                                     product.images.length > 4 && key === 3 && (
-                                                        <div className="absolute inset-0 w-full cursor-pointer select-none avatar placeholder" onClick={() => setIsOpenLightboxGallery(true)}>
+                                                        <div className="absolute inset-0 w-full cursor-pointer select-none avatar placeholder" onClick={() => { setIsOpenGallery(true), setcurrentSlideGallery(key + 1) }}>
                                                             <div className="w-full bg-neutral-focus/30 text-neutral-content">
                                                                 <span>+{product.images.length - 4}</span>
                                                             </div>
@@ -235,25 +244,45 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                                 </div>
                             </div>
-                            {
-                                isOpenLightboxGallery && (
-                                    <div
-                                        className='fixed inset-0 z-50 w-screen h-screen p-8 overflow-hidden bg-black/20'
-                                    >
-                                        <div className='relative w-full h-full'>
-                                            <BlurImage
-                                                src={replaceURL(lightboxGallery[0])}
-                                                objectFit="contain"
-                                                className='object-contain group-hover:opacity-100'
-                                            />
-                                        </div>
-                                    </div>
-                                )
-                            }
+
+                            <div className={`fixed inset-0 z-50 w-screen h-screen px-4 py-16 overflow-hidden md:px-8 bg-black/20 ${!isOpenGallery && "hidden"}`}>
+                                <Swiper
+                                    slidesPerView={1}
+                                    spaceBetween={30}
+                                    loop={true}
+                                    keyboard={{
+                                        enabled: true,
+                                    }}
+                                    hashNavigation={{
+                                        watchState: true,
+                                    }}
+                                    navigation={true}
+                                    modules={[Navigation, Keyboard, HashNavigation]}
+                                    className="mySwiper"
+                                    ref={refGallery}
+                                >
+                                    {
+                                        Gallery.map((img, key) => (
+                                            <SwiperSlide key={key}>
+                                                <div className='relative flex h-full'>
+                                                    <BlurImage
+                                                        src={replaceURL(img)}
+                                                        objectFit="contain"
+                                                        hoverOpacity={false}
+                                                        className='opacity-100 group-hover:opacity-100'
+                                                    />
+                                                </div>
+                                            </SwiperSlide>
+                                        ))
+                                    }
+                                </Swiper>
+
+
+                            </div>
                         </>
                     )
             }
-        </BasescreenWrapper>
+        </BasescreenWrapper >
     )
 }
 
