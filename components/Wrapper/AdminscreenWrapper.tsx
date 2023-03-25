@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Navbar from "@components/navbar"
 import Link from 'next/link'
 import { HiTemplate, HiArchive, HiCollection, HiClipboardList, HiGift, HiChartBar, HiUsers } from "react-icons/hi";
+import { useSwipeAxeX } from '@libs/hooks';
 
 interface NavLinkItemProps {
     href: string;
@@ -28,6 +29,18 @@ interface Props {
 export default function AdminscreenWrapper({ title, children }: Props) {
 
     const titleHead = title ? `${title} - Spaceate` : "Spaceate"
+
+    // toggle filter panel on mobile
+    useSwipeAxeX(
+        () => {
+            document.body.classList.remove('sidebar-open')
+            document.body.classList.remove('no-scroll')
+        },
+        () => {
+            document.body.classList.add('sidebar-open')
+            document.body.classList.add('no-scroll')
+        }
+    )
 
     return (
         <div data-theme="light" className="flex flex-col items-center justify-center w-full min-h-screen ">

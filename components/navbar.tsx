@@ -78,11 +78,15 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     // SIDEBAR
     const handleToggleSidebar = () => {
         document.body.classList.toggle('sidebar-open');
+        document.body.classList.toggle('no-scroll')
     };
 
     const ref = useRef(null)
 
-    useEscapeListener(ref, () => document.body.classList.remove('sidebar-open'))
+    useEscapeListener(ref, () =>{
+        document.body.classList.remove('sidebar-open')
+        document.body.classList.remove('no-scroll')
+    })
 
     return (
         <nav className="fixed top-0 z-50 justify-between h-16 space-x-0.5 shadow-lg md:space-x-4 navbar bg-base-100 md:px-8">

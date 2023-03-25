@@ -62,7 +62,6 @@ export function usePrevious(value) {
     return ref.current;
 }
 
-
 export function useEscapeListener(ref, callback) {
     // sidebar click event close
     const clickListener = useCallback(e => {
