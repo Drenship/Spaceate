@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
+import { NextPage } from 'next/types';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AnnotationIcon } from '@heroicons/react/solid';
 import { useRecoilState } from "recoil"
@@ -10,22 +12,19 @@ import "swiper/css/navigation";
 
 import { cartState } from "@atoms/cartState"
 import { setCartState, CART_ADD_ITEM } from "@atoms/setStates/setCartState"
-
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
-import BestsellerCard from '@components/cards/BestsellerCard'
-import CommentaireCard from '@components/cards/CommentaireCard'
-import BlurImage from '@components/ui-ux/BlurImage'
-import InputNumber from '@components/ui-ux/inputs/InputNumber'
-import Rating from "@components/ui-ux/Rating"
-
-import { NextPage } from 'next/types';
 import { TypeCartItem, TypeProduct, TypeCommentaire } from '@libs/typings';
 import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
 import { replaceURL, teinteDeLimage } from '@libs/utils';
-import Link from 'next/link';
-import { useClickOutside, useEscapeGallery } from '@libs/hooks';
+import { useClickOutside, useEscapeGallery, useSwipeUp } from '@libs/hooks';
+
+import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
+import CommentaireCard from '@components/cards/CommentaireCard'
+import BlurImage from '@components/ui-ux/BlurImage'
+import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct';
+import Rating from "@components/ui-ux/Rating"
+
 
 type Props = {
     productFind: boolean
@@ -111,6 +110,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
     useEscapeGallery(isOpenGallery, setIsOpenGallery)
     useClickOutside(refGallery, () => setIsOpenGallery(false))
+    useSwipeUp(setIsOpenGallery);
 
 
     return (
@@ -212,7 +212,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
                                         <h2 className='mb-5 text-xl font-bold uppercase'>Produits similaire</h2>
                                         {
-                                            sameProducts && <CarouselProduct overflow="hidden" products={sameProducts} /> 
+                                            sameProducts && <CarouselProduct overflow="hidden" products={sameProducts} />
                                         }
                                     </section>
 
@@ -244,7 +244,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                 </div>
                             </div>
 
-                            <div className={`fixed inset-0 z-50 px-4 py-16 overflow-hidden md:px-8 bg-black/20 ${!isOpenGallery && "hidden"}`}>
+                            <div
+                                className={`fixed inset-0 z-50 px-4 py-16 overflow-hidden md:px-8 bg-black/20 ${!isOpenGallery && "hidden"}`}
+                                onDoubleClick={() => setIsOpenGallery(false)}
+                            >
                                 <Swiper
                                     slidesPerView={1}
                                     spaceBetween={30}
