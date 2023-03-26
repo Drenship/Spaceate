@@ -34,7 +34,7 @@ export default function Footer() {
                     </ul>
                 </div>
             </div>
-            <div className='md:text-center'>
+            <div className='mt-5 md:text-center'>
                 <p>Copyright © 2023 - Tous droits réservés</p>
             </div>
         </footer>

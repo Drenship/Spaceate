@@ -82,6 +82,7 @@ export default function BasescreenWrapper({
                                     sku: meta.product.slug,
                                     offers: {
                                         '@type': 'Offer',
+                                        availability: meta.product.countInStock > 0 ? "InStock" : "OutOfStock",
                                         priceCurrency: 'EUR',
                                         price: meta.product.price,
                                     },
