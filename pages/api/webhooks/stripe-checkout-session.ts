@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { buffer } from "micro";
 import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
-import { TypeOrder, TypeUser } from '@libs/typings';
 import Product from '@libs/models/Product';
 import { sendMail } from '@libs/utils/email-sendgrid';
 import User from '@libs/models/User';
