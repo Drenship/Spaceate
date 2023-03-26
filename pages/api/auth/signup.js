@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
+import { sendMail } from '@libs/utils/email-sendgrid';
 
 async function handler(req, res) {
     if (req.method !== 'POST') {
