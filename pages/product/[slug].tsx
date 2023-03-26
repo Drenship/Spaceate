@@ -139,15 +139,18 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     // Admin menu
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
-    const currentURL = useMemo(() => {
+    const [currentURL, baseUrl] = useMemo(() => {
         if(typeof window !== 'undefined'){
-            return window.location.href
+            return [window.location.href, window.location.origin]
         }
         const protocol = process.env.NODE_ENV === 'https' ? 'https://' : 'http://';
         const host = typeof window !== 'undefined' ? window.location.host : '';
-
-        return protocol + host + router.asPath;
+        const baseUrl = protocol + host;
+        const fullUrl = baseUrl + router.asPath
+        return [fullUrl, baseUrl];
     }, [product])
+
+    console.log(`${baseUrl}/api/image-proxy?imageUrl=${encodeURIComponent(product.main_image)}`)
 
     return (
         <BasescreenWrapper
@@ -156,7 +159,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                 description: product.description,
                 keywords: product.name + ', ' + product.categorie + ', ' + product.subCategorie,
                 url: currentURL,
-                image: product.main_image,
+                image: `${baseUrl}/api/image-proxy?imageUrl=${encodeURIComponent(product.main_image)}`,
                 twitterCardType: 'summary_large_image',
                 ogType: 'product',
             }}
