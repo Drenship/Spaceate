@@ -150,8 +150,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         return [fullUrl, baseUrl];
     }, [product])
 
-    console.log(`${baseUrl}/api/image-proxy?imageUrl=${encodeURIComponent(product.main_image)}`)
-
     return (
         <BasescreenWrapper
             title={product.name}
@@ -159,7 +157,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                 description: product.description,
                 keywords: product.name + ', ' + product.categorie?.name + ', ' + product.subCategorie?.name,
                 url: currentURL,
-                image: `${baseUrl}/api/image-proxy?imageUrl=${encodeURIComponent(product.main_image)}`,
+                image: product.main_image,
                 twitterCardType: 'summary_large_image',
                 ogType: 'product',
             }}
