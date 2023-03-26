@@ -54,7 +54,7 @@ export default function BasescreenWrapper({
 
 
                 {/* Open Graph */}
-                <meta property="og:title" content={title} />
+                <meta property="og:title" content={titleHead} />
                 <meta property="og:description" content={meta.description} />
                 <meta property="og:type" content={meta.ogType} />
                 <meta property="og:url" content={meta.url} />
@@ -62,7 +62,7 @@ export default function BasescreenWrapper({
 
                 {/* Twitter Card */}
                 <meta name="twitter:card" content={meta.twitterCardType} />
-                <meta name="twitter:title" content={title} />
+                <meta name="twitter:title" content={titleHead} />
                 <meta name="twitter:description" content={meta.description} />
                 <meta name="twitter:image" content={meta.image} />
             </Head>
