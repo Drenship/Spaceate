@@ -154,12 +154,13 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         <BasescreenWrapper
             title={product.name}
             meta={{
-                description: product.description.substring(0, 200),
+                description: product.description.substring(0, 300),
                 keywords: product.name + ', ' + product.categorie?.name + ', ' + product.subCategorie?.name,
                 url: currentURL,
                 image: product.main_image,
                 twitterCardType: 'summary_large_image',
                 ogType: 'product',
+                product: product
             }}
         >
             {

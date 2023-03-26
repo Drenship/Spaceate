@@ -2,6 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import Navbar from "@components/navbar"
 import Footer from "@components/footer"
+import { TypeProduct } from '@libs/typings';
 
 interface Props {
     title?: string;
@@ -16,6 +17,7 @@ interface Props {
         image?: string;
         twitterCardType?: 'summary' | 'summary_large_image' | 'app' | 'player';
         ogType?: 'website' | 'article' | 'video.movie' | 'book' | 'profile' | string;
+        product?: TypeProduct
     }
 }
 
@@ -43,12 +45,12 @@ export default function BasescreenWrapper({
         <div data-theme="light" className="flex flex-col items-center justify-center w-full min-h-screen">
             <Head>
                 <title>{titleHead}</title>
-                
+
                 <link rel="icon" href="/favicons/favicon.ico" />
                 <link rel="manifest" href="/site.webmanifest" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta charSet="utf-8" />
-                
+
                 <meta name="description" content={meta.description} />
                 <meta name="keywords" content={meta.keywords} />
 
@@ -65,6 +67,30 @@ export default function BasescreenWrapper({
                 <meta name="twitter:title" content={titleHead} />
                 <meta name="twitter:description" content={meta.description} />
                 <meta name="twitter:image" content={meta.image} />
+
+                {
+                    meta.product && (
+                        <script
+                            type="application/ld+json"
+                            dangerouslySetInnerHTML={{
+                                __html: JSON.stringify({
+                                    '@context': 'https://schema.org',
+                                    '@type': 'Product',
+                                    name: title,
+                                    description: meta.description,
+                                    image: meta.image,
+                                    sku: meta.product.slug,
+                                    offers: {
+                                        '@type': 'Offer',
+                                        priceCurrency: 'EUR',
+                                        price: meta.product.price,
+                                    },
+                                }),
+                            }}
+                        />
+                    )
+                }
+
             </Head>
 
             <Navbar placeholderSearch={placeholderSearch} />
