@@ -14,6 +14,7 @@ interface Props {
         keywords?: string;
         url?: string;
         image?: string;
+        imageVersion?: string;
         twitterCardType?: 'summary' | 'summary_large_image' | 'app' | 'player';
         ogType?: 'website' | 'article' | 'video.movie' | 'book' | 'profile' | string;
     }
@@ -26,6 +27,7 @@ BasescreenWrapper.defaultProps = {
         keywords: "fruits, légumes, fleurs, e-commerce, jardin, jardinerie, boutique en ligne",
         url: "https://spaceate.vercel.app/",
         image: "https://spaceate.vercel.app/_next/image?url=%2Fuploads%2F824e34a2-ea15-4d9a-8c7f-e546c4677ec5.jpg&w=1920&q=75",
+        imageVersion: '1',
         twitterCardType: "summary_large_image",
         ogType: "website",
     }
@@ -36,6 +38,7 @@ export default function BasescreenWrapper({
 }: Props) {
 
     const titleHead = title ? `${title} - Spaceate` : "Spaceate"
+    const imageUrl = meta.imageVersion ? `${meta.image}?v=${meta.imageVersion}` : meta.image;
 
     const needFooter = footer === false ? false : true
 
@@ -58,13 +61,13 @@ export default function BasescreenWrapper({
                 <meta property="og:description" content={meta.description} />
                 <meta property="og:type" content={meta.ogType} />
                 <meta property="og:url" content={meta.url} />
-                <meta property="og:image" content={meta.image} />
+                <meta property="og:image" content={imageUrl} />
 
                 {/* Twitter Card */}
                 <meta name="twitter:card" content={meta.twitterCardType} />
                 <meta name="twitter:title" content={titleHead} />
                 <meta name="twitter:description" content={meta.description} />
-                <meta name="twitter:image" content={meta.image} />
+                <meta name="twitter:image" content={imageUrl} />
             </Head>
 
             <Navbar placeholderSearch={placeholderSearch} />
