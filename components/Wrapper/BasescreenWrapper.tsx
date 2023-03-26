@@ -76,6 +76,7 @@ export default function BasescreenWrapper({
                                 __html: JSON.stringify({
                                     '@context': 'https://schema.org',
                                     '@type': 'Product',
+                                    gtin13: meta.product._id,
                                     name: title,
                                     description: meta.description,
                                     image: meta.image,
