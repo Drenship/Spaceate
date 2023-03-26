@@ -139,8 +139,28 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     // Admin menu
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
+    const currentURL = useMemo(() => {
+        if(typeof window !== 'undefined'){
+            return window.location.href
+        }
+        const protocol = process.env.NODE_ENV === 'https' ? 'https://' : 'http://';
+        const host = typeof window !== 'undefined' ? window.location.host : '';
+
+        return protocol + host + router.asPath;
+    }, [product])
+
     return (
-        <BasescreenWrapper title={product.name} footer>
+        <BasescreenWrapper
+            title={product.name}
+            meta={{
+                description: product.description,
+                keywords: product.name + ', ' + product.categorie + ', ' + product.subCategorie,
+                url: currentURL,
+                image: product.main_image,
+                twitterCardType: 'summary_large_image',
+                ogType: 'product',
+            }}
+        >
             {
                 productFind === false
                     ? (
@@ -225,7 +245,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                         </div>
 
                                         <p key={product._id} className='mt-5 text-gray-600' dangerouslySetInnerHTML={{ __html: product.description }} />
-                                   
+
                                         <div className='mt-5 space-x-1'>
                                             <span className='text-2xl font-bold'>{product.price}€</span>
                                             <span className='text-xl'>/</span>
