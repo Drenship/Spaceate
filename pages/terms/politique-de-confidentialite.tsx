@@ -124,10 +124,10 @@ const Terms: NextPage = ({ jsonPDGC }) => {
                     <BsSliders className='rotate-90' />
                 </button>
                 <div
-                    className='max-md:fixed z-40 min-h-[calc(100vh-64px)] h-full -left-[100vw] duration-300 transition-all flex-row md:block md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full px-3 py-8 sm:px-6 sm:h-full'
+                    className='bg-gray-100 max-md:fixed z-40 min-h-[calc(100vh-64px)] h-full -left-[100vw] duration-300 transition-all flex-row md:block md:flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full px-3 py-8 sm:px-6 sm:h-full'
                     style={{ left: toggleFiltersPannel }}
                 >
-                    <div className="z-40 w-full top-20">
+                    <div className="sticky z-40 w-full top-20">
                         <h2 className="text-xl font-bold">Navigation rapide</h2>
                         {pdgc && renderMenu()}
                     </div>
