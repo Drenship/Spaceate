@@ -38,8 +38,17 @@ async function handler(req, res) {
 
     const user = await newUser.save();
     await db.disconnect();
+
+    const result = await sendMail({
+        from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
+        to: email,
+        subject: 'Verifier votre email',
+        text: 'Verification de votre email',
+        html: '<p style={{text-color: "blue"}}">Verification de votre email.</p>',
+    })
+
     res.status(201).send({
-        message: 'Created user!',
+        message: 'Created user !',
         _id: user._id,
         name: user.name,
         email: user.email,

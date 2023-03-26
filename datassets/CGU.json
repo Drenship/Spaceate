@@ -1,0 +1,74 @@
+{
+    "Conditions Générales d'Utilisation": {
+        "Article 1 - Définitions": {
+            "1.1. Application": "[Nom de l'Application]",
+            "1.2. Utilisateur": "Toute personne physique utilisant l'Application et ayant accepté les présentes Conditions Générales d'Utilisation (CGU).",
+            "1.3. Produits": "Fruits, légumes et fleurs proposés à la vente sur l'Application.",
+            "1.4. Commande": "Acte par lequel l'Utilisateur achète un ou plusieurs Produits sur l'Application."
+        },
+        "Article 2 - Acceptation des CGU": {
+            "2.1. Acceptation": "L'accès et l'utilisation de l'Application impliquent l'acceptation sans réserve des présentes CGU.",
+            "2.2. Modification": "L'Éditeur se réserve le droit de modifier les CGU à tout moment."
+        },
+        "Article 3 - Accès à l'Application": {
+            "3.1. Accessibilité": "L'Application est accessible gratuitement à tout Utilisateur disposant d'un accès à internet et d'un appareil mobile compatible."
+        },
+        "Article 4 - Inscription et Compte Utilisateur": {
+            "4.1. Création de compte": "L'utilisation de l'Application nécessite la création d'un compte utilisateur.",
+            "4.2. Confidentialité": "L'Utilisateur est responsable de la confidentialité de son identifiant et de son mot de passe."
+        },
+        "Article 5 - Commandes et Paiements": {
+            "5.1. Prix": "Les prix des Produits sont indiqués en euros et incluent toutes les taxes applicables.",
+            "5.2. Commande": "L'Utilisateur peut passer Commande en sélectionnant les Produits de son choix et en procédant au paiement.",
+            "5.3. Paiements": "Les paiements sont effectués par carte bancaire ou tout autre moyen de paiement accepté par l'Éditeur et sécurisé par un système de paiement en ligne.",
+            "5.4. Confirmation": "Une confirmation de Commande sera envoyée à l'Utilisateur par courrier électronique."
+        },
+        "Article 6 - Livraison": {
+            "6.1. Adresse de livraison": "Les Produits sont livrés à l'adresse de livraison indiquée par l'Utilisateur lors de la Commande.",
+            "6.2. Délais de livraison": "Les délais de livraison sont donnés à titre indicatif et peuvent varier en fonction de la disponibilité des Produits et des contraintes logistiques."
+        },
+        "Article 7 - Droit de Rétractation et Retours": {
+            "7.1. Délai de rétractation": "L'Utilisateur dispose d'un délai de 14 jours à compter de la réception des Produits pour exercer son droit de rétractation.",
+            "7.2. Produits périssables": "Ce droit de rétractation ne s'applique pas aux fruits, légumes et fleurs frais.",
+            "7.3. Notification": "Pour exercer son droit de rétractation, l'Utilisateur doit notifier à l'Éditeur sa décision de se rétracter par une déclaration écrite.",
+            "7.4. Retours": {
+                "7.4.1. Conditions": "Les Produits retournés doivent être en parfait état et dans leur emballage d'origine.",
+                "7.4.2. Frais de retour": "Les frais de retour sont à la charge de l'Utilisateur."
+            },
+            "7.5. Remboursement": "L'Éditeur procédera au remboursement des Produits retournés dans les 14 jours suivant la réception des Produits ou la preuve d'expédition, selon la première de ces éventualités."
+        },
+        "Article 8 - Garanties et Responsabilités": {
+            "8.1. Qualité des Produits": "L'Éditeur s'engage à fournir des Produits de qualité, conformes à la législation en vigueur et aux normes sanitaires applicables.",
+            "8.2. Utilisation non conforme": "L'Éditeur ne pourra être tenu responsable en cas d'utilisation anormale, frauduleuse ou non conforme aux présentes CGU de l'Application par l'Utilisateur.",
+            "8.3. Force majeure": "L'Éditeur ne pourra être tenu responsable en cas de force majeure, telle que définie par la jurisprudence française, empêchant ou retardant la livraison des Produits."
+        },
+        "Article 9 - Protection des Données Personnelles": {
+            "9.1. Respect de la législation": "L'Éditeur s'engage à respecter la législation en vigueur en matière de protection des données personnelles et à mettre en œuvre les mesures techniques et organisationnelles appropriées pour protéger les données collectées auprès des Utilisateurs.",
+            "9.2. Utilisation des données": "Les données personnelles collectées sont utilisées uniquement pour les finalités liées à l'utilisation de l'Application, notamment pour la gestion des Commandes, la communication avec l'Utilisateur et l'amélioration de l'expérience utilisateur.",
+            "9.3. Droits de l'Utilisateur": "Conformément à la législation en vigueur, l'Utilisateur dispose d'un droit d'accès, de rectification, d'opposition, de limitation, de portabilité et de suppression de ses données personnelles."
+        },
+        "Article 10 - Propriété Intellectuelle": {
+            "10.1. Éléments protégés": "Tous les éléments de l'Application, y compris les textes, images, logos, marques, vidéos, sons, codes et interfaces, sont la propriété exclusive de l'Éditeur ou de ses partenaires et sont protégés par les lois françaises et internationales relatives à la propriété intellectuelle.",
+            "10.2. Interdictions": "Toute reproduction, représentation, modification, adaptation ou exploitation non autorisée de tout ou partie des éléments de l'Application est strictement interdite et constitue une violation des droits de propriété intellectuelle."
+        },
+        "Article 11 - Résiliation": {
+            "11.1. Résiliation par l'Utilisateur": "L'Utilisateur peut résilier son compte à tout moment en contactant l'Éditeur.",
+            "11.2. Résiliation par l'Éditeur": "L'Éditeur se réserve le droit de résilier un compte utilisateur sans préavis et sans indemnité, en cas de non-respect des présentes CGU, de comportement frauduleux ou d'utilisation abusive de l'Application."
+        },
+        "Article 12 - Loi applicable et Juridiction compétente": {
+            "12.1. Loi applicable": "Les présentes CGU sont régies par la loi française.",
+            "12.2. Juridiction compétente": "En cas de litige relatif à l'interprétation, la validité ou l'exécution des présentes CGU, les tribunaux français seront compétents pour en connaître, sauf disposition légale impérative contraire."
+        },
+        "Article 13 - Dispositions diverses": {
+            "13.1. Validité des stipulations": "Si une ou plusieurs stipulations des présentes CGU sont déclarées nulles, caduques ou inapplicables en tout ou partie, les autres stipulations demeurent pleinement en vigueur et de plein effet.",
+            "13.2. Cession ou transfert": "L'Éditeur se réserve le droit de céder ou transférer à toute entité de son choix les droits et obligations résultant des présentes CGU, à condition que cela ne porte pas atteinte aux droits des Utilisateurs.",
+            "13.3. Langue des CGU": "Les présentes CGU sont disponibles en langue française. En cas de traduction en une ou plusieurs langues étrangères, seule la version française fera foi en cas de litige."
+        },
+        "Article 14 - Contact": {
+            "14.1. Coordonnées": "Pour toute question ou réclamation concernant l'Application ou les présentes CGU, l'Utilisateur peut contacter l'Éditeur aux coordonnées suivantes:",
+            "14.1.1. Adresse électronique": "[adresse email de l'Éditeur]",
+            "14.1.2. Adresse postale": "[adresse postale de l'Éditeur]"
+        },
+        "Dernière mise à jour": "[Date de la dernière mise à jour des CGU]"
+    }
+}

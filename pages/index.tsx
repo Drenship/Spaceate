@@ -5,7 +5,6 @@ import { TypeCategorie, TypeProduct } from '@libs/typings'
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
 import ServiceCard from '@components/cards/ServiceCard'
-import Carousel from '@components/contents/Carousel'
 
 import db from '@libs/database/dbConnect'
 import Product from '@libs/models/Product'
@@ -23,14 +22,14 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
 
   const services = [
     {
-      title: "Légumes",
-      src: "https://www.finedininglovers.fr/sites/g/files/xknfdk1291/files/styles/article_1200_800_fallback/public/2021-03/fruits%20l%C3%A9gumes%20avril.jpg?itok=dXANY9eR",
-      link: "/search?query=&categorie=63e573b93835b8c932531ad3&subCategorie=all"
-    },
-    {
       title: "Fruits",
       src: "https://t3.ftcdn.net/jpg/05/52/09/76/360_F_552097663_QLhLtZgGzmHqKtW0fBBxLAc3cnn8n53g.jpg",
       link: "/search?query=&categorie=63e56ca43835b8c932531a9a&subCategorie=all"
+    },
+    {
+      title: "Légumes",
+      src: "https://www.finedininglovers.fr/sites/g/files/xknfdk1291/files/styles/article_1200_800_fallback/public/2021-03/fruits%20l%C3%A9gumes%20avril.jpg?itok=dXANY9eR",
+      link: "/search?query=&categorie=63e573b93835b8c932531ad3&subCategorie=all"
     },
     {
       title: "Fleurs",
@@ -71,7 +70,8 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
 
           <div className='absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-white/20'>
             <div className='relative w-full overflow-hidden'>
-              <Carousel slidesData={slidesData} />
+              
+              
             </div>
           </div>
 

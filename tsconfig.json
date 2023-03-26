@@ -29,8 +29,8 @@
       "@libs/*": [
         "libs/*"
       ],
-      "@devasset/*": [
-        "devasset/*"
+      "@datassets/*": [
+        "datassets/*"
       ],
       "@config/*": [
         "config/*"
