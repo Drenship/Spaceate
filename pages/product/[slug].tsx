@@ -157,7 +157,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
             title={product.name}
             meta={{
                 description: product.description,
-                keywords: product.name + ', ' + product.categorie + ', ' + product.subCategorie,
+                keywords: product.name + ', ' + product.categorie?.name + ', ' + product.subCategorie?.name,
                 url: currentURL,
                 image: `${baseUrl}/api/image-proxy?imageUrl=${encodeURIComponent(product.main_image)}`,
                 twitterCardType: 'summary_large_image',
