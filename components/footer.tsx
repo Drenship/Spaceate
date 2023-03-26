@@ -6,7 +6,7 @@ export default function Footer() {
         <footer className="w-full py-8 text-white bg-black">
             <div className="container flex flex-col justify-around px-4 mx-auto md:flex-row">
                 <div>
-                    <Link className="hidden text-xl font-black text-transparent uppercase sm:block bg-clip-text bg-gradient-to-r via-sky-500 from-blue-700 to-purple-500" href="/">Spaceate</Link>
+                    <Link className="block text-xl font-black text-transparent uppercase bg-clip-text bg-gradient-to-r via-sky-500 from-blue-700 to-purple-500" href="/">Spaceate</Link>
                 </div>
                 <div>
                     <h3 className="mb-4 text-xl font-bold">À propos</h3>
@@ -34,7 +34,7 @@ export default function Footer() {
                     </ul>
                 </div>
             </div>
-            <div className='text-center'>
+            <div className='md:text-center'>
                 <p>Copyright © 2023 - Tous droits réservés</p>
             </div>
         </footer>
