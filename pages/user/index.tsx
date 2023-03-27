@@ -2,12 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import { AnnotationIcon, CheckIcon, ShieldCheckIcon } from '@heroicons/react/solid';
+import { RxCross1 } from 'react-icons/rx';
+
+import { TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CommentaireCard from '@components/cards/CommentaireCard';
-import { useSession } from 'next-auth/react';
-import { TypeUser } from '@libs/typings';
 
 
 function LocationCard({ item }: any) {
@@ -42,12 +44,10 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
     const { data: session } = useSession();
     const user: TypeUser | null = session?.user || null;
 
-    console.log(user)
-
     const [member] = useMemo(() => {
 
         const createdAt = new Date(user?.createdAt).getFullYear()
- 
+
 
         return [createdAt];
     }, [user]);
@@ -76,26 +76,18 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                                     className='rounded-full'
                                 />
                             </div>
-                            <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
                         </div>
 
                     </div>
 
-
-                    <div className='w-full mt-5'>
-                        <ShieldCheckIcon className="h-7" />
-                    </div>
-
-                    <div className='w-full mt-5'>
-                        <h4 className='text-xl font-semibold'>Vérification de l'identité</h4>
-                        <p className='mt-2'>Confirmez votre identité avec le badge de vérification d'identité.</p>
-                        <button className='py-3 mt-2 font-semibold border border-black rounded-lg px-7 button-click-effect'>Obtenir le badge</button>
-                    </div>
-
                     <div className='w-full border-t border-b pb-7 my-7 lg:pb-0 lg:border-b-0'>
-                        <h4 className='mt-5 text-xl font-semibold'>Florentin : identification vérifiée</h4>
+                        <h4 className='mt-5 text-xl font-semibold'>Vérification</h4>
                         <div className='flex items-center mt-5 space-x-2'>
-                            <CheckIcon className='w-5' />
+                            {
+                                user?.email_is_verified
+                                    ? <CheckIcon className='w-5 text-green-600' />
+                                    : <RxCross1 className='w-5 text-red-600' />
+                            }
                             <p>Adresse e-mail</p>
                         </div>
                         {
@@ -134,10 +126,10 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                         <div className='flex items-center justify-between'>
                             <div className='flex items-center space-x-2'>
                                 <AnnotationIcon className="h-5" />
-                                <h4 className='text-xl font-bold'>0 commentaire</h4>
+                                <h4 className='text-xl font-bold'>{user?.reviews ? user?.reviews.length : 0} commentaire</h4>
                             </div>
 
-                            <Link href='/user/myReviews' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
+                            <Link href='/user/myReviews' className='font-semibold underline active:text-gray-400'>Voire mes commentaires</Link>
                         </div>
                         <div className='grid grid-cols-1'>
                             {
@@ -151,10 +143,6 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                                 />)
                             }
                         </div>
-                    </div>
-
-                    <div className='border-t border-b my-7 py-7'>
-                        <Link href='/user/reviews' className='font-semibold underline active:text-gray-400'>Commentaires de votre part</Link>
                     </div>
                 </div>
 
