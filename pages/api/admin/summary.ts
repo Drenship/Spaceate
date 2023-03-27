@@ -1,4 +1,3 @@
-import { getSession } from 'next-auth/react';
 import Order from '@libs/models/Order';
 import Product from '@libs/models/Product';
 import User from '@libs/models/User';
