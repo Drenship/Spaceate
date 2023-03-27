@@ -50,11 +50,7 @@ async function handler(req, res) {
 
     res.status(201).send({
         message: 'Created user !',
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        createdAt: user.createdAt
+        ...user
     });
 }
 

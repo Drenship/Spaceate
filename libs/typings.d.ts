@@ -1,10 +1,78 @@
-export interface TypeUser {
-    _id: string;
-    name: string;
-    email: string;
-    isAdmin: boolean;
-    createdAt: Date;
+
+interface Address {
+    fullName: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    phone: string;
+    addressType: 'shipping' | 'billing';
+    isDefault: boolean;
 }
+
+interface CartItem {
+    productId: Types.ObjectId;
+    quantity: number;
+}
+
+interface WishlistItem {
+    productId: Types.ObjectId;
+}
+
+interface Order {
+    orderId: Types.ObjectId;
+}
+
+interface Review {
+    reviewId: Types.ObjectId;
+}
+
+interface SearchHistoryItem {
+    query: string;
+    date: Date;
+}
+
+interface RecentlyViewedItem {
+    productId: Types.ObjectId;
+    date: Date;
+}
+
+interface Security {
+    code: string;
+    codeEndDate: Date;
+    _notif_connect: boolean;
+    _2fa: boolean;
+    _2fa_type: 'email' | 'phone';
+    login_history: {
+        ip: string | null;
+        location: string | null;
+        date: Date;
+    }[];
+}
+
+export interface TypeUser {
+    name: string;
+    gender: 'male' | 'female' | 'other' | 'preferNotToSay' | 'unknown';
+    email: string;
+    email_is_verified: boolean;
+    password: string;
+    isAdmin: boolean;
+    addresses: Address[];
+    cart: CartItem[];
+    wishlist: WishlistItem[];
+    orders: Order[];
+    reviews: Review[];
+    searchHistory: SearchHistoryItem[];
+    recentlyViewed: RecentlyViewedItem[];
+    security: Security;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+
+
+
 
 export interface TypeSubCategories {
     _id: string;
@@ -49,7 +117,7 @@ export interface TypeProduct {
 }
 
 export interface TypeCartItem extends TypeProduct {
-    quantity: number, 
+    quantity: number,
     outOfStock?: boolean, // rupture de stock
     outOfQuantity?: boolean // quantité demande non disponible mais pas en rupture
 }
@@ -94,7 +162,7 @@ export interface TypeOrder {
     _id: string;
     user: TypeUser;
     stripeDetails?: {
-        session_id: string; 
+        session_id: string;
         customer_id: string;
         payment_intent_id: string;
         refund_id: string;

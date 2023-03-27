@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,22 +6,24 @@ import { AnnotationIcon, CheckIcon, ShieldCheckIcon } from '@heroicons/react/sol
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CommentaireCard from '@components/cards/CommentaireCard';
+import { useSession } from 'next-auth/react';
+import { TypeUser } from '@libs/typings';
 
 
-function LocationCard({ item }: any){
+function LocationCard({ item }: any) {
     return (
         <div className="flex flex-col overflow-hidden border rounded-xl shadow-lg max-w-[320px] min-w-[320px] w-full cursor-pointer button-click-effect">
-            
+
             <div className="relative w-full h-40">
-                <Image 
+                <Image
                     src={item.img}
                     layout='fill'
                     objectFit="cover"
                 />
             </div>
             <div className="p-5">
-                <h3 className="text-lg font-bold">{ item.title }</h3>
-                <p className="text-sm text-gray-600 truncate">{ item.description }</p>
+                <h3 className="text-lg font-bold">{item.title}</h3>
+                <p className="text-sm text-gray-600 truncate">{item.description}</p>
                 <p className="font-bold text-right">30€</p>
             </div>
 
@@ -36,7 +38,19 @@ interface Props {
 }
 
 const UserProfil: NextPage<Props> = ({ myLocations }) => {
-    
+
+    const { data: session } = useSession();
+    const user: TypeUser | null = session?.user || null;
+
+    console.log(user)
+
+    const [member] = useMemo(() => {
+
+        const createdAt = new Date(user?.createdAt).getFullYear()
+ 
+
+        return [createdAt];
+    }, [user]);
 
     const [commentaires, setCommentaires] = useState([]);
 
@@ -49,8 +63,8 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                     <div className='flex items-center justify-between w-full'>
 
                         <div className='inline-block lg:hidden'>
-                            <h3 className='text-3xl font-bold'>Bonjour, je m'appelle Florentin</h3>
-                            <p className='pt-2 text-gray-400'>Membre depuis 2022</p>
+                            <h3 className='text-3xl font-bold'>Bonjour, {user?.name}</h3>
+                            <p className='pt-2 text-gray-400'>Membre depuis {member}</p>
                             <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
                         </div>
 
@@ -84,6 +98,9 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                             <CheckIcon className='w-5' />
                             <p>Adresse e-mail</p>
                         </div>
+                        {
+                            !user?.email_is_verified && <button className='py-3 mt-2 font-semibold border border-black rounded-lg px-7 button-click-effect'>Verifier mon e-mail</button>
+                        }
                     </div>
 
                 </div>
@@ -91,16 +108,16 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                 { /* Right */}
                 <div className='flex-grow lg:mt-0 lg:w-full'>
                     <div className='hidden lg:block'>
-                        <h3 className='text-3xl font-bold'>Bonjour, je m'appelle Florentin</h3>
-                        <p className='pt-2 text-gray-400'>Membre depuis 2022</p>
+                        <h3 className='text-3xl font-bold'>Bonjour, {user?.name}</h3>
+                        <p className='pt-2 text-gray-400'>Membre depuis {member}</p>
                         <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
                     </div>
 
                     <div className='inline-grid border-b lg:mt-10 pb-7 mb-7'>
                         <div className='flex justify-between py-3'>
-                            <h4 className='text-xl font-semibold'>Mes locations</h4>
+                            <h4 className='text-xl font-semibold'>Mes dernieres commandes</h4>
 
-                            <Link href='/user/all_location' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
+                            <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
                         </div>
                         <div className='flex items-start space-x-2 overflow-y-auto scrollbar-hide'>
                             {
