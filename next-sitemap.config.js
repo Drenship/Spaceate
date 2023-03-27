@@ -20,7 +20,7 @@ module.exports = async () => {
     const productUrls = await getProductUrls();
 
     return {
-        siteUrl: 'https://spaceate.vercel.app/', // Remplacez par l'URL de votre site
+        siteUrl: 'https://spaceate.vercel.app', // Remplacez par l'URL de votre site
         generateRobotsTxt: true, // (optionnel)
         exclude: [
             '/api/*',
@@ -33,7 +33,7 @@ module.exports = async () => {
         sitemapSize: 5000,
         additionalSitemap: [
             {
-                baseUrl: 'https://spaceate.vercel.app/',
+                baseUrl: 'https://spaceate.vercel.app',
                 pages: productUrls,
                 sitemap: 'sitemap-products',
             },
