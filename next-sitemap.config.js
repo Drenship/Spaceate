@@ -10,7 +10,7 @@ async function fetchProducts() {
 async function getProductUrls() {
     const products = await fetchProducts();
     return products.map((product) => ({
-        loc: `https://spaceate.vercel.app/${product.slug}`, // Remplacez par le format d'URL de vos produits
+        loc: `https://spaceate.vercel.app/product/${product.slug}`, // Remplacez par le format d'URL de vos produits
         changefreq: 'daily',
         priority: 0.7,
     }));
@@ -22,24 +22,21 @@ module.exports = async () => {
     return {
         siteUrl: 'https://spaceate.vercel.app',
         generateRobotsTxt: true,
+        sitemapSize: 5000,
         exclude: [
             '/api/*',
             '/admin/*',
             '/documents/*',
         ],
         robotsTxtOptions: {
-            additionalSitemaps: [
-                "https://spaceate.vercel.app/sitemap-products"
-            ]
+            additionalSitemap: [
+                {
+                    baseUrl: 'https://spaceate.vercel.app',
+                    pages: productUrls,
+                    sitemap: 'sitemap-products',
+                },
+            ],
         },
-        sitemapSize: 5000,
-        additionalSitemap: [
-            {
-                baseUrl: 'https://spaceate.vercel.app',
-                pages: productUrls,
-                sitemap: 'sitemap-products',
-            },
-        ],
         transform: (config, url) => {
             return {
                 loc: `${config.siteUrl}${url}`, // Ajoutez l'URL du site ici
