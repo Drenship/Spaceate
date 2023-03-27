@@ -50,7 +50,7 @@ async function fetchData() {
     const productUrls = await getProductUrls();
 
     return {
-        siteUrl: 'https://spaceate.vercel.app',
+        siteUrl: '',
         generateRobotsTxt: true,
         sitemapSize: 7000,
         exclude: [
@@ -61,7 +61,7 @@ async function fetchData() {
         robotsTxtOptions: {
             additionalSitemap: [
                 {
-                    baseUrl: 'https://spaceate.vercel.app',
+                    baseUrl: '',
                     pages: productUrls,
                     sitemap: 'sitemap-products',
                 },
