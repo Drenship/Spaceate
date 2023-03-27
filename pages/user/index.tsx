@@ -52,7 +52,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
 
     const sendMailForVerify = async () => {
 
-        if(!user) {
+        if (!user) {
             return;
         }
 
@@ -60,7 +60,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
             return;
         }
 
-        const result = await fetchPostJSON("/api/mailer", { 
+        const result = await fetchPostJSON("/api/mailer", {
             emailType: 'VERIFY_MAIL',
             user: {
                 email: user.email
@@ -108,7 +108,10 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                             <p>Adresse e-mail</p>
                         </div>
                         {
-                            !user?.email_is_verified && <button className='py-3 mt-2 font-semibold border border-black rounded-lg px-7 button-click-effect'>Verifier mon e-mail</button>
+                            !user?.email_is_verified && <button
+                                className='py-3 mt-2 font-semibold border border-black rounded-lg px-7 button-click-effect'
+                                onClick={sendMailForVerify}
+                            >Verifier mon e-mail</button>
                         }
                     </div>
 

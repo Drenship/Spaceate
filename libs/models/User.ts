@@ -180,12 +180,12 @@ const userSchema = new mongoose.Schema(
         },
     },
     {
-        strict: false,
+        strict: true,
         timestamps: true,
     }
 );
 
-userSchema.set('strictQuery', false)
+userSchema.set('strictQuery', true)
 
 
 export default mongoose.models.User || mongoose.model('User', userSchema);

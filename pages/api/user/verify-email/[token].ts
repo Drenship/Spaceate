@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sendMail } from '@libs/utils/email-sendgrid';
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
-import { generateUUID } from '@libs/utils';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
@@ -27,6 +25,10 @@ const handleGetRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (!user) {
             return res.status(400).json({ message: 'Le lien de vérification est invalide ou expiré.' });
+        }
+
+        if (user.email_is_verified) {
+            return res.status(200).json({ message: 'Votre email est déjà verifier !' });
         }
 
         user.email_is_verified = true;

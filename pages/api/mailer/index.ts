@@ -54,9 +54,10 @@ const VERIFY_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
 
     })
 
-    res.status(result.status).json({ message: result.message, result: result });
+    return res.status(result.status).json({ message: result.message, result: result });
 
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: `Erreur lors de l'envoi de l'email: ${error}` });
   } finally {
     await db.disconnect();
