@@ -9,5 +9,7 @@ module.exports = {
         '/admin/*',
         '/documents/*',
     ],
-    additionalSitemaps: [`${process.env.NEXTDOMAIN_URL}/api/sitemap/sitemap-products`],
+    additionalSitemaps: [
+        `${process.env.NEXTDOMAIN_URL}/api/sitemap/sitemap-products`
+    ],
 };
