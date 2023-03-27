@@ -46,6 +46,8 @@ export default function BasescreenWrapper({
             <Head>
                 <title>{titleHead}</title>
 
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+
                 <meta name="description" content={meta.description} />
                 <meta name="keywords" content={meta.keywords} />
 

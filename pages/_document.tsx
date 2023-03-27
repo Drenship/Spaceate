@@ -14,7 +14,6 @@ class MyDocument extends Document {
                     <link rel="icon" href="/favicons/favicon.ico" />
                     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png" />
                     <link rel="manifest" href="/site.webmanifest" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <meta charSet="utf-8" />
                 </Head>
                 <body>
