@@ -14,8 +14,12 @@ export default NextAuth({
         },
         async session({ session, token }) {
             session.user = { ...token._doc };
+            
+            // verify last update 
+            // if last update est plus vielle de x update avec un call api 
+            
             return session;
-        },
+        }
     },
     providers: [
         CredentialsProvider({

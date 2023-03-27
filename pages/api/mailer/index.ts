@@ -54,7 +54,7 @@ const VERIFY_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
 
     })
 
-    return res.status(result.status).json({ message: result.message, result: result });
+    return res.status(result.status).json({ success: true, message: result.message, result: result });
 
   } catch (error) {
     console.log("error", error)

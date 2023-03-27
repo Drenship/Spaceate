@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import { AnnotationIcon, CheckIcon, ShieldCheckIcon } from '@heroicons/react/solid';
+import { signIn, useSession } from 'next-auth/react';
+import { AnnotationIcon, CheckIcon } from '@heroicons/react/solid';
 import { RxCross1 } from 'react-icons/rx';
 
 import { TypeUser } from '@libs/typings';
@@ -42,7 +42,10 @@ interface Props {
 
 const UserProfil: NextPage<Props> = ({ myLocations }) => {
 
+
     const { data: session } = useSession();
+
+
     const user: TypeUser | null = session?.user || null;
 
     const [member] = useMemo(() => {
@@ -50,6 +53,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
         return [createdAt];
     }, [user]);
 
+    const [sendMailDisablerd, setSendMailDisablerd] = useState(false)
     const sendMailForVerify = async () => {
 
         if (!user) {
@@ -60,6 +64,8 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
             return;
         }
 
+        setSendMailDisablerd(true)
+
         const result = await fetchPostJSON("/api/mailer", {
             emailType: 'VERIFY_MAIL',
             user: {
@@ -67,9 +73,14 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
             }
         })
 
-        console.log(result)
+        if (result.success) {
+            setSendMailDisablerd(true)
+        } else {
+            setSendMailDisablerd(false)
+        }
 
     }
+
 
     return (
         <BasescreenWrapper title="Profile" footer={true}>
@@ -111,6 +122,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                             !user?.email_is_verified && <button
                                 className='py-3 mt-2 font-semibold border border-black rounded-lg px-7 button-click-effect'
                                 onClick={sendMailForVerify}
+                                disabled={sendMailDisablerd}
                             >Verifier mon e-mail</button>
                         }
                     </div>

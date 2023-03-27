@@ -26,10 +26,11 @@ const userSchema = new mongoose.Schema(
         },
         emailVerificationToken: { 
             type: String, 
-            unique: true 
         },
-        emailVerificationTokenExpires: { type: Date },
-      
+        emailVerificationTokenExpires: { 
+            type: Date 
+        },
+
         password: {
             type: String,
             required: true
@@ -184,6 +185,8 @@ const userSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+userSchema.index({ emailVerificationToken: 1 }, { unique: true, partialFilterExpression: { emailVerificationToken: { $exists: true } } });
 
 userSchema.set('strictQuery', true)
 

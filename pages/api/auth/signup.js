@@ -1,7 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
-import { sendMail } from '@libs/utils/email-sendgrid';
+import axios from 'axios';
 
 async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -40,12 +40,11 @@ async function handler(req, res) {
     const user = await newUser.save();
     await db.disconnect();
 
-    const result = await sendMail({
-        from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
-        to: email,
-        subject: 'Verifier votre email',
-        text: 'Verification de votre email',
-        html: '<p style={{text-color: "blue"}}">Verification de votre email.</p>',
+    await axios.post(`${process.env.NEXTDOMAIN_URL}/api/mailer`, {
+        emailType: 'VERIFY_MAIL',
+        user: {
+            email: user.email
+        }
     })
 
     res.status(201).send({
