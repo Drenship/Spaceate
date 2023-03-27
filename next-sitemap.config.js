@@ -2,9 +2,38 @@ const fetch = require('isomorphic-unfetch');
 
 async function fetchProducts() {
     // Remplacez cette URL par l'URL de votre API pour récupérer les produits
-    const res = await fetch('https://spaceate.vercel.app/api/product/sitemap');
-    const products = await res.json();
-    return products;
+    //const res = await fetch('https://spaceate.vercel.app/api/product/sitemap');
+    //const products = await res.json();
+    //return products;
+    return [
+        {
+            "slug": "makima"
+        },
+        {
+            "slug": "mashle"
+        },
+        {
+            "slug": "ftx-exchange-usdt-long-bot-2"
+        },
+        {
+            "slug": "fisher"
+        },
+        {
+            "slug": "avatar-2"
+        },
+        {
+            "slug": "fraise"
+        },
+        {
+            "slug": "stange-fish"
+        },
+        {
+            "slug": "trader"
+        },
+        {
+            "slug": "lotus"
+        }
+    ]
 }
 
 async function getProductUrls() {
@@ -16,13 +45,14 @@ async function getProductUrls() {
     }));
 }
 
-module.exports = async () => {
+
+async function fetchData() {
     const productUrls = await getProductUrls();
 
     return {
         siteUrl: 'https://spaceate.vercel.app',
         generateRobotsTxt: true,
-        sitemapSize: 5000,
+        sitemapSize: 7000,
         exclude: [
             '/api/*',
             '/admin/*',
@@ -47,4 +77,6 @@ module.exports = async () => {
             };
         },
     };
-};
+}
+
+module.exports = fetchData;
