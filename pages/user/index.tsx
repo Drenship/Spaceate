@@ -10,11 +10,12 @@ import { TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CommentaireCard from '@components/cards/CommentaireCard';
+import { fetchPostJSON } from '@libs/utils/api-helpers';
 
 
 function LocationCard({ item }: any) {
     return (
-        <div className="flex flex-col overflow-hidden border rounded-xl shadow-lg max-w-[320px] min-w-[320px] w-full cursor-pointer button-click-effect">
+        <div className="flex flex-col overflow-hidden border rounded-xl shadow-lg max-w-[90vw] min-w-[320px] w-full cursor-pointer button-click-effect">
 
             <div className="relative w-full h-40">
                 <Image
@@ -45,14 +46,30 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
     const user: TypeUser | null = session?.user || null;
 
     const [member] = useMemo(() => {
-
         const createdAt = new Date(user?.createdAt).getFullYear()
-
-
         return [createdAt];
     }, [user]);
 
-    const [commentaires, setCommentaires] = useState([]);
+    const sendMailForVerify = async () => {
+
+        if(!user) {
+            return;
+        }
+
+        if (user?.email_is_verified) {
+            return;
+        }
+
+        const result = await fetchPostJSON("/api/mailer", { 
+            emailType: 'VERIFY_MAIL',
+            user: {
+                email: user.email
+            }
+        })
+
+        console.log(result)
+
+    }
 
     return (
         <BasescreenWrapper title="Profile" footer={true}>
@@ -123,7 +140,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                     </div>
 
                     <div className='flex flex-col'>
-                        <div className='flex items-center justify-between'>
+                        <div className='flex flex-col md:justify-between md:items-center md:flex-row'>
                             <div className='flex items-center space-x-2'>
                                 <AnnotationIcon className="h-5" />
                                 <h4 className='text-xl font-bold'>{user?.reviews ? user?.reviews.length : 0} commentaire</h4>
@@ -133,7 +150,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                         </div>
                         <div className='grid grid-cols-1'>
                             {
-                                commentaires?.map((item: any, key: any) => <CommentaireCard
+                                user?.reviews?.map((item: any, key: any) => <CommentaireCard
                                     key={key}
                                     img={item.img}
                                     name={item.name}
