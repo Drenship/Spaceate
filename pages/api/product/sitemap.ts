@@ -5,7 +5,7 @@ import Product from '@libs/models/Product';
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         await db.connect();
-        const products = await Product.find({}, { slug: 1 })
+        const products = await Product.find({}, { _id: 0, slug: 1 })
         await db.disconnect();
         console.log(products)
         res.send({ products: products });

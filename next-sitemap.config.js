@@ -2,7 +2,7 @@ const fetch = require('isomorphic-unfetch');
 
 async function fetchProducts() {
     // Remplacez cette URL par l'URL de votre API pour récupérer les produits
-    const res = await fetch('./api/product/sitemap');
+    const res = await fetch('https://spaceate.vercel.app/api/product/sitemap');
     const products = await res.json();
     return products;
 }
