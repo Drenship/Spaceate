@@ -28,15 +28,14 @@ module.exports = async () => {
             '/documents/*'
         ], // Exclure les fichiers API ou autres fichiers que vous ne souhaitez pas inclure dans le sitemap
         robotsTxtOptions: {
-            additionalSitemaps: [],
+            sitemapSize: 5000,
+            additionalSitemap: [
+                {
+                    baseUrl: 'https://spaceate.vercel.app',
+                    pages: productUrls,
+                    sitemap: 'sitemap-products',
+                },
+            ],
         },
-        sitemapSize: 5000,
-        additionalSitemap: [
-            {
-                baseUrl: 'https://spaceate.vercel.app',
-                pages: productUrls,
-                sitemap: 'sitemap-products',
-            },
-        ],
     };
 };
