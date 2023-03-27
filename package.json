@@ -2,8 +2,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "build": "npm run generate-sitemap && next build",
+    "generate-sitemap": "node generate-sitemap.js"
   },
   "dependencies": {
     "@badrap/bar-of-progress": "^0.2.2",
@@ -36,6 +37,7 @@
     "react-icons": "^4.7.1",
     "recoil": "^0.7.6",
     "recoil-persist": "^4.2.0",
+    "sitemap": "^7.1.1",
     "stripe": "^11.7.0",
     "swiper": "^9.1.0",
     "swr": "^2.0.3"
