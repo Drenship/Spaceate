@@ -132,7 +132,7 @@ const CGU: NextPage = ({ jsonCGU }) => {
                         {cgu && renderMenu()}
                     </div>
                 </div>
-                <div className="max-w-[1400px] space-y-5 px-5 py-8 border-l-0 bg-white shadow-lg">
+                <div className="w-full px-5 py-8 space-y-5 bg-white border-l-0 shadow-lg">
                     <h1 className="text-3xl font-bold">{cguTitle}</h1>
                     {cgu && renderCgu(cgu)}
                 </div>

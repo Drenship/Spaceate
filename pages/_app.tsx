@@ -6,6 +6,7 @@ import { RecoilRoot, RecoilEnv } from 'recoil';
 import { NotifyContextProvider } from '@libs/hooks/notify';
 import { Analytics } from '@vercel/analytics/react';
 import '../styles/globals.css'
+import CookiePopup from '@components/ui-ux/Notifications/CookiePopup';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -36,6 +37,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
             )
           }
           <Analytics />
+          <CookiePopup />
         </NotifyContextProvider>
       </RecoilRoot>
     </SessionProvider>

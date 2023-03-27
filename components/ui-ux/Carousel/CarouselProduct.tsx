@@ -51,15 +51,13 @@ function CarouselProduct({ products, overflow }: Props) {
             grabCursor={true}
             modules={[Navigation, Keyboard]}
             className="w-full max-w-screen"
-            style={{
-                overflow: `${overflow} !important;`
-            }}
+            style={{ overflow: `${overflow} !important` }}
         >
             {
                 products.map((data, key) => <SwiperSlide key={key}>
                     <Productcard product={data} />
                 </SwiperSlide>)
-                }
+            }
         </Swiper>
     );
 }
