@@ -20,22 +20,21 @@ module.exports = async () => {
     const productUrls = await getProductUrls();
 
     return {
-        siteUrl: 'https://spaceate.vercel.app', // Remplacez par l'URL de votre site
-        generateRobotsTxt: true, // (optionnel)
+        siteUrl: 'https://spaceate.vercel.app',
+        generateRobotsTxt: true,
         exclude: [
             '/api/*',
             '/admin/*',
-            '/documents/*'
-        ], // Exclure les fichiers API ou autres fichiers que vous ne souhaitez pas inclure dans le sitemap
-        robotsTxtOptions: {
-            sitemapSize: 5000,
-            additionalSitemap: [
-                {
-                    baseUrl: 'https://spaceate.vercel.app',
-                    pages: productUrls,
-                    sitemap: 'sitemap-products',
-                },
-            ],
-        },
+            '/documents/*',
+        ],
+        robotsTxtOptions: {},
+        sitemapSize: 5000,
+        additionalSitemap: [
+            {
+                baseUrl: 'https://spaceate.vercel.app',
+                pages: productUrls,
+                sitemap: 'sitemap-products',
+            },
+        ],
     };
 };
