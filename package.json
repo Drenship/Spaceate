@@ -23,6 +23,7 @@
     "fs": "^0.0.1-security",
     "gsap": "^3.11.4",
     "is-mobile": "^4.0.0",
+    "isomorphic-unfetch": "^4.0.2",
     "micro": "^10.0.1",
     "micro-cors": "^0.1.1",
     "mongoose": "^6.8.4",
