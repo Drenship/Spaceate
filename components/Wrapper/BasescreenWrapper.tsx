@@ -46,14 +46,8 @@ export default function BasescreenWrapper({
             <Head>
                 <title>{titleHead}</title>
 
-                <link rel="icon" href="/favicons/favicon.ico" />
-                <link rel="manifest" href="/site.webmanifest" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <meta charSet="utf-8" />
-
                 <meta name="description" content={meta.description} />
                 <meta name="keywords" content={meta.keywords} />
-
 
                 {/* Open Graph */}
                 <meta property="og:title" content={titleHead} />

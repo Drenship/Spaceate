@@ -8,9 +8,14 @@ class MyDocument extends Document {
 
     render() {
         return (
-            <Html lang="fr"> {/* Remplacez "fr" par la langue appropriée pour votre site */}
+            <Html lang="fr">
                 <Head>
-                    {/* Ajoutez vos balises <head> personnalisées ici */}
+                    <meta name="theme-color" content="#ffffff" />
+                    <link rel="icon" href="/favicons/favicon.ico" />
+                    <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png" />
+                    <link rel="manifest" href="/site.webmanifest" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <meta charSet="utf-8" />
                 </Head>
                 <body>
                     <Main />
