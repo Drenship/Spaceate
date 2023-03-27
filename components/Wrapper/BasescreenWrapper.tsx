@@ -76,11 +76,13 @@ export default function BasescreenWrapper({
                                 __html: JSON.stringify({
                                     '@context': 'https://schema.org',
                                     '@type': 'Product',
-                                    gtin13: meta.product._id,
+                                    productID: meta.product._id,
                                     name: title,
                                     description: meta.description,
+                                    category: meta.product.categorie.name,
                                     image: meta.image,
                                     sku: meta.product.slug,
+                                    releaseDate: meta.product.createdAt,
                                     offers: {
                                         '@type': 'Offer',
                                         availability: meta.product.countInStock > 0 ? "InStock" : "OutOfStock",

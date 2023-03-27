@@ -44,6 +44,8 @@ export interface TypeProduct {
     };
     isFeatured: boolean;
     isPublished: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface TypeCartItem extends TypeProduct {
