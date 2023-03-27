@@ -79,4 +79,4 @@ async function fetchData() {
     };
 }
 
-module.exports = await fetchData();
+module.exports = fetchData();
