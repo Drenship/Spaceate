@@ -27,7 +27,11 @@ module.exports = async () => {
             '/admin/*',
             '/documents/*',
         ],
-        robotsTxtOptions: {},
+        robotsTxtOptions: {
+            additionalSitemaps: [
+                "https://spaceate.vercel.app/sitemap-products"
+            ]
+        },
         sitemapSize: 5000,
         additionalSitemap: [
             {
@@ -36,5 +40,14 @@ module.exports = async () => {
                 sitemap: 'sitemap-products',
             },
         ],
+        transform: (config, url) => {
+            return {
+                loc: `${config.siteUrl}${url}`, // Ajoutez l'URL du site ici
+                changefreq: config.changefreq,
+                priority: config.priority,
+                lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
+                alternateRefs: config.alternateRefs,
+            };
+        },
     };
 };
