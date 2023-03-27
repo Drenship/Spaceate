@@ -47,6 +47,11 @@ export default function BasescreenWrapper({
                 <title>{titleHead}</title>
 
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta name="theme-color" content="#ffffff" />
+                <meta charSet="utf-8" />
+                <link rel="icon" href="/favicons/favicon.ico" />
+                <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png" />
+                <link rel="manifest" href="/site.webmanifest" />
 
                 <meta name="description" content={meta.description} />
                 <meta name="keywords" content={meta.keywords} />

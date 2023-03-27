@@ -12,8 +12,13 @@ export default function AuthscreenWrapper({ title, children }: AuthscreenWrapper
     <div data-theme="light" className="flex flex-col items-center justify-center w-full min-h-screen ">
       <Head>
         <title>{titleHead}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta charSet="utf-8" />
         <link rel="icon" href="/favicons/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+
       </Head>
 
       <main className="flex flex-col items-center justify-start flex-1 w-full">
