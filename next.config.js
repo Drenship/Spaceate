@@ -7,10 +7,12 @@ module.exports = {
   images: {
     domains: [
       'firebasestorage.googleapis.com',
+      
+      // delete after
       'rb.gy', 'pbs.twimg.com',
-
-
-      'acadienouvelle-6143.kxcdn.com'
+      'acadienouvelle-6143.kxcdn.com', 
+      'images8.alphacoders.com',
+      'a0.muscache.com'
     ],
   },
   env: {
