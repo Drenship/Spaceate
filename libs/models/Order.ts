@@ -4,13 +4,13 @@ import User from './User';
 const orderSchema = new mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-        
+
         stripeDetails: {
-            session_id: { type: String, required: false }, 
+            session_id: { type: String, required: false },
             customer_id: { type: String, required: false },
             payment_intent_id: { type: String, required: false },
-            refund_id: { type: String, required: false }, 
-            charge_id: { type: String, required: false }, 
+            refund_id: { type: String, required: false },
+            charge_id: { type: String, required: false },
         },
 
         orderItems: [
@@ -59,7 +59,7 @@ const orderSchema = new mongoose.Schema(
         isSended: { type: Boolean, required: true, default: false },
         isDelivered: { type: Boolean, required: true, default: false },
         isRefund: { type: Boolean, required: true, default: false },
-        
+
         isRefundAsked: { type: Boolean, required: true, default: false },
 
         cancelAt: { type: Date },
@@ -85,14 +85,7 @@ orderSchema.pre('find', function () {
 });
 
 orderSchema.post('find', async function (result) {
-        // Populate the categorie field
-        const user = await User.findById(result.user);
-
-        if (user) {
-            result.user = user;
-        } else {
-            console.log(`Could not find Categorie with id ${result.user}`)
-        }
+    // Populate the categorie field
     console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds');
 });
 

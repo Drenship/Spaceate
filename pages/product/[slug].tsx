@@ -378,7 +378,6 @@ export const getServerSideProps = async (context: any) => {
                 ? { slug: slug }
                 : { slug: slug, isPublished: true }
 
-            console.log(querySearch)
             await db.connect();
             product = await Product.findOne(querySearch).populate("categorie").lean();
             const find = product ? true : false

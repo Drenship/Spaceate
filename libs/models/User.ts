@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Order from '@libs/models/Order';
 
 const userSchema = new mongoose.Schema(
     {
@@ -24,11 +25,11 @@ const userSchema = new mongoose.Schema(
             required: true,
             default: false
         },
-        emailVerificationToken: { 
-            type: String, 
+        emailVerificationToken: {
+            type: String,
         },
-        emailVerificationTokenExpires: { 
-            type: Date 
+        emailVerificationTokenExpires: {
+            type: Date
         },
 
         password: {
@@ -108,7 +109,8 @@ const userSchema = new mongoose.Schema(
         orders: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'Order'
+                ref: 'Order',
+                autopopulate: true
             }
         ],
         reviews: [
@@ -181,14 +183,15 @@ const userSchema = new mongoose.Schema(
         },
     },
     {
-        strict: true,
+        strict: false,
         timestamps: true,
     }
 );
 
 userSchema.index({ emailVerificationToken: 1 }, { unique: true, partialFilterExpression: { emailVerificationToken: { $exists: true } } });
 
-userSchema.set('strictQuery', true)
+userSchema.plugin(require('mongoose-autopopulate'));
 
+userSchema.set('strictQuery', false)
 
 export default mongoose.models.User || mongoose.model('User', userSchema);

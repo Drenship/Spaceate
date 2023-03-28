@@ -11,6 +11,7 @@ import { TypeUser } from '@libs/typings';
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CommentaireCard from '@components/cards/CommentaireCard';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
+import { fixedPriceToCurrency } from '@libs/utils';
 
 
 function LocationCard({ item }: any) {
@@ -19,15 +20,15 @@ function LocationCard({ item }: any) {
 
             <div className="relative w-full h-40">
                 <Image
-                    src={item.img}
+                    src={item.orderItems[0].image}
                     layout='fill'
                     objectFit="cover"
                 />
             </div>
             <div className="p-5">
-                <h3 className="text-lg font-bold">{item.title}</h3>
-                <p className="text-sm text-gray-600 truncate">{item.description}</p>
-                <p className="font-bold text-right">30€</p>
+                <h3 className="text-lg font-bold">{item.shippingAddress.fullName}</h3>
+                <p className="text-sm text-gray-600 truncate">{item.shippingAddress.address}</p>
+                <p className="font-bold text-right">{fixedPriceToCurrency(item.totalPrice)}</p>
             </div>
 
         </div>
@@ -47,7 +48,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
 
 
     const user: TypeUser | null = session?.user || null;
-
+    console.log(user)
     const [member] = useMemo(() => {
         const createdAt = new Date(user?.createdAt).getFullYear()
         return [createdAt];
@@ -84,7 +85,7 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
 
     return (
         <BasescreenWrapper title="Profile" footer={true}>
-            <div className='block px-5 my-12 lg:flex max-w-[1400px]'>
+            <div className='block px-5 my-12 lg:flex max-w-[1400px] w-full'>
 
                 { /* Left */}
                 <div className='flex flex-col items-center justify-start rounded-xl w-full lg:max-w-[320px] mr-0 lg:mr-16 lg:py-4 lg:px-6 lg:border flex-shrink-0'>
@@ -143,9 +144,9 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
 
                             <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
                         </div>
-                        <div className='flex items-start space-x-2 overflow-y-auto scrollbar-hide'>
+                        <div className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide'>
                             {
-                                myLocations?.slice(0, 4).map((item: any, key: any) => <LocationCard
+                                user?.orders?.slice(0, 4).map((item: any, key: any) => <LocationCard
                                     key={key}
                                     item={item}
                                 />)

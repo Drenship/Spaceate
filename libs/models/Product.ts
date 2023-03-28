@@ -211,15 +211,6 @@ productSchema.pre('find', function () {
 });
 
 productSchema.post('find', async function (result) {
-    // Populate the categorie field
-    const categorie = await Categorie.findById(result.categorie);
-
-    if (categorie) {
-        result.categorie = categorie
-        result.subCategorie = categorie.subCategorie.filter(c => c._id === result.subCategorie);
-    } else {
-        console.log(`Could not find Categorie with id ${result.categorie}`)
-    }
 
     console.log('find() product in ' + (Date.now() - findstart) + ' milliseconds');
 });

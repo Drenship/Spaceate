@@ -4,6 +4,7 @@ import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
 import { TypeCartItem } from '@libs/typings';
 import Product from '@libs/models/Product';
+import User from '@libs/models/User';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     authSessionMiddleware({ authOnly: true, adminOnly: false })(req, res, () => {
@@ -77,6 +78,15 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
         await updateProducts();
+
+        // ,
+
+        const user = await User.findById(req.body.user._id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        user.orders.push(order._id);
+        await user.save();
 
         await db.disconnect();
         res.send({ message: 'Order created successfully', data: order });
