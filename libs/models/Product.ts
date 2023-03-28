@@ -1,5 +1,5 @@
 import mongoose, { Document } from "mongoose";
-import Categorie from "./Categorie";
+import "@libs/models/Categorie";
 
 interface IProduct extends Document {
     name: string;

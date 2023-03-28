@@ -176,7 +176,7 @@ const UserProfil: NextPage<Props> = () => {
                         </div>
                         <div className='flex flex-col items-start w-full '>
                             {
-                                [...(user?.orders || []),...(user?.orders || []),...(user?.orders || []),...(user?.orders || []),...(user?.orders || [])]
+                                [...(user?.orders || [])]
                                     .filter((order) => order.isPaid === true && order.isDelivered === false && order.isRefund === false && order.isCancel === false).slice(0, 4)
                                     .map((item: any, key: any) => <ProfilCurrentOrderLine
                                         key={key}
