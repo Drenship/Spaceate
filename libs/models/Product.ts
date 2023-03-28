@@ -1,5 +1,5 @@
 import mongoose, { Document } from "mongoose";
-import "@libs/models/Categorie";
+import Categorie from "@libs/models/Categorie";
 
 interface IProduct extends Document {
     name: string;
@@ -151,59 +151,6 @@ productSchema.index({
     subCategorie: 1,
 });
 
-/*
-// test
-productSchema.pre('validate', function () {
-    console.log('this gets printed first');
-});
-
-productSchema.post('validate', function () {
-    console.log('this gets printed second');
-});
-
-productSchema.pre('save', function () {
-    console.log('this gets printed third');
-});
-
-productSchema.post('save', function () {
-    console.log('this gets printed fourth');
-});
- */
-
-
-// Working functions
-/*
-productSchema.pre('save', function (this: IProduct & mongoose.Document<any, any, IProduct>, next) {
-    const product = this;
-    // On ne peut pas faire de l'async/await ici car la fonction doit être synchrone
-    // On doit donc utiliser le callback next() à la place de l'await
-    if (product.isModified('name')) {
-        product.slug = slugify(product.name, { lower: true });
-    }
-
-    if (product.isModified('categorie') || product.isModified('subCategorie')) {
-        const categorie = Categorie.findById(product.categorie);
-
-        if (categorie) {
-            const subCategorie = categorie.subCategorie.find(
-                (subCategorie) => subCategorie._id.toString() === product.subCategorie.toString()
-            );
-
-            if (subCategorie) {
-                next();
-            } else {
-                throw new Error(`SubCategorie with id ${product.subCategorie} not found in Categorie with id ${product.categorie}`);
-            }
-        } else {
-            throw new Error(`Categorie with id ${product.categorie} not found`);
-        }
-    } else {
-        next();
-    }
-});
-*/
-
-
 let findstart = 0;
 productSchema.pre('find', function () {
     console.log(this instanceof mongoose.Query); // true
@@ -211,6 +158,8 @@ productSchema.pre('find', function () {
 });
 
 productSchema.post('find', async function (result) {
+
+    if(result) Categorie.findOne({})
 
     console.log('find() product in ' + (Date.now() - findstart) + ' milliseconds');
 });

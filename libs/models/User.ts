@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import '@libs/models/Order';
+import Order from '@libs/models/Order';
 
 const userSchema = new mongoose.Schema(
     {
@@ -193,5 +193,20 @@ userSchema.index({ emailVerificationToken: 1 }, { unique: true, partialFilterExp
 userSchema.plugin(require('mongoose-autopopulate'));
 
 userSchema.set('strictQuery', false)
+
+
+let findstart = 0;
+userSchema.pre('find', function () {
+    console.log(this instanceof mongoose.Query); // true
+    findstart = Date.now();
+});
+
+userSchema.post('find', async function (result) {
+
+    if(result) Order.findOne({})
+
+    console.log('find() user in ' + (Date.now() - findstart) + ' milliseconds');
+});
+
 
 export default mongoose.models.User || mongoose.model('User', userSchema);
