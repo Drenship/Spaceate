@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from "@libs/models/User";
+import "@libs/models/User";
 
 const orderSchema = new mongoose.Schema(
     {
@@ -85,8 +85,6 @@ orderSchema.pre('find', function () {
 });
 
 orderSchema.post('find', async function (result) {
-    // Populate the categorie field
-    if(result) User.findOne({})
     console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds');
 });
 

@@ -1,5 +1,5 @@
 import mongoose, { Document } from "mongoose";
-import Categorie from "@libs/models/Categorie";
+import "@libs/models/Categorie";
 
 interface IProduct extends Document {
     name: string;
@@ -158,9 +158,6 @@ productSchema.pre('find', function () {
 });
 
 productSchema.post('find', async function (result) {
-
-    if(result) Categorie.findOne({})
-
     console.log('find() product in ' + (Date.now() - findstart) + ' milliseconds');
 });
 

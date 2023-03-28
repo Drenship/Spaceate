@@ -41,7 +41,7 @@ const ProfilOrderCard = ({ order }: ProfilOrderCardProps) => (
 
 const ProfilCurrentOrderLine = ({ order }: ProfilOrderCardProps) => (
     <Link href={`/user/order-history/${order._id}`} className="w-full [&:nth-child(1)]:border-t [&:not(:last-child)]:border-b hover:bg-gray-50 px-1">
-        <div className='flex items-center justify-between w-full space-x-1'>
+        <div className='flex items-center justify-between w-full'>
             <div className="-space-x-6 avatar-group">
 
                 {
@@ -172,7 +172,7 @@ const UserProfil: NextPage<Props> = () => {
                     <div className='inline-grid w-full border-b lg:mt-10 pb-7 mb-7'>
                         <div className='flex justify-between py-3'>
                             <h4 className='text-xl font-semibold'>Commandes en cours</h4>
-                            <Link href='/user/order-history' className='pr-1 font-semibold underline active:text-gray-400'>Voire plus</Link>
+                            <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
                         </div>
                         <div className='flex flex-col items-start w-full '>
                             {
