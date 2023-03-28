@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Order from '@libs/models/Order';
+import '@libs/models/Order';
 
 const userSchema = new mongoose.Schema(
     {
@@ -202,9 +202,6 @@ userSchema.pre('find', function () {
 });
 
 userSchema.post('find', async function (result) {
-
-    if(result) Order.findOne({})
-
     console.log('find() user in ' + (Date.now() - findstart) + ' milliseconds');
 });
 

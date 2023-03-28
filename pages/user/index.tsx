@@ -172,7 +172,7 @@ const UserProfil: NextPage<Props> = () => {
                     <div className='inline-grid w-full border-b lg:mt-10 pb-7 mb-7'>
                         <div className='flex justify-between py-3'>
                             <h4 className='text-xl font-semibold'>Commandes en cours</h4>
-                            <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
+                            <Link href='/user/order-history' className='pr-1 font-semibold underline active:text-gray-400'>Voire plus</Link>
                         </div>
                         <div className='flex flex-col items-start w-full '>
                             {
