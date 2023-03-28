@@ -2,53 +2,84 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { AnnotationIcon, CheckIcon } from '@heroicons/react/solid';
 import { RxCross1 } from 'react-icons/rx';
 
-import { TypeUser } from '@libs/typings';
+import { fetchPostJSON } from '@libs/utils/api-helpers';
+import { fixedPriceToCurrency, replaceURL, splitString, UTCStringToDate } from '@libs/utils';
+import { TypeOrder, TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CommentaireCard from '@components/cards/CommentaireCard';
-import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { fixedPriceToCurrency } from '@libs/utils';
+import OrderStatus from '@components/contents/orderStatus';
 
 
-function LocationCard({ item }: any) {
-    return (
-        <div className="flex flex-col overflow-hidden border rounded-xl shadow-lg max-w-[90vw] min-w-[320px] w-full cursor-pointer button-click-effect">
+interface ProfilOrderCardProps {
+    order: TypeOrder
+}
 
-            <div className="relative w-full h-40">
-                <Image
-                    src={item.orderItems[0].image}
-                    layout='fill'
-                    objectFit="cover"
-                />
-            </div>
-            <div className="p-5">
-                <h3 className="text-lg font-bold">{item.shippingAddress.fullName}</h3>
-                <p className="text-sm text-gray-600 truncate">{item.shippingAddress.address}</p>
-                <p className="font-bold text-right">{fixedPriceToCurrency(item.totalPrice)}</p>
-            </div>
+const ProfilOrderCard = ({ order }: ProfilOrderCardProps) => (
+    <div className="flex flex-col overflow-hidden border rounded-xl shadow-lg md:max-w-[320px] max-w-[80vw] min-w-[320px] w-full cursor-pointer button-click-effect">
 
+        <div className="relative w-full h-40">
+            <Image
+                src={order.orderItems[0].image}
+                layout='fill'
+                objectFit="cover"
+            />
         </div>
-    )
-}
+        <div className="p-5">
+            <h3 className="text-lg font-bold">{order.shippingAddress.fullName}</h3>
+            <p className="text-sm text-gray-600 truncate">{order.shippingAddress.address}</p>
+            <p className="font-bold text-right">{fixedPriceToCurrency(order.totalPrice)}</p>
+        </div>
+
+    </div>
+)
 
 
+const ProfilCurrentOrderLine = ({ order }: ProfilOrderCardProps) => (
+    <Link href={`/user/order-history/${order._id}`} className="w-full [&:nth-child(1)]:border-t border-b">
+        <div className='flex items-center justify-between w-full space-x-1'>
+            <div className="-space-x-6 avatar-group">
 
-interface Props {
-    myLocations: any[]
-}
+                {
+                    order.orderItems.length > 0 && [...order.orderItems].slice(0, 4).map((p, k) => <div key={k} className="avatar">
+                        <div className="w-12">
+                            <img src={replaceURL(p.image)} alt={`panier spaceate - ${p.name}`} />
+                        </div>
+                    </div>)
+                }
 
-const UserProfil: NextPage<Props> = ({ myLocations }) => {
+                {
+                    order.orderItems.length > 4 && (
+                        <div className="select-none avatar placeholder">
+                            <div className="w-12 bg-neutral-focus text-neutral-content">
+                                <span>+{order.orderItems.length - 3}</span>
+                            </div>
+                        </div>
+                    )
+                }
+            </div>
+            <div className="px-3 whitespace-no-wrap">
+                <OrderStatus order={order} />
+            </div>
+            <div className="px-3 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{fixedPriceToCurrency(order.totalPrice)}</div>
+            <div className="pl-3 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(order.createdAt)}</div>
+        </div>
+    </Link>
+)
+
+
+interface Props {}
+
+const UserProfil: NextPage<Props> = () => {
 
 
     const { data: session } = useSession();
-
-
     const user: TypeUser | null = session?.user || null;
-    console.log(user)
+
     const [member] = useMemo(() => {
         const createdAt = new Date(user?.createdAt).getFullYear()
         return [createdAt];
@@ -138,7 +169,24 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                         <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
                     </div>
 
-                    <div className='inline-grid border-b lg:mt-10 pb-7 mb-7'>
+                    <div className='inline-grid w-full border-b lg:mt-10 pb-7 mb-7'>
+                        <div className='flex justify-between py-3'>
+                            <h4 className='text-xl font-semibold'>Commandes en cours</h4>
+                            <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
+                        </div>
+                        <div className='flex flex-col items-start w-full '>
+                            {
+                                [...(user?.orders || [])]
+                                    .filter((order) => order.isPaid === true && order.isDelivered === false && order.isRefund === false && order.isCancel === false).slice(0, 4)
+                                    .map((item: any, key: any) => <ProfilCurrentOrderLine
+                                        key={key}
+                                        order={item}
+                                    />)
+                            }
+                        </div>
+                    </div>
+
+                    <div className='inline-grid w-full border-b lg:mt-10 pb-7 mb-7'>
                         <div className='flex justify-between py-3'>
                             <h4 className='text-xl font-semibold'>Mes dernieres commandes</h4>
 
@@ -146,9 +194,9 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
                         </div>
                         <div className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide'>
                             {
-                                user?.orders?.slice(0, 4).map((item: any, key: any) => <LocationCard
+                                user?.orders?.slice(0, 4).map((item: any, key: any) => <ProfilOrderCard
                                     key={key}
-                                    item={item}
+                                    order={item}
                                 />)
                             }
                         </div>
@@ -183,38 +231,6 @@ const UserProfil: NextPage<Props> = ({ myLocations }) => {
         </BasescreenWrapper>
     )
 }
-
-export async function getStaticProps() {
-
-    const myLocations = [{
-        _id: "1",
-        img: "https://images8.alphacoders.com/110/thumb-1920-1102284.jpg",
-        title: 'Piscine',
-        description: "bbudsvbozusidv  ndszouv zod^_jvùZDPOIM?VC ZDÖPIFGVHZEDoifazepùfvhbre vdpç ghrzov bfdqkmu ,qdsP9%FVRZEUFGOZDSNVEFQ%O8V QREFDZ9HR"
-    }, {
-        _id: "2",
-        img: "https://images8.alphacoders.com/110/thumb-1920-1102284.jpg",
-        title: 'Appartent',
-        description: "dvgil du kgfd poufhdo dqsnf oupdz vnv ZSDGO8  NGFEZD7b ngfomlubl pùfd b^o_gsfdhbdf dvn hqdfoidfi oiu fo ifd boiowdpfhbdf dfloi f !"
-    }, {
-        _id: "3",
-        img: "https://images8.alphacoders.com/110/thumb-1920-1102284.jpg",
-        title: 'Maison',
-        description: "dvgil du kgfd poufhdo dqsnf oupdz vnv ZSDGO8  NGFEZD7b ngfomlubl pùfd b^o_gsfdhbdf dvn hqdfoidfi oiu fo ifd boiowdpfhbdf dfloi f !"
-    }, {
-        _id: "4",
-        img: "https://images8.alphacoders.com/110/thumb-1920-1102284.jpg",
-        title: 'Champ',
-        description: "dvgil du kgfd poufhdo dqsnf oupdz vnv ZSDGO8  NGFEZD7b ngfomlubl pùfd b^o_gsfdhbdf dvn hqdfoidfi oiu fo ifd boiowdpfhbdf dfloi f !"
-    }]
-
-    return {
-        props: {
-            myLocations,
-        }
-    }
-}
-
 
 UserProfil.auth = true;
 export default UserProfil
