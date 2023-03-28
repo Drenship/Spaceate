@@ -40,7 +40,7 @@ const ProfilOrderCard = ({ order }: ProfilOrderCardProps) => (
 
 
 const ProfilCurrentOrderLine = ({ order }: ProfilOrderCardProps) => (
-    <Link href={`/user/order-history/${order._id}`} className="w-full [&:nth-child(1)]:border-t border-b">
+    <Link href={`/user/order-history/${order._id}`} className="w-full [&:nth-child(1)]:border-t [&:not(:last-child)]:border-b hover:bg-gray-50 px-1">
         <div className='flex items-center justify-between w-full space-x-1'>
             <div className="-space-x-6 avatar-group">
 
@@ -176,7 +176,7 @@ const UserProfil: NextPage<Props> = () => {
                         </div>
                         <div className='flex flex-col items-start w-full '>
                             {
-                                [...(user?.orders || [])]
+                                [...(user?.orders || []),...(user?.orders || []),...(user?.orders || []),...(user?.orders || []),...(user?.orders || [])]
                                     .filter((order) => order.isPaid === true && order.isDelivered === false && order.isRefund === false && order.isCancel === false).slice(0, 4)
                                     .map((item: any, key: any) => <ProfilCurrentOrderLine
                                         key={key}
