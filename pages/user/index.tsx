@@ -24,7 +24,7 @@ const ProfilOrderCard = ({ order }: ProfilOrderCardProps) => (
 
         <div className="relative w-full h-40">
             <Image
-                src={order.orderItems[0].image}
+                src={replaceURL(order.orderItems[0].image)}
                 layout='fill'
                 objectFit="cover"
             />
@@ -72,7 +72,7 @@ const ProfilCurrentOrderLine = ({ order }: ProfilOrderCardProps) => (
 )
 
 
-interface Props {}
+interface Props { }
 
 const UserProfil: NextPage<Props> = () => {
 
@@ -80,9 +80,11 @@ const UserProfil: NextPage<Props> = () => {
     const { data: session } = useSession();
     const user: TypeUser | null = session?.user || null;
 
-    const [member] = useMemo(() => {
+    const [member, orders] = useMemo(() => {
         const createdAt = new Date(user?.createdAt).getFullYear()
-        return [createdAt];
+        const orders = [...(user?.orders || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+        return [createdAt, orders];
     }, [user]);
 
     const [sendMailDisablerd, setSendMailDisablerd] = useState(false)
@@ -118,6 +120,7 @@ const UserProfil: NextPage<Props> = () => {
         <BasescreenWrapper title="Profile" footer={true}>
             <div className='block px-5 my-12 lg:flex max-w-[1400px] w-full'>
 
+
                 { /* Left */}
                 <div className='flex flex-col items-center justify-start rounded-xl w-full lg:max-w-[320px] mr-0 lg:mr-16 lg:py-4 lg:px-6 lg:border flex-shrink-0'>
                     <div className='flex items-center justify-between w-full'>
@@ -125,7 +128,9 @@ const UserProfil: NextPage<Props> = () => {
                         <div className='inline-block lg:hidden'>
                             <h3 className='text-3xl font-bold'>Bonjour, {user?.name}</h3>
                             <p className='pt-2 text-gray-400'>Membre depuis {member}</p>
-                            <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
+                            <Link href='/user/settings'>
+                                <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
+                            </Link>
                         </div>
 
                         <div className='flex flex-col items-end justify-end lg:items-center lg:w-full'>
@@ -166,7 +171,9 @@ const UserProfil: NextPage<Props> = () => {
                     <div className='hidden lg:block'>
                         <h3 className='text-3xl font-bold'>Bonjour, {user?.name}</h3>
                         <p className='pt-2 text-gray-400'>Membre depuis {member}</p>
-                        <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
+                        <Link href='/user/settings'>
+                            <button className='mt-5 font-semibold underline active:text-gray-400'>Modifier le profil</button>
+                        </Link>
                     </div>
 
                     <div className='inline-grid w-full border-b lg:mt-10 pb-7 mb-7'>
@@ -176,7 +183,7 @@ const UserProfil: NextPage<Props> = () => {
                         </div>
                         <div className='flex flex-col items-start w-full '>
                             {
-                                [...(user?.orders || [])]
+                                orders
                                     .filter((order) => order.isPaid === true && order.isDelivered === false && order.isRefund === false && order.isCancel === false).slice(0, 4)
                                     .map((item: any, key: any) => <ProfilCurrentOrderLine
                                         key={key}
@@ -194,10 +201,12 @@ const UserProfil: NextPage<Props> = () => {
                         </div>
                         <div className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide'>
                             {
-                                user?.orders?.slice(0, 4).map((item: any, key: any) => <ProfilOrderCard
-                                    key={key}
-                                    order={item}
-                                />)
+                                orders
+                                    .slice(0, 4)
+                                    .map((item: any, key: any) => <ProfilOrderCard
+                                        key={key}
+                                        order={item}
+                                    />)
                             }
                         </div>
 

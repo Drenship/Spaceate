@@ -13,7 +13,7 @@ function shouldUpdateUser(lastUpdatedAt, intervalMinutes = 1) {
     return nowUTC >= nextUpdateTimeUTC;
 }
 
-async function checkAndUpdateUser(user) {
+async function updateUser(user) {
     try {
         await db.connect();
 
@@ -40,18 +40,11 @@ async function checkAndUpdateUser(user) {
 async function updateIfNeeded(source, callback) {
     const lastUpdatedAt = source?.updatedAt ? new Date(source.updatedAt) : new Date().toISOString();
 
-    console.log(
-        `lastUpdatedAt: ${lastUpdatedAt} vs now ${new Date().toISOString()}`
-        , shouldUpdateUser(lastUpdatedAt)
-    )
-
     if (shouldUpdateUser(lastUpdatedAt)) {
-        console.log(`jwt update -> ${lastUpdatedAt}`);
-        const updatedUser = await checkAndUpdateUser(source);
+        const updatedUser = await updateUser(source);
         callback.updatedAt = updatedUser.updatedUser;
         return { ...callback, ...updatedUser };
     }
-    console.log(`jwt source default -> ${lastUpdatedAt}`);
     return callback;
 }
 

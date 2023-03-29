@@ -42,6 +42,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
             return;
         };
 
+        await fetchPostJSON('/api/user/update/search-history', { query: query })
         const { data } = await fetchPostJSON('/api/product/search', { query: query })
         setSearchResult(data)
     }
@@ -83,7 +84,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
 
     const ref = useRef(null)
 
-    useEscapeListener(ref, () =>{
+    useEscapeListener(ref, () => {
         document.body.classList.remove('sidebar-open')
         document.body.classList.remove('no-scroll')
     })
@@ -104,7 +105,15 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                 </Link>
             </div>
 
-            <div ref={searchBarMenuRef} className='relative border border[#f3f6fd] bg-[#f3f6fd] rounded-full shadow-lg w-full max-w-[480px] h-10 flex justify-between items-center px-3'>
+            <div
+                ref={searchBarMenuRef}
+                className='relative border border-solid border-gray-200 border-x-[0.15rem] focus-within:border-x-sky-500 transition-all duration-300 bg-[#f3f6fd] rounded-full shadow-lg w-full max-w-[480px] h-10 flex justify-between items-center px-3'
+                style={{
+                    //border: '0.15rem solid rgb(240, 240, 240)',
+                    //borderLeftColor: '#1488e4',
+                    //borderRightColor: '#1488e4',
+                }}
+            >
                 <input
                     type="search"
                     placeholder='Search'
@@ -196,7 +205,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                         <div className="dropdown dropdown-end">
                             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">
-                                    <img src="https://placeimg.com/80/80/people" alt="profil picture"/>
+                                    <img src="https://placeimg.com/80/80/people" alt="profil picture" />
                                 </div>
                             </label>
                             <ul tabIndex={0} className="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
