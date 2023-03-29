@@ -162,7 +162,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                     <Link href='/' className='mb-1 text-lg font-semibold leading-loose hover:underline underline-offset-8'>Contact</Link>
                 </div>
 
-                <div className="dropdown dropdown-end">
+                <div className="hidden dropdown dropdown-end sm:block">
                     <label tabIndex={0} className="btn btn-ghost btn-circle">
                         <div className="indicator">
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
@@ -202,7 +202,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                 </div>
                 {
                     status !== 'loading' && session?.user ? (
-                        <div className="dropdown dropdown-end">
+                        <div className="hidden dropdown dropdown-end sm:block">
                             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">
                                     <img src="https://placeimg.com/80/80/people" alt="profil picture" />
@@ -221,7 +221,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                             </ul>
                         </div>
                     ) : (
-                        <Link href="/auth/register" className='p-2 text-sm font-bold rounded lg:block button-click-effect'>
+                        <Link href="/auth/register" className='hidden p-2 text-sm font-bold rounded lg:block button-click-effect sm:block'>
                             <BsPersonPlusFill className="w-5 h-5" />
                         </Link>
                     )
