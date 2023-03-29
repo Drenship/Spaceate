@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export default function Footer() {
     return (
-        <footer className="w-full px-4 py-8 text-white bg-black">
+        <footer className="w-full px-4 py-8 mb-16 text-white bg-black sm:mb-0">
             <div className="container flex flex-col justify-around mx-auto space-y-5 md:space-y-0 md:flex-row">
                 <div>
                     <Link className="block text-xl font-black text-transparent uppercase bg-clip-text bg-gradient-to-r via-sky-500 from-blue-700 to-purple-500" href="/">Spaceate</Link>

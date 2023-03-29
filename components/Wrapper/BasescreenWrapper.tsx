@@ -3,6 +3,9 @@ import Head from 'next/head'
 import Navbar from "@components/navbar"
 import Footer from "@components/footer"
 import { TypeProduct } from '@libs/typings';
+import Link from 'next/link';
+import { HomeIcon, MenuAlt1Icon } from '@heroicons/react/solid';
+import { BsPersonFill } from 'react-icons/bs';
 
 interface Props {
     title?: string;
@@ -100,13 +103,29 @@ export default function BasescreenWrapper({
 
             <Navbar placeholderSearch={placeholderSearch} />
 
-            <main className="flex flex-col items-center justify-start flex-1 w-full mt-16 overflow-x-hidden">
+            <main className={`flex flex-col items-center justify-start flex-1 w-full mt-16 overflow-x-hidden ${!needFooter && " pb-16 sm:pb-0"} `}>
                 {children}
             </main>
 
             {
                 needFooter && <Footer />
             }
+
+
+            <nav className='fixed bottom-0 z-50 flex items-center justify-between w-full h-16 bg-white border-t shadow-lg sm:hidden'>
+                <Link className='flex items-center justify-center w-full h-full border-r' href={"/"}>
+                    <HomeIcon className="w-5 h-5" />
+                </Link>
+                <Link className='flex items-center justify-center w-full h-full border-r' href={"/user"}>
+                    <BsPersonFill className="w-5 h-5" />
+                </Link>
+                <Link className='flex items-center justify-center w-full h-full border-r' href={"/cart"}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                </Link>
+                <button className='flex items-center justify-center w-full h-full'>
+                    <MenuAlt1Icon className="w-5 h-5" />
+                </button>
+            </nav>
         </div>
     )
 }
