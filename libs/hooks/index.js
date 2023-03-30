@@ -287,6 +287,7 @@ export const useRightSwipe = (onSwipe) => {
     return {};
 };
 
+// js-not-swipe -> for not active function
 export const useSwipeAxeX = (onSwipeLeft, onSwipeRight) => {
     const [touchStartX, setTouchStartX] = useState(null);
     const [touchStartY, setTouchStartY] = useState(null);
@@ -311,8 +312,9 @@ export const useSwipeAxeX = (onSwipeLeft, onSwipeRight) => {
                 const target = event.target;
                 const isTable = target.tagName === "TABLE" || !!target.closest("table");
                 const isSwiper = target.classList.contains("swiper") || target.classList.contains("swiper-container") || !!target.closest(".swiper-container") || !!target.closest(".swiper-slide");
+                const isNotSwipe = target.classList.contains("js-not-swipe") || !!target.closest(".js-not-swipe");
 
-                if (!isTable && !isSwiper && absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY) {
+                if (!isTable && !isSwiper && !isNotSwipe && absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY) {
                     if (deltaX < 0) {
                         onSwipeLeft();
                     } else {

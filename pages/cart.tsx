@@ -23,7 +23,7 @@ interface Update {
 const Cart: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const { data: session } = useSession();
-    const user: TypeUser | null = session?.user ?? null;
+    const user = session && session.user as TypeUser || null;
     const [priceChange, setPriceChange] = useState<Update[]>([])
     const [cartItems, setCartItem] = useRecoilState<TypeCartItem[]>(cartState)
 

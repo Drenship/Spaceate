@@ -8,6 +8,7 @@ import { Analytics } from '@vercel/analytics/react';
 import '../styles/globals.css'
 import CookiePopup from '@components/ui-ux/Notifications/CookiePopup';
 import Sidebar from '@components/Sidebar';
+import { TypeUser } from '@libs/typings';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -59,10 +60,11 @@ const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
       router.push('/unauthorized?message=login required');
     },
   });
+  const user = session && session.user as TypeUser || null;
   if (status === 'loading') {
     return <div>Loading...</div>;
   }
-  if (adminOnly && !session.user.isAdmin) {
+  if (adminOnly && !user?.isAdmin) {
     router.push('/unauthorized?message=admin login required');
   }
 

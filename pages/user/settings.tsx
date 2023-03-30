@@ -20,7 +20,7 @@ const UserSettings: NextPage<Props> = () => {
 
 
     const { data: session } = useSession();
-    const user: TypeUser | null = session?.user || null;
+    const user = session && session.user as TypeUser || null;
 
     const [member, orders] = useMemo(() => {
         const createdAt = new Date(user?.createdAt).getFullYear()

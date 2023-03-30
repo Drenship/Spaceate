@@ -322,7 +322,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                             {
                                 isOpenGallery === true && (
                                     <div
-                                        className="fixed inset-0 z-50 px-4 py-16 overflow-hidden md:px-8 bg-black/20"
+                                        className="fixed inset-0 z-50 px-4 py-16 overflow-hidden md:px-8 bg-black/20 js-not-swipe"
                                         onDoubleClick={closeGallery}
                                     >
                                         <Swiper

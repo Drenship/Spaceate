@@ -78,9 +78,11 @@ const UserProfil: NextPage<Props> = () => {
 
 
     const { data: session } = useSession();
-    const user: TypeUser | null = session?.user || null;
+    const user = session && session.user as TypeUser || null;
 
     const [member, orders] = useMemo(() => {
+        if(!user) return [0, []];
+        
         const createdAt = new Date(user?.createdAt).getFullYear()
         const orders = [...(user?.orders || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
@@ -139,6 +141,7 @@ const UserProfil: NextPage<Props> = () => {
                                     layout='fill'
                                     objectFit='cover'
                                     className='rounded-full'
+                                    alt="user default profil"
                                 />
                             </div>
                         </div>
@@ -185,8 +188,8 @@ const UserProfil: NextPage<Props> = () => {
                             {
                                 orders
                                     .filter((order) => order.isPaid === true && order.isDelivered === false && order.isRefund === false && order.isCancel === false).slice(0, 4)
-                                    .map((item: any, key: any) => <ProfilCurrentOrderLine
-                                        key={key}
+                                    .map((item: TypeOrder) => <ProfilCurrentOrderLine
+                                        key={item._id}
                                         order={item}
                                     />)
                             }

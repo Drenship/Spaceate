@@ -126,6 +126,7 @@ export const getServerSideProps = async (context: any) => {
 
     try {
         const { user } = await getSession(context);
+        user as TypeUser || null;
         if (!user) return defaultReturn
 
 

@@ -187,7 +187,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                     <h2 className='w-full max-w-sm font-bold uppercase text-md'>Infos du jour</h2>
                     <StatsDashboard
                         title="Payement du jour"
-                        info={fixedPriceToCurrency(summary.totalCompletedPaymentValue)}
+                        info={fixedPriceToCurrency(summary.totalCompletedPaymentValue).toString()}
                         link="/admin/orders"
                         linkLabel="Voire plus"
                     >
@@ -195,7 +195,7 @@ const AdminDashboardScreen: NextPage<Props> = ({ orders }) => {
                     </StatsDashboard>
                     <StatsDashboard
                         title="Payement en attentes"
-                        info={fixedPriceToCurrency(summary.totalPendingPaymentValue)}
+                        info={fixedPriceToCurrency(summary.totalPendingPaymentValue).toString()}
                         link="/admin/orders"
                         linkLabel="Voire plus"
                     >

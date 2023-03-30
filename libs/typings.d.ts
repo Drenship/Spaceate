@@ -1,5 +1,6 @@
 
 interface Address {
+    _id: string;
     fullName: string;
     streetAddress: string;
     city: string;
@@ -12,28 +13,29 @@ interface Address {
 }
 
 interface CartItem {
+    _id: string;
     productId: Types.ObjectId;
     quantity: number;
 }
 
 interface WishlistItem {
+    _id: string;
     productId: Types.ObjectId;
 }
 
-interface Order {
-    orderId: Types.ObjectId;
-}
-
 interface Review {
+    _id: string;
     reviewId: Types.ObjectId;
 }
 
 interface SearchHistoryItem {
+    _id: string;
     query: string;
     date: Date;
 }
 
 interface RecentlyViewedItem {
+    _id: string;
     productId: Types.ObjectId;
     date: Date;
 }
@@ -52,6 +54,7 @@ interface Security {
 }
 
 export interface TypeUser {
+    _id: string;
     name: string;
     gender: 'male' | 'female' | 'other' | 'preferNotToSay' | 'unknown';
     email: string;
@@ -61,7 +64,7 @@ export interface TypeUser {
     addresses: Address[];
     cart: CartItem[];
     wishlist: WishlistItem[];
-    orders: Order[];
+    orders: TypeOrder[];
     reviews: Review[];
     searchHistory: SearchHistoryItem[];
     recentlyViewed: RecentlyViewedItem[];
@@ -69,9 +72,6 @@ export interface TypeUser {
     createdAt: Date;
     updatedAt: Date;
 }
-
-
-
 
 
 export interface TypeSubCategories {
@@ -101,14 +101,14 @@ export interface TypeProduct {
     price_in: string;
     rating: number;
     numReviews: number;
-    reviews: TypeCommentaire[]
+    reviews: TypeCommentaire[];
     advancePrice: {
-        initialCost: number
-        tva: number
-        marge: number
+        initialCost: number;
+        tva: number;
+        marge: number;
     };
     stats: {
-        totalSelled: number
+        totalSelled: number;
     };
     isFeatured: boolean;
     isPublished: boolean;
@@ -117,9 +117,9 @@ export interface TypeProduct {
 }
 
 export interface TypeCartItem extends TypeProduct {
-    quantity: number,
-    outOfStock?: boolean, // rupture de stock
-    outOfQuantity?: boolean // quantité demande non disponible mais pas en rupture
+    quantity: number;
+    outOfStock?: boolean; // rupture de stock
+    outOfQuantity?: boolean; // quantité demandée non disponible mais pas en rupture
 }
 
 export interface TypeCommentaire {

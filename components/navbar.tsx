@@ -10,8 +10,9 @@ import SearchResultItem from '@components/cards/SearchResultItem';
 
 import { querySecurMongoDB, replaceURL } from '@libs/utils';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { TypeCartItem } from '@libs/typings';
+import { TypeCartItem, TypeProduct, TypeUser } from '@libs/typings';
 import { BiMenuAltRight } from 'react-icons/bi';
+import { useSession } from 'next-auth/react';
 
 interface NavbarProps {
     leftButton?: boolean
@@ -24,6 +25,8 @@ Navbar.defaultProps = {
 
 function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     const router = useRouter()
+    const { data: session } = useSession();
+    const user = session && session.user as TypeUser || null;
     const [cartItem] = useRecoilState(cartState)
 
     const searchBarMenuRef = useRef(null);
@@ -39,7 +42,9 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
             return;
         };
 
-        await fetchPostJSON('/api/user/update/search-history', { query: query })
+        if(user) {
+            await fetchPostJSON('/api/user/update/search-history', { query: query })
+        }
         const { data } = await fetchPostJSON('/api/product/search', { query: query })
         setSearchResult(data)
     }
@@ -57,7 +62,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     // cart details
     const [totalCartValue, totalCountItems] = useMemo(() => {
         let total = 0
-        cartItem.forEach((item: TypeCartItem[]) => total += (item.price * item.quantity))
+        cartItem.forEach((item: TypeCartItem) => total += (item.price * item.quantity))
         const countItems = cartItem.length;
         return [total, countItems]
     }, [cartItem]);
@@ -135,14 +140,30 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                 </svg>
 
                 {
-                    searchBarFocus && searchResult.length > 0 && (
-                        <div className='absolute left-0 right-0 -z-[1] w-full bg-[#f3f6fd] rounded-b-lg shadow-lg top-5'>
-                            <div className='p-1.5 mt-5 space-y-0.5 overflow-hidden rounded-md flex flex-col'>
-                                {
-                                    searchResult.map((data, key) => <SearchResultItem key={key} product={data} />)
-                                }
-                            </div>
+                    searchBarFocus && (searchResult.length > 0 || user?.searchHistory?.length) && (
+                    <div className='fixed top-8 sm:absolute left-0 right-0 -z-[1] w-full bg-[#f3f6fd] rounded-b-lg shadow-lg sm:top-5'>
+                        <div className='p-1.5 mt-5 space-y-0.5 overflow-hidden rounded-md flex flex-col'>
+                            {
+                                user && (
+                                    user.searchHistory?.slice(0, 4).map((query) => <button
+                                        className='flex w-full bg-white py-1 border-t shadow-lg border-[#f3f6fd] p-2 text-sm font-bold uppercase'
+                                        key={query._id}
+                                        onClick={() => {
+                                            const [value, allow] = querySecurMongoDB(query.query.trim());
+
+                                            if (allow) {
+                                                setQuery(value);
+                                                handleRedirectSearch()
+                                            }
+                                        }}
+                                    >{query.query}</button>)
+                                )
+                            }
+                            {
+                                searchResult.map((data: TypeProduct) => <SearchResultItem key={data._id} product={data} />)
+                            }
                         </div>
+                    </div>
                     )
                 }
             </div>
