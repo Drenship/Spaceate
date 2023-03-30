@@ -310,7 +310,7 @@ export const useSwipeAxeX = (onSwipeLeft, onSwipeRight) => {
                 // Vérifier si le swipe est effectué sur un élément qui n'est pas un tableau
                 const target = event.target;
                 const isTable = target.tagName === "TABLE" || !!target.closest("table");
-                const isSwiper = target.classList.contains("swiper-container") || !!target.closest(".swiper-container");
+                const isSwiper = target.classList.contains("swiper") || target.classList.contains("swiper-container") || !!target.closest(".swiper-container") || !!target.closest(".swiper-slide");
 
                 if (!isTable && !isSwiper && absDeltaX > 0.2 * window.innerWidth && absDeltaX > absDeltaY) {
                     if (deltaX < 0) {
