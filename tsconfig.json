@@ -65,8 +65,10 @@
     "components/Wrapper/BasescreenWrapper.tsx",
     "components/tables/TableProductLine.jsx",
     "components/PrintObject.tsx",
-    "components/footer.tsx"
-, "components/Navbar.tsx", "next-sitemap.config.js"  ],
+    "components/footer.tsx",
+    "components/navbar.tsx",
+    "next-sitemap.config.js"
+  ],
   "exclude": [
     "node_modules"
   ]

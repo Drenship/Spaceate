@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { HiTemplate, HiArchive, HiCollection, HiClipboardList, HiGift, HiChartBar, HiUsers } from "react-icons/hi";
 import { useSwipeAxeX } from '@libs/hooks';
 import MobileNavbar from '@components/MobileNavbar';
-import Navbar from '@components/Navbar';
+import Navbar from '@components/navbar';
 
 interface NavLinkItemProps {
     href: string;
