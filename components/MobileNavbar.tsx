@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Link from 'next/link';
-import { HomeIcon, MenuAlt1Icon } from '@heroicons/react/solid';
-import { BsPerson, BsPersonFill } from 'react-icons/bs';
+import { HomeIcon } from '@heroicons/react/solid';
+import { BsPerson } from 'react-icons/bs';
 
 import { useEscapeListener, useSwipeAxeX } from '@libs/hooks';
 import { BiMenuAltRight } from 'react-icons/bi';
