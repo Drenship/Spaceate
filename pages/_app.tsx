@@ -62,7 +62,7 @@ const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
   });
   const user = session && session.user as TypeUser || null;
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <div>Loading session...</div>;
   }
   if (adminOnly && !user?.isAdmin) {
     router.push('/unauthorized?message=admin login required');

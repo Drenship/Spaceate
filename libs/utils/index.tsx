@@ -94,8 +94,8 @@ export async function teinteDeLimage(urlImage: string): Promise<string> {
 }
 
 export function querySecurMongoDB(str: string): [string, boolean] {
-    const regex = /^[a-zA-Z0-9_*]+$/;
-    const strUpdate = str.replace(/[^a-zA-Z0-9] /g, '').replace(/[$]/g, '')
+    const regex = /^[a-zA-Z0-9_*àâäèéêëìîïòôöùûüÿçñ]+$/;
+    const strUpdate = str.replace(/[^a-zA-Z0-9_*àâäèéêëìîïòôöùûüÿçñ]*/g, '');
 
     if (!regex.test(strUpdate)) {
         console.log(strUpdate, "La chaîne de caractères contient des caractères spéciaux qui ne sont pas autorisés pour MongoDB");

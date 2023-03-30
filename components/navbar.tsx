@@ -27,7 +27,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     const router = useRouter()
     const { data: session } = useSession();
     const user = session && session.user as TypeUser || null;
-    console.log(user)
+    console.log(user && user.searchHistory)
     const [cartItem] = useRecoilState(cartState)
 
     const searchBarMenuRef = useRef(null);
@@ -47,10 +47,10 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
         setSearchResult(data)
     }
 
-    const handleRedirectSearch = async () => {
+    const handleRedirectSearch = () => {
         if (!query || query.length === 0) return;
         if(user) {
-            await fetchPostJSON('/api/user/update/search-history', { query: query })
+            fetchPostJSON('/api/user/update/search-history', { query: query })
         }
         router.push(`/search?query=${query}`)
     }
