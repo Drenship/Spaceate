@@ -2,7 +2,6 @@ import React, { useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
 import { useTimeout, useEscapeListener, useResize } from '@libs/hooks/index'
