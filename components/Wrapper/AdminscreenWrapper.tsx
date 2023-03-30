@@ -1,9 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
-import Navbar from "@components/navbar"
+import Navbar from "@components/Navbar"
 import Link from 'next/link'
 import { HiTemplate, HiArchive, HiCollection, HiClipboardList, HiGift, HiChartBar, HiUsers } from "react-icons/hi";
 import { useSwipeAxeX } from '@libs/hooks';
+import MobileNavbar from '@components/MobileNavbar';
 
 interface NavLinkItemProps {
     href: string;
@@ -37,6 +38,7 @@ export default function AdminscreenWrapper({ title, children }: Props) {
             document.body.classList.remove('no-scroll')
         },
         () => {
+            if(document.body.classList.contains('no-scroll')) return;
             document.body.classList.add('sidebar-open')
             document.body.classList.add('no-scroll')
         }
@@ -56,7 +58,7 @@ export default function AdminscreenWrapper({ title, children }: Props) {
 
             <Navbar leftButton={true} />
 
-            <main className="flex w-full h-full mt-16">
+            <main className="flex w-full h-full pb-16 mt-16 sm:pb-0">
                 <div className='sidebar w-[280px] h-[calc(100vh-64px)] border-r shadow-lg sticky top-16 bg-gray-100 hidden lg:block z-40'>
                     <div className='w-full overflow-x-hidden overflow-y-auto'>
                         <NavLinkItem href="/admin" title="Dashboard">
@@ -87,6 +89,8 @@ export default function AdminscreenWrapper({ title, children }: Props) {
                     {children}
                 </div>
             </main>
+
+            <MobileNavbar />
         </div>
     )
 }

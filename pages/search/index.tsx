@@ -126,10 +126,18 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
 
     const ratingHandler = (e: React.BaseSyntheticEvent) => filterSearch({ rating: e.target.value });
 
+    const handleToggleFiltersPannel = () => {
+        if(document.body.classList.contains('no-scroll')) return;
+        setToggleFiltersPannel(0)
+    }
+
+    const handleRemoveFiltersPannel = () => setToggleFiltersPannel(fixeValueFiltersPannel)
+    
+
     // toggle filter panel on mobile
     useSwipeAxeX(
-        () => setToggleFiltersPannel(fixeValueFiltersPannel),
-        () => setToggleFiltersPannel(0)
+        handleRemoveFiltersPannel,
+        handleToggleFiltersPannel
     )
 
     useEffect(() => {

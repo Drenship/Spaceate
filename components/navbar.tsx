@@ -2,18 +2,17 @@ import React, { useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
-import { CART_EMPTY, setCartState } from '@atoms/setStates/setCartState';
-import { useTimeout, useEscapeListener } from '@libs/hooks/index'
+import { useTimeout, useEscapeListener, useResize } from '@libs/hooks/index'
 import SearchResultItem from '@components/cards/SearchResultItem';
 //import { useVideoSearch } from '@libs/hooks/useSearch'
 
 import { querySecurMongoDB, replaceURL } from '@libs/utils';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { BsPersonPlusFill } from 'react-icons/bs';
 import { TypeCartItem } from '@libs/typings';
+import { BiMenuAltRight } from 'react-icons/bi';
 
 interface NavbarProps {
     leftButton?: boolean
@@ -26,8 +25,7 @@ Navbar.defaultProps = {
 
 function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     const router = useRouter()
-    const { status, data: session } = useSession();
-    const [cartItem, setCartItem] = useRecoilState(cartState)
+    const [cartItem] = useRecoilState(cartState)
 
     const searchBarMenuRef = useRef(null);
     const [query, setQuery] = useState<null | string>(null);
@@ -65,19 +63,16 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
         return [total, countItems]
     }, [cartItem]);
 
-    // logout Handler
-    const logoutClickHandler = () => {
-        setCartState({
-            action: CART_EMPTY,
-            product: {},
-            cartItem: cartItem,
-            setCartItem: setCartItem
-        })
-        signOut({ callbackUrl: '/auth/login' });
-    };
+
+    const handleToggleSidebar = () => document.body.classList.toggle('user-sidebar-open');
+    const handleRemoveSidebar = () => document.body.classList.remove('user-sidebar-open')
+
+    const refUserSidebar = useRef(null)
+    useEscapeListener(refUserSidebar, handleRemoveSidebar)
+    useResize(handleRemoveSidebar);
 
     // SIDEBAR
-    const handleToggleSidebar = () => {
+    const handleToggleAdminSidebar = () => {
         document.body.classList.toggle('sidebar-open');
         document.body.classList.toggle('no-scroll')
     };
@@ -94,7 +89,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
             <div className='flex-none'>
                 {
                     leftButton && (
-                        <button ref={ref} className="btn btn-square btn-ghost lg:hidden" onClick={handleToggleSidebar}>
+                        <button ref={ref} className="btn btn-square btn-ghost lg:hidden" onClick={handleToggleAdminSidebar}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                     )
@@ -200,35 +195,20 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                         </div>
                     </div>
                 </div>
-                {
-                    status !== 'loading' && session?.user ? (
-                        <div className="hidden dropdown dropdown-end sm:block">
-                            <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                                <div className="w-10 rounded-full">
-                                    <img src="https://placeimg.com/80/80/people" alt="profil picture" />
-                                </div>
-                            </label>
-                            <ul tabIndex={0} className="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-                                <li><Link href="/">Accueil</Link></li>
-                                <li><Link href="/user">Profil</Link></li>
-                                <li><Link href="/user/order-history">Mes commandes</Link></li>
-                                {
-                                    session?.user?.isAdmin && (
-                                        <li className='border-t'><Link href="/admin/">Admin Dashboard</Link></li>
-                                    )
-                                }
-                                <li className='border-t'><a onClick={logoutClickHandler}>Se déconnecter</a></li>
-                            </ul>
-                        </div>
-                    ) : (
-                        <Link href="/auth/register" className='hidden p-2 text-sm font-bold rounded lg:block button-click-effect sm:block'>
-                            <BsPersonPlusFill className="w-5 h-5" />
-                        </Link>
-                    )
-                }
+                <div className="hidden sm:block">
+                    <button
+                        tabIndex={0}
+                        onClick={handleToggleSidebar}
+                        ref={refUserSidebar}
+                        className="h-[48px] aspect-square flex items-center justify-center btn btn-ghost btn-circle"
+                    >
+                        <BiMenuAltRight className="w-6 h-6" />
+                    </button>
+                </div>
             </div>
         </nav>
     )
 }
+
 
 export default dynamic(() => Promise.resolve(Navbar), { ssr: false });
