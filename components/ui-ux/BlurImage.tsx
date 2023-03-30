@@ -3,9 +3,9 @@ import React from 'react';
 import { useState } from 'react';
 interface Props {
     src: string
-    className?: string
+    className?: string | undefined
     objectFit?: "contain" | ""
-    alt?: string
+    alt?: string;
     hoverOpacity?: boolean
     onClick?: () => void
 }
@@ -32,10 +32,10 @@ export default function BlurImage({ src, alt, className, hoverOpacity, onClick, 
                     src={src}
                     fill={true}
                     objectFit={objectFit}
-                    alt={alt}
+                    alt={alt || "spaceate fruit & legume"}
                     className={cn(
                         'duration-700 ease-in-out object-cover',
-                        hoverOpacity ? "group-hover:opacity-80 active:opacity-100 focus:opacity-100" : "",
+                        hoverOpacity && "group-hover:opacity-80 active:opacity-100 group-focus:opacity-100 focus:opacity-100",
                         className,
                         isLoading
                             ? 'blur-sm'

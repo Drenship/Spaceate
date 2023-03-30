@@ -71,9 +71,4 @@ const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
   return children;
 }
 
-
-//export function reportWebVitals(metric) {
-//  console.log(metric)
-//}
-
 export default MyApp
