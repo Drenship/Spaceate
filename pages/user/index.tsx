@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { AnnotationIcon, CheckIcon } from '@heroicons/react/solid';
 import { RxCross1 } from 'react-icons/rx';
 
@@ -13,6 +13,8 @@ import { TypeOrder, TypeUser } from '@libs/typings';
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CommentaireCard from '@components/cards/CommentaireCard';
 import OrderStatus from '@components/contents/orderStatus';
+import db from '@libs/database/dbConnect';
+import User from '@libs/models/User';
 
 
 interface ProfilOrderCardProps {
@@ -72,22 +74,24 @@ const ProfilCurrentOrderLine = ({ order }: ProfilOrderCardProps) => (
 )
 
 
-interface Props { }
+interface Props {
+    initialOrders: TypeOrder[]
+}
 
-const UserProfil: NextPage<Props> = () => {
-
+const UserProfil: NextPage<Props> = ({ initialOrders }) => {
 
     const { data: session } = useSession();
+    const [initialOrdersCopy] = useState(initialOrders)
     const user = session && session.user as TypeUser || null;
 
     const [member, orders] = useMemo(() => {
-        if(!user) return [0, []];
-        
+        if (!user) return [0, []];
+
         const createdAt = new Date(user?.createdAt).getFullYear()
-        const orders = [...(user?.orders || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        const orders = initialOrdersCopy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
         return [createdAt, orders];
-    }, [user]);
+    }, [user, initialOrdersCopy]);
 
     const [sendMailDisablerd, setSendMailDisablerd] = useState(false)
     const sendMailForVerify = async () => {
@@ -244,5 +248,33 @@ const UserProfil: NextPage<Props> = () => {
     )
 }
 
+export const getServerSideProps = async (context: any) => {
+
+    const defaultReturn = {
+        props: {
+            initialOrders: [],
+        },
+    }
+    try {
+        const { user } = await getSession(context);
+        user as TypeUser || null;
+        if (!user) return defaultReturn
+
+        await db.connect();
+
+        const orders = await User.findById(user._id, { orders: { $slice: -5 } })
+
+        return {
+            props: {
+                initialOrders: JSON.parse(JSON.stringify(orders.orders)) || [],
+            },
+        }
+
+    } catch (err) {
+        return defaultReturn
+    } finally {
+        await db.disconnect();
+    }
+}
 UserProfil.auth = true;
 export default UserProfil
