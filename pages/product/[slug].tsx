@@ -218,7 +218,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                                 { /* right */}
                                 <div className='flex-grow min-h-full overflow-x-hidden bg-white shadow-lg'>
-                                    <div className='px-5 py-12md:px-10 lg:px-20'>
+                                    <div className='px-5 py-12 md:px-10 lg:px-20'>
 
                                         { /* Product info */}
                                         <section>
@@ -313,7 +313,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                                         { /* Commentaire section */}
                                         <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
-                                            <h3 className='flex space-x-2 text-xl font-bold'><AnnotationIcon className='w-5' />
+                                            <h3 className='flex text-xl font-bold lg:space-x-2'><AnnotationIcon className='w-5' />
                                                 <span>{product.numReviews}</span>
                                                 <span>{product.numReviews <= 1 ? "commentaire" : "commentaires"}</span>
                                             </h3>
