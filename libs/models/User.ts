@@ -88,7 +88,8 @@ const userSchema = new mongoose.Schema(
                 productId: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
-                    required: true
+                    required: true,
+                    autopopulate: true
                 },
                 quantity: {
                     type: Number,
@@ -102,7 +103,8 @@ const userSchema = new mongoose.Schema(
                 productId: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
-                    required: true
+                    required: true,
+                    autopopulate: true
                 }
             }
         ],
@@ -110,12 +112,14 @@ const userSchema = new mongoose.Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Order',
+                autopopulate: true
             }
         ],
         reviews: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'Review'
+                ref: 'Review',
+                autopopulate: true
             }
         ],
         searchHistory: [
@@ -134,7 +138,8 @@ const userSchema = new mongoose.Schema(
             {
                 productId: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'Product'
+                    ref: 'Product',
+                    autopopulate: true
                 },
                 date: {
                     type: Date,
@@ -191,6 +196,7 @@ userSchema.index({ emailVerificationToken: 1 }, { unique: true, partialFilterExp
 
 userSchema.set('strictQuery', false)
 
+userSchema.plugin(require('mongoose-autopopulate'));
 
 let findstart = 0;
 userSchema.pre('find', function () {
