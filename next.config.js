@@ -28,7 +28,45 @@ module.exports = {
 
     WEBSITE_EMAIL: process.env.WEBSITE_EMAIL,
   },
-  //session: {
-  //  keepAlive: 60 * 1000, // Ajoutez cette ligne pour rafraîchir la session toutes les minutes
-  //},
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: '/api/:path*',
+      },
+      {
+        source: '/:path*',
+        destination: '/:path*',
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/api/auth/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Credentials',
+            value: 'true',
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'http://localhost:3000',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value:
+              'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+          },
+        ],
+      },
+    ];
+  },
+  session: {
+    keepAlive: 0, // Ajoutez cette ligne pour désactiver le rafraîchissement de la session
+  },
 }

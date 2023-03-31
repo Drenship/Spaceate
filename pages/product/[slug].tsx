@@ -140,7 +140,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
     const [currentURL, baseUrl] = useMemo(() => {
-        if(typeof window !== 'undefined'){
+        if (typeof window !== 'undefined') {
             return [window.location.href, window.location.origin]
         }
         const protocol = process.env.NODE_ENV === 'https' ? 'https://' : 'http://';
@@ -176,9 +176,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                             <div className='flex flex-col md:flex-row w-full min-h-[calc(100vh-64px)] relative bg-gray-100 '>
                                 { /* left */}
                                 <div className='block space-x-0 flex-shrink md:max-w-[25vw] md:min-w-[25vw] w-full p-3 sm:p-6 lg:p-9 h-full md:sticky top-0 bg-gray-100'>
-                                    <div style={{ boxShadow: `0px 0px 20px 5px ${color}` }} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
+                                    <div itemProp="image" style={{ boxShadow: `0px 0px 20px 5px ${color}` }} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                                         <BlurImage
                                             src={replaceURL(product.main_image)}
+                                            alt={product.name + ', ' + product.categorie?.name + ', ' + product.subCategorie?.name}
                                             className="cursor-pointer"
                                             onClick={openGallery}
                                         />
@@ -209,113 +210,117 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                 </div>
 
                                 { /* right */}
-                                <div className='flex-grow min-h-full px-5 py-12 bg-white shadow-lg md:px-10 lg:px-20'>
+                                <div className='overflow-x-hidden'>
+                                    <div className='flex-grow min-h-full px-5 py-12 bg-white shadow-lg md:px-10 lg:px-20'>
 
-                                    { /* Product info */}
-                                    <section>
-                                        <p>Accueil &gt; {product?.categorie?.name} &gt; {product?.subCategorie?.name}</p>
-                                        <div className='flex items-center justify-between'>
-                                            <h1 className='mt-5 text-3xl font-bold uppercase'>{product.name}</h1>
-                                            {
-                                                user && user.isAdmin && (
-                                                    <div className="relative">
-                                                        <div className={`absolute left-0 z-10 w-32 mt-8 -ml-24 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
-                                                            <ul className="py-1 bg-white rounded shadow ">
-                                                                <Link href={`/admin/products/edit?slug=${product.slug}`}>
-                                                                    <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Modifier</li>
-                                                                </Link>
-                                                            </ul>
+                                        { /* Product info */}
+                                        <section>
+                                            <article itemScope itemType="http://schema.org/Product">
+                                                <p>Accueil &gt; {product?.categorie?.name} &gt; {product?.subCategorie?.name}</p>
+                                                <div className='flex items-center justify-between'>
+                                                    <h1 itemProp="name" className='mt-5 text-3xl font-bold uppercase'>{product.name}</h1>
+                                                    {
+                                                        user && user.isAdmin && (
+                                                            <div className="relative">
+                                                                <div className={`absolute left-0 z-10 w-32 mt-8 -ml-24 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>
+                                                                    <ul className="py-1 bg-white rounded shadow ">
+                                                                        <Link href={`/admin/products/edit?slug=${product.slug}`}>
+                                                                            <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Modifier</li>
+                                                                        </Link>
+                                                                    </ul>
+                                                                </div>
+                                                                <button className="text-gray-500 border border-transparent rounded cursor-pointer focus:outline-none" ref={seeMenuRef}>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" onClick={() => setSeeMenu(prev => !prev)} className="icon icon-tabler icon-tabler-dots-vertical dropbtn" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <path stroke="none" d="M0 0h24v24H0z" />
+                                                                        <circle cx={12} cy={12} r={1} />
+                                                                        <circle cx={12} cy={19} r={1} />
+                                                                        <circle cx={12} cy={5} r={1} />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
+                                                <div className='flex items-center justify-start mt-5 space-x-2'>
+                                                    <Rating rating={product.rating === 0 ? 5 : product.rating} />
+                                                    <p className='space-x-1'>
+                                                        <span itemProp="reviewCount">{product.numReviews}</span>
+                                                        <span>{product.numReviews <= 1 ? "commentaire" : "commentaires"}</span>
+                                                    </p>
+                                                </div>
+
+                                                <p itemProp="description" key={product._id} className='mt-5 text-gray-600' dangerouslySetInnerHTML={{ __html: product.description }} />
+
+                                                <div className='mt-5 space-x-1'>
+                                                    <span className='text-2xl font-bold' itemProp="price">{product.price}€</span>
+                                                    <span className='text-xl'>/</span>
+                                                    <span className='text-xl'>{product.price_in}</span>
+                                                </div>
+
+                                                {
+                                                    !isOutOfStock && (
+                                                        <div className="flex flex-row items-center justify-start mt-2 space-x-5">
+                                                            <p>Sélectionnez la quantité :</p>
+                                                            <InputNumber
+                                                                min={1}
+                                                                max={product.countInStock}
+                                                                defaultValue={1}
+                                                                setUpdate={setQuantity}
+                                                            />
                                                         </div>
-                                                        <button className="text-gray-500 border border-transparent rounded cursor-pointer focus:outline-none" ref={seeMenuRef}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" onClick={() => setSeeMenu(prev => !prev)} className="icon icon-tabler icon-tabler-dots-vertical dropbtn" width={28} height={28} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                                                <path stroke="none" d="M0 0h24v24H0z" />
-                                                                <circle cx={12} cy={12} r={1} />
-                                                                <circle cx={12} cy={19} r={1} />
-                                                                <circle cx={12} cy={5} r={1} />
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                )
+                                                    )
+                                                }
+
+
+                                                <button
+                                                    onClick={addItemsToCart}
+                                                    disabled={isOutOfStock}
+                                                    className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect'
+                                                >
+                                                    {
+                                                        isOutOfStock ? "Rupture de stock" : "Ajouter au panier"
+                                                    }
+                                                </button>
+                                            </article>
+                                        </section>
+
+                                        { /* Product associate */}
+                                        <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
+                                            <h2 className='mb-5 text-xl font-bold uppercase'>Produits similaire</h2>
+                                            {
+                                                sameProducts && <CarouselProduct overflow="hidden" products={sameProducts} />
                                             }
-                                        </div>
-                                        <div className='flex items-center justify-start mt-5 space-x-2'>
-                                            <Rating rating={product.rating === 0 ? 5 : product.rating} />
-                                            <p className='space-x-1'>
+                                        </section>
+
+                                        { /* Commentaire section */}
+                                        <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
+                                            <h3 className='flex space-x-2 text-xl font-bold'><AnnotationIcon className='w-5' />
                                                 <span>{product.numReviews}</span>
                                                 <span>{product.numReviews <= 1 ? "commentaire" : "commentaires"}</span>
-                                            </p>
-                                        </div>
+                                            </h3>
+                                            { /* Commentaires container */}
+                                            <div className='grid grid-cols-1 space-x-3 lg:grid-cols-2'>
+                                                { /* Commentaires */}
+                                                {
+                                                    commentaires?.map((item, key) => <CommentaireCard
+                                                        key={key}
+                                                        img={item.img}
+                                                        name={item.name}
+                                                        rating={item.rating}
+                                                        description={item.description}
+                                                        date={item.date}
+                                                    />)
+                                                }
+                                            </div>
 
-                                        <p key={product._id} className='mt-5 text-gray-600' dangerouslySetInnerHTML={{ __html: product.description }} />
+                                            <button
+                                                className='block px-4 py-4 mx-auto mt-5 border rounded-full button-click-effect'
+                                                onClick={getCommentaires}
+                                            >Afficher plus de commentaires</button>
 
-                                        <div className='mt-5 space-x-1'>
-                                            <span className='text-2xl font-bold'>{product.price}€</span>
-                                            <span className='text-xl'>/</span>
-                                            <span className='text-xl'>{product.price_in}</span>
-                                        </div>
+                                        </section>
 
-                                        {
-                                            !isOutOfStock && (
-                                                <div className="flex flex-row items-center justify-start mt-2 space-x-5">
-                                                    <p>Sélectionnez la quantité :</p>
-                                                    <InputNumber
-                                                        min={1}
-                                                        max={product.countInStock}
-                                                        defaultValue={1}
-                                                        setUpdate={setQuantity}
-                                                    />
-                                                </div>
-                                            )
-                                        }
-
-
-                                        <button
-                                            onClick={addItemsToCart}
-                                            disabled={isOutOfStock}
-                                            className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect'
-                                        >
-                                            {
-                                                isOutOfStock ? "Rupture de stock" : "Ajouter au panier"
-                                            }
-                                        </button>
-                                    </section>
-
-                                    { /* Product associate */}
-                                    <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
-                                        <h2 className='mb-5 text-xl font-bold uppercase'>Produits similaire</h2>
-                                        {
-                                            sameProducts && <CarouselProduct overflow="hidden" products={sameProducts} />
-                                        }
-                                    </section>
-
-                                    { /* Commentaire section */}
-                                    <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
-                                        <h3 className='flex space-x-2 text-xl font-bold'><AnnotationIcon className='w-5' />
-                                            <span>{product.numReviews}</span>
-                                            <span>{product.numReviews <= 1 ? "commentaire" : "commentaires"}</span>
-                                        </h3>
-                                        { /* Commentaires container */}
-                                        <div className='grid grid-cols-1 space-x-3 lg:grid-cols-2'>
-                                            { /* Commentaires */}
-                                            {
-                                                commentaires?.map((item, key) => <CommentaireCard
-                                                    key={key}
-                                                    img={item.img}
-                                                    name={item.name}
-                                                    rating={item.rating}
-                                                    description={item.description}
-                                                    date={item.date}
-                                                />)
-                                            }
-                                        </div>
-
-                                        <button
-                                            className='block px-4 py-4 mx-auto mt-5 border rounded-full button-click-effect'
-                                            onClick={getCommentaires}
-                                        >Afficher plus de commentaires</button>
-
-                                    </section>
-
+                                    </div>
                                 </div>
                             </div>
 
@@ -401,6 +406,8 @@ export const getServerSideProps = async (context: any) => {
                     countInStock: 1,
                     numReviews: 1
                 })
+                    .limit(12)
+                    .sort({ 'stats.totalSelled': -1 })
             }
             await db.disconnect()
         }

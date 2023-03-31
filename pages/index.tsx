@@ -128,7 +128,7 @@ export const getStaticProps = async () => {
         $project: {
           categorie: '$_id',
           items: {
-            $slice: ['$items', 20],
+            $slice: ['$items', 10],
           },
         },
       },

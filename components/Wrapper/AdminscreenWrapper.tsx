@@ -59,7 +59,7 @@ export default function AdminscreenWrapper({ title, children }: Props) {
             <Navbar leftButton={true} />
 
             <main className="flex w-full h-full pb-16 mt-16 sm:pb-0">
-                <div className='sidebar w-[280px] h-[calc(100vh-64px)] border-r shadow-lg sticky top-16 bg-gray-100 hidden lg:block z-40'>
+                <aside className='sidebar w-[280px] h-[calc(100vh-64px)] border-r shadow-lg sticky top-16 bg-gray-100 hidden lg:block z-40'>
                     <div className='w-full overflow-x-hidden overflow-y-auto'>
                         <NavLinkItem href="/admin" title="Dashboard">
                             <HiTemplate />
@@ -83,7 +83,7 @@ export default function AdminscreenWrapper({ title, children }: Props) {
                             <HiChartBar />
                         </NavLinkItem>
                     </div>
-                </div>
+                </aside>
 
                 <div className='flex flex-col justify-start flex-1 w-full px-4 py-8 md:px-8'>
                     {children}

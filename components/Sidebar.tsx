@@ -26,7 +26,7 @@ export default function Sidebar() {
     };
 
     return (
-        <div className="fixed top-16 z-40 h-[calc(100vh-124px)] sm:h-[calc(100vh-64px)] bg-white border-l shadow-xl w-[300px] text-black user-sidebar">
+        <aside className="fixed top-16 z-40 h-[calc(100vh-124px)] sm:h-[calc(100vh-64px)] bg-white border-l shadow-xl w-[300px] text-black user-sidebar">
             <h3 className="p-4 text-xl font-bold shadow-lg">Menu</h3>
             <Link href="/" className="flex items-center p-4 font-semibold border-t border-b cursor-pointer button-click-effect"><HomeIcon className="w-5 mr-2" /> Accueil</Link>
             {
@@ -47,6 +47,6 @@ export default function Sidebar() {
                     </>
                 )
             }
-        </div>
+        </aside>
     );
 }

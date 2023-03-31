@@ -38,7 +38,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     //const { results, hasMore, loading, error } = useVideoSearch(query, pageNumber)
 
     const searchRequest = async () => {
-        if (!query || query.length === 0) {
+        if (!query || query.length < 2) {
             setSearchResult([])
             return;
         };
@@ -47,10 +47,10 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
         setSearchResult(data)
     }
 
-    const handleRedirectSearch = () => {
+    const handleRedirectSearch = async () => {
         if (!query || query.length === 0) return;
-        if(user) {
-            fetchPostJSON('/api/user/update/search-history', { query: query })
+        if(user && query.length > 1) {
+            await fetchPostJSON('/api/user/update/search-history', { query: query })
         }
         router.push(`/search?query=${query}`)
     }
@@ -145,8 +145,8 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                     <div className='fixed top-8 sm:absolute left-0 right-0 -z-[1] w-full bg-[#f3f6fd] rounded-b-lg shadow-lg sm:top-5'>
                         <div className='p-1.5 mt-5 space-y-0.5 overflow-hidden rounded-md flex flex-col'>
                             {
-                                query && user && user.searchHistory && (
-                                    [...user.searchHistory]
+                                query && user && user.searchHistory.length && (
+                                    [...(user.searchHistory || [])]
                                     .filter(history => history.query.toLowerCase().includes(query))
                                     .slice(0, 4)
                                     .map((query) => <button
