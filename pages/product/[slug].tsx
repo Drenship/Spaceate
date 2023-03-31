@@ -25,15 +25,17 @@ import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct';
 import Rating from "@components/ui-ux/Rating"
 import { getSession, useSession } from 'next-auth/react';
+import Order from '@libs/models/Order';
 
 
 type Props = {
     productFind: boolean
     initialProduct: TypeProduct
     sameProducts: TypeProduct[]
+    frequentlyBoughtProducts: TypeProduct[]
 }
 
-const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProducts }) => {
+const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProducts, frequentlyBoughtProducts }) => {
     const router = useRouter();
 
     const { data: session } = useSession();
@@ -56,6 +58,12 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
     ])
     const [isOpenGallery, setIsOpenGallery] = useState<boolean>(false)
     const [canOpenGallery, setCanOpenGallery] = useState<boolean>(true);
+
+    const frequentlyBought = useMemo(() => {
+        return frequentlyBoughtProducts.map(fbp => ({
+            ...fbp.productDetails
+        }))
+    }, [frequentlyBoughtProducts])
 
 
     const addItemsToCart = () => {
@@ -186,9 +194,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                     </div>
                                     <div className='grid w-full grid-cols-4 gap-2 mt-2 lg:mt-4 lg:gap-4'>
                                         {
-                                            [...(product.images || [])].slice(0, 4)?.map((img, key) => <div className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
+                                            [...(product.images || [])].slice(0, 4)?.map((img, key) => <div key={img} className='relative object-cover w-full overflow-hidden rounded-lg aspect-square'>
                                                 <BlurImage
-                                                    key={key}
                                                     src={replaceURL(img)}
                                                     className="cursor-pointer"
                                                     onClick={openGallery}
@@ -210,8 +217,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                 </div>
 
                                 { /* right */}
-                                <div className='overflow-x-hidden'>
-                                    <div className='flex-grow min-h-full px-5 py-12 bg-white shadow-lg md:px-10 lg:px-20'>
+                                <div className='flex-grow min-h-full overflow-x-hidden bg-white shadow-lg'>
+                                    <div className='px-5 py-12md:px-10 lg:px-20'>
 
                                         { /* Product info */}
                                         <section>
@@ -283,6 +290,18 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                 </button>
                                             </article>
                                         </section>
+
+
+                                        { /* Product associate */}
+                                        {
+                                            frequentlyBought.length > 0 && (
+
+                                                <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
+                                                    <h2 className='mb-5 text-xl font-bold uppercase'>Fréquemment acheter avec</h2>
+                                                    <CarouselProduct overflow="hidden" products={frequentlyBought} />
+                                                </section>
+                                            )
+                                        }
 
                                         { /* Product associate */}
                                         <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
@@ -374,12 +393,13 @@ export const getServerSideProps = async (context: any) => {
         const slug = query.slug || null;
         let product: any = {}
         let sameProducts: any = []
+        let frequentlyBoughtProducts: any = [];
 
         if (slug) {
 
             const session = await getSession(context);
-
-            const querySearch = session && session?.user && session?.user?.isAdmin
+            const user = session && session.user as TypeUser || null;
+            const querySearch = user && user.isAdmin
                 ? { slug: slug }
                 : { slug: slug, isPublished: true }
 
@@ -387,8 +407,66 @@ export const getServerSideProps = async (context: any) => {
             product = await Product.findOne(querySearch).populate("categorie").lean();
             const find = product ? true : false
             if (find) {
+                
+                frequentlyBoughtProducts = await Order.aggregate([
+                    {
+                        $unwind: '$orderItems',
+                    },
+                    {
+                        $match: {
+                            'orderItems._id': product._id,
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: 'orders',
+                            localField: '_id',
+                            foreignField: '_id',
+                            as: 'relatedOrders',
+                        },
+                    },
+                    {
+                        $unwind: '$relatedOrders',
+                    },
+                    {
+                        $unwind: '$relatedOrders.orderItems',
+                    },
+                    {
+                        $match: {
+                            'relatedOrders.orderItems._id': { $ne: product._id },
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: '$relatedOrders.orderItems._id',
+                            count: { $sum: 1 },
+                        },
+                    },
+                    {
+                        $sort: {
+                            count: -1,
+                        },
+                    },
+                    {
+                        $limit: 4,
+                    },
+                    {
+                        $lookup: {
+                            from: 'products', // Replace 'products' with the actual name of your Product collection if different
+                            localField: '_id',
+                            foreignField: '_id',
+                            as: 'productDetails',
+                        },
+                    },
+                    {
+                        $unwind: '$productDetails',
+                    },
+                ]);
+
+                const notSame = [product._id, ...frequentlyBoughtProducts.map(d => d._id)]
+
                 sameProducts = await Product.find({
-                    _id: { $ne: product._id },
+                    _id: { $nin: notSame },
                     isPublished: true,
 
                     $or: [
@@ -416,7 +494,9 @@ export const getServerSideProps = async (context: any) => {
             props: {
                 productFind: product ? true : false,
                 initialProduct: JSON.parse(JSON.stringify(product)) || {},
-                sameProducts: JSON.parse(JSON.stringify(sameProducts)) || []
+                sameProducts: JSON.parse(JSON.stringify(sameProducts)) || [],
+                frequentlyBoughtProducts: JSON.parse(JSON.stringify(frequentlyBoughtProducts)) || [],
+
             },
         }
 
@@ -425,7 +505,8 @@ export const getServerSideProps = async (context: any) => {
             props: {
                 productFind: false,
                 initialProduct: {},
-                sameProducts: []
+                sameProducts: [],
+                frequentlyBoughtProducts: []
             },
         };
     }

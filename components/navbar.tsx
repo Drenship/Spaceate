@@ -27,7 +27,6 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
     const router = useRouter()
     const { data: session } = useSession();
     const user = session && session.user as TypeUser || null;
-    console.log(user && user.searchHistory)
     const [cartItem] = useRecoilState(cartState)
 
     const searchBarMenuRef = useRef(null);
