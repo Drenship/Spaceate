@@ -89,7 +89,7 @@ const userSchema = new mongoose.Schema(
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
                     required: true,
-                    autopopulate: true
+                    autopopulate: false
                 },
                 quantity: {
                     type: Number,
@@ -104,7 +104,7 @@ const userSchema = new mongoose.Schema(
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
                     required: true,
-                    autopopulate: true
+                    autopopulate: false
                 }
             }
         ],
@@ -119,7 +119,7 @@ const userSchema = new mongoose.Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Review',
-                autopopulate: true
+                autopopulate: false
             }
         ],
         searchHistory: [
@@ -139,7 +139,7 @@ const userSchema = new mongoose.Schema(
                 productId: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
-                    autopopulate: true
+                    autopopulate: false
                 },
                 date: {
                     type: Date,
