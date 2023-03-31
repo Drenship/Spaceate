@@ -110,7 +110,6 @@ const userSchema = new mongoose.Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Order',
-                autopopulate: true
             }
         ],
         reviews: [
@@ -189,8 +188,6 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ emailVerificationToken: 1 }, { unique: true, partialFilterExpression: { emailVerificationToken: { $exists: true } } });
-
-userSchema.plugin(require('mongoose-autopopulate'));
 
 userSchema.set('strictQuery', false)
 

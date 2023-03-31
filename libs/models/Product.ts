@@ -40,7 +40,8 @@ const productSchema = new mongoose.Schema(
         categorie: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Categorie',
-            required: true
+            required: true,
+            autopopulate: true
         },
         subCategorie: {
             type: mongoose.Schema.Types.ObjectId,
@@ -150,6 +151,8 @@ productSchema.index({
     categorie: 1,
     subCategorie: 1,
 });
+
+productSchema.plugin(require('mongoose-autopopulate'));
 
 let findstart = 0;
 productSchema.pre('find', function () {

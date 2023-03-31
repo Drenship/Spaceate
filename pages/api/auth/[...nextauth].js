@@ -17,7 +17,18 @@ async function updateUser(user) {
     try {
         await db.connect();
 
-        const userLastInfo = await User.findById(user._id).populate('orders');
+        const userLastInfo = await User.findById(user._id, {
+            _id: 1,
+            name: 1,
+            gender: 1,
+            email: 1,
+            email_is_verified: 1,
+            isAdmin: 1,
+            orders: 1,
+            searchHistory: 1,
+            updatedAt: 1,
+            createdAt: 1,
+        });
 
         if (!userLastInfo) {
             return user;
@@ -42,6 +53,7 @@ async function updateIfNeeded(source, callback) {
 
     if (shouldUpdateUser(lastUpdatedAt)) {
         const updatedUser = await updateUser(source);
+        console.log(updatedUser)
         return {
             _id: updatedUser._id,
             name: updatedUser.name,
@@ -49,11 +61,11 @@ async function updateIfNeeded(source, callback) {
             email: updatedUser.email,
             email_is_verified: updatedUser.email_is_verified,
             isAdmin: updatedUser.isAdmin,
-            cart: updatedUser.cart,
-            searchHistory: updatedUser.searchHistory.map(x => x.query),
             orders: updatedUser.orders,
-            wishlist: updatedUser.wishlist,
-            recentlyViewed: updatedUser.recentlyViewed,
+            searchHistory: updatedUser.searchHistory.map(x => x.query),
+            //cart: updatedUser.cart,
+            //wishlist: updatedUser.wishlist,
+            //recentlyViewed: updatedUser.recentlyViewed,
             updatedAt: updatedUser.updatedUser,
             createdAt: updatedUser.createdAt
         }
@@ -80,6 +92,7 @@ export default NextAuth({
         },
         async session({ session, token }) {
             session.user = token;
+            console.log(session)
             return session;
         },
     },
@@ -87,7 +100,19 @@ export default NextAuth({
         CredentialsProvider({
             async authorize(credentials) {
                 await db.connect();
-                const user = await User.findOne({ email: credentials.email });
+                const user = await User.findOne({ email: credentials.email }, {
+                    _id: 1,
+                    name: 1,
+                    password: 1,
+                    gender: 1,
+                    email: 1,
+                    email_is_verified: 1,
+                    isAdmin: 1,
+                    orders: 1,
+                    searchHistory: 1,
+                    updatedAt: 1,
+                    createdAt: 1,
+                });
                 await db.disconnect();
                 if (user && bcrypt.compareSync(credentials.password, user.password)) {
                     return user._doc;
