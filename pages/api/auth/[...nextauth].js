@@ -24,8 +24,10 @@ async function updateUser(user) {
             email: 1,
             email_is_verified: 1,
             isAdmin: 1,
-            orders: 1,
+            cart: 1,
             searchHistory: 1,
+            wishlist: 1,
+            recentlyViewed: 1,
             updatedAt: 1,
             createdAt: 1,
         });
@@ -61,11 +63,10 @@ async function updateIfNeeded(source, callback) {
             email: updatedUser.email,
             email_is_verified: updatedUser.email_is_verified,
             isAdmin: updatedUser.isAdmin,
-            orders: updatedUser.orders,
+            cart: updatedUser.cart,
             searchHistory: updatedUser.searchHistory.map(x => x.query),
-            //cart: updatedUser.cart,
-            //wishlist: updatedUser.wishlist,
-            //recentlyViewed: updatedUser.recentlyViewed,
+            wishlist: updatedUser.wishlist,
+            recentlyViewed: updatedUser.recentlyViewed,
             updatedAt: updatedUser.updatedUser,
             createdAt: updatedUser.createdAt
         }
@@ -108,8 +109,10 @@ export default NextAuth({
                     email: 1,
                     email_is_verified: 1,
                     isAdmin: 1,
-                    orders: 1,
+                    cart: 1,
                     searchHistory: 1,
+                    wishlist: 1,
+                    recentlyViewed: 1,
                     updatedAt: 1,
                     createdAt: 1,
                 });
