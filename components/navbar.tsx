@@ -107,11 +107,6 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
             <div
                 ref={searchBarMenuRef}
                 className='relative border border-solid border-gray-200 border-x-[0.15rem] focus-within:border-x-sky-500 transition-all duration-300 bg-[#f3f6fd] rounded-full shadow-lg w-full max-w-[480px] h-10 flex justify-between items-center px-3'
-                style={{
-                    //border: '0.15rem solid rgb(240, 240, 240)',
-                    //borderLeftColor: '#1488e4',
-                    //borderRightColor: '#1488e4',
-                }}
             >
                 <input
                     type="search"
@@ -146,20 +141,20 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                             {
                                 query && user && user.searchHistory.length && (
                                     [...(user.searchHistory || [])]
-                                    .filter(history => history.query.toLowerCase().includes(query))
+                                    .filter(history => history.toLowerCase().includes(query))
                                     .slice(0, 4)
-                                    .map((query) => <button
+                                    .map((historyQuery, key) => <button
                                         className='flex w-full bg-white py-1 border-t shadow-lg border-[#f3f6fd] p-2 text-sm font-bold uppercase'
-                                        key={query._id}
+                                        key={key}
                                         onClick={() => {
-                                            const [value, allow] = querySecurMongoDB(query.query.trim());
+                                            const [value, allow] = querySecurMongoDB(query.trim());
 
                                             if (allow) {
                                                 setQuery(value);
                                                 handleRedirectSearch()
                                             }
                                         }}
-                                    >{query.query}</button>)
+                                    >{historyQuery}</button>)
                                 )
                             }
                             {

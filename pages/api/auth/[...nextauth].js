@@ -43,6 +43,7 @@ async function updateIfNeeded(source, callback) {
     if (shouldUpdateUser(lastUpdatedAt)) {
         const updatedUser = await updateUser(source);
         return {
+            _id: updatedUser._id,
             name: updatedUser.name,
             gender: updatedUser.gender,
             email: updatedUser.email,
@@ -50,7 +51,11 @@ async function updateIfNeeded(source, callback) {
             isAdmin: updatedUser.isAdmin,
             cart: updatedUser.cart,
             searchHistory: updatedUser.searchHistory.map(x => x.query),
-            updatedAt: updatedUser.updatedUser
+            orders: updatedUser.orders,
+            wishlist: updatedUser.wishlist,
+            recentlyViewed: updatedUser.recentlyViewed,
+            updatedAt: updatedUser.updatedUser,
+            createdAt: updatedUser.createdAt
         }
     }
     return callback;
