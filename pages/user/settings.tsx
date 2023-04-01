@@ -2,17 +2,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { AnnotationIcon, CheckIcon } from '@heroicons/react/solid';
-import { RxCross1 } from 'react-icons/rx';
 
 import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { fixedPriceToCurrency, replaceURL, splitString, UTCStringToDate } from '@libs/utils';
-import { TypeOrder, TypeUser } from '@libs/typings';
+import { TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import Tabs from '@components/contents/Tab';
+import { TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6, TypographyP, TypographySmall, TypographyTiny } from '@components/ui-ux/Typography';
 
 
 interface Props { }
@@ -71,9 +68,9 @@ const UserSettings: NextPage<Props> = () => {
                     ]}
                     setActive={setActiveTab}
                 />
-                
+
                 { /* TAB 1 - Profil */}
-                <div className={`flex-grow pt-5 border-t lg:mt-0 lg:w-full ${ activeTab !== 1 && "hidden"}`}>
+                <div className={`flex-grow pt-5 border-t lg:mt-0 lg:w-full ${activeTab !== 1 && "hidden"}`}>
                     <div>
                         <Link href='/user'>
                             <h3 className='inline-block text-3xl font-bold'>{user?.name}</h3>
@@ -126,10 +123,26 @@ const UserSettings: NextPage<Props> = () => {
                 </div>
 
                 { /* TAB 2 - Sécurité */}
-                <div className={`flex-grow pt-5 border-t lg:mt-0 lg:w-full ${ activeTab !== 2 && "hidden"}`}>
-                    sécurity tab
+                <div className={`flex-grow pt-5 border-t lg:mt-0 lg:w-full ${activeTab !== 2 && "hidden"}`}>
+                    <div className="container px-4 mx-auto">
+                        <TypographyH1>Titre h1</TypographyH1>
+                        <TypographyH2>Titre h2</TypographyH2>
+                        <TypographyH3>Titre h3</TypographyH3>
+                        <TypographyH4>Titre h4</TypographyH4>
+                        <TypographyH5>Titre h5</TypographyH5>
+                        <TypographyH6>Titre h6</TypographyH6>
+                        <TypographyP>
+                            Paragraphe avec du texte standard. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
+                        </TypographyP>
+                        <TypographySmall>
+                            Texte en taille small. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
+                        </TypographySmall>
+                        <TypographyTiny>
+                            Texte en taille tiny. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
+                        </TypographyTiny>
+                    </div>
                 </div>
-
+ 
             </div>
         </BasescreenWrapper>
     )

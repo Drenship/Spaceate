@@ -101,8 +101,9 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                     )
                 }
 
-                <Link href='/' className="hidden text-xl font-black text-transparent uppercase sm:block bg-clip-text bg-gradient-to-r via-sky-500 from-blue-700 to-purple-500" >
-                    Spaceate
+                <Link href='/' className="relative hidden px-2 select-none sm:block" >
+                    <img width={100} src="/icons/spaceate.svg" alt="My SVG Image" />
+                    <div className='absolute inset-0 z-10' />
                 </Link>
             </div>
 

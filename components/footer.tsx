@@ -3,10 +3,13 @@ import Link from "next/link"
 
 export default function Footer() {
     return (
-        <footer className="w-full px-4 py-8 mb-16 text-white bg-black sm:mb-0">
+        <footer className="w-full px-4 py-8 mb-16 text-black bg-white border-t shadow-inner sm:mb-0">
             <div className="container flex flex-col justify-around mx-auto space-y-5 md:space-y-0 md:flex-row">
                 <div>
-                    <Link className="block text-xl font-black text-transparent uppercase bg-clip-text bg-gradient-to-r via-sky-500 from-blue-700 to-purple-500" href="/">Spaceate</Link>
+                    <Link href='/' className="relative hidden select-none sm:block" >
+                        <img width={150} src="/icons/spaceate.svg" alt="My SVG Image" />
+                        <div className='absolute inset-0 z-10' />
+                    </Link>
                 </div>
                 <div>
                     <h3 className="mb-4 text-xl font-bold">À propos</h3>
