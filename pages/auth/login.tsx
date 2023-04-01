@@ -56,7 +56,7 @@ const LoginScreen: NextPage = () => {
         <BasescreenWrapper title={"Se connecter"}>
             <div className='md:min-h-[calc(100vh-64px)] min-h-[calc(100vh-128px)] flex items-center justify-center'>
                 <form
-                    className={`relative w-full px-6 py-10 mt-24 space-y-8 bg-white rounded shadow-lg md:mt-0 md:max-w-md md:px-14 ${error && 'border border-red-500'}`}
+                    className={`relative w-full px-6 py-10 space-y-8 bg-white rounded shadow-lg md:mt-0 md:max-w-md md:px-14 ${error && 'border border-red-500'}`}
                     onSubmit={handleSubmit(submitHandler)}
                 >
                     <div>
