@@ -178,7 +178,7 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
                             <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
                         </div>
                         <div
-                            className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide'
+                            className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide js-not-swipe'
                         >
                             {
                                 orders
