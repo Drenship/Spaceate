@@ -142,7 +142,7 @@ const UserSettings: NextPage<Props> = () => {
                         </TypographyTiny>
                     </div>
                 </div>
- 
+                
             </div>
         </BasescreenWrapper>
     )
