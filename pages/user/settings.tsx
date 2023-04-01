@@ -12,15 +12,18 @@ import { fixedPriceToCurrency, replaceURL, splitString, UTCStringToDate } from '
 import { TypeOrder, TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
+import Tabs from '@components/contents/Tab';
 
 
 interface Props { }
 
 const UserSettings: NextPage<Props> = () => {
 
-
     const { data: session } = useSession();
     const user = session && session.user as TypeUser || null;
+
+    const [activeTab, setActiveTab] = useState<number>(1);
+    const [sendMailDisablerd, setSendMailDisablerd] = useState<boolean>(false)
 
     const [member, orders] = useMemo(() => {
         const createdAt = new Date(user?.createdAt).getFullYear()
@@ -29,7 +32,7 @@ const UserSettings: NextPage<Props> = () => {
         return [createdAt, orders];
     }, [user]);
 
-    const [sendMailDisablerd, setSendMailDisablerd] = useState(false)
+
     const sendMailForVerify = async () => {
 
         if (!user) {
@@ -60,12 +63,20 @@ const UserSettings: NextPage<Props> = () => {
 
     return (
         <BasescreenWrapper title="Profile" footer={true}>
-            <div className='block px-5 my-12 lg:flex max-w-[1400px] w-full'>
-
-                <div className='flex-grow lg:mt-0 lg:w-full'>
+            <div className='flex flex-col px-5 my-12 lg:flex max-w-[1400px] w-full'>
+                <Tabs
+                    tabsData={[
+                        { title: 'Profil' },
+                        { title: 'Sécurité' },
+                    ]}
+                    setActive={setActiveTab}
+                />
+                
+                { /* TAB 1 - Profil */}
+                <div className={`flex-grow pt-5 border-t lg:mt-0 lg:w-full ${ activeTab !== 1 && "hidden"}`}>
                     <div>
                         <Link href='/user'>
-                            <h3 className='text-3xl font-bold'>{user?.name}</h3>
+                            <h3 className='inline-block text-3xl font-bold'>{user?.name}</h3>
                         </Link>
                     </div>
 
@@ -112,6 +123,11 @@ const UserSettings: NextPage<Props> = () => {
 
 
 
+                </div>
+
+                { /* TAB 2 - Sécurité */}
+                <div className={`flex-grow pt-5 border-t lg:mt-0 lg:w-full ${ activeTab !== 2 && "hidden"}`}>
+                    sécurity tab
                 </div>
 
             </div>

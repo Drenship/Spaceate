@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,15 +6,15 @@ import { getSession, useSession } from 'next-auth/react';
 import { AnnotationIcon, CheckIcon } from '@heroicons/react/solid';
 import { RxCross1 } from 'react-icons/rx';
 
+import db from '@libs/database/dbConnect';
+import User from '@libs/models/User';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { fixedPriceToCurrency, replaceURL, splitString, UTCStringToDate } from '@libs/utils';
+import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import { TypeOrder, TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import CommentaireCard from '@components/cards/CommentaireCard';
-import OrderStatus from '@components/contents/orderStatus';
-import db from '@libs/database/dbConnect';
-import User from '@libs/models/User';
+import TableProfilOrderLine from '@components/tables/TableProfilOrderLine';
 
 
 interface ProfilOrderCardProps {
@@ -40,40 +40,6 @@ const ProfilOrderCard = ({ order }: ProfilOrderCardProps) => (
     </div>
 )
 
-
-const ProfilCurrentOrderLine = ({ order }: ProfilOrderCardProps) => (
-    <Link href={`/user/order-history/${order._id}`} className="w-full [&:nth-child(1)]:border-t [&:not(:last-child)]:border-b hover:bg-gray-50 px-1">
-        <div className='flex items-center justify-between w-full'>
-            <div className="-space-x-6 avatar-group">
-
-                {
-                    order.orderItems.length > 0 && [...order.orderItems].slice(0, 4).map((p, k) => <div key={k} className="avatar">
-                        <div className="w-12">
-                            <img src={replaceURL(p.image)} alt={`panier spaceate - ${p.name}`} />
-                        </div>
-                    </div>)
-                }
-
-                {
-                    order.orderItems.length > 4 && (
-                        <div className="select-none avatar placeholder">
-                            <div className="w-12 bg-neutral-focus text-neutral-content">
-                                <span>+{order.orderItems.length - 3}</span>
-                            </div>
-                        </div>
-                    )
-                }
-            </div>
-            <div className="px-3 whitespace-no-wrap">
-                <OrderStatus order={order} />
-            </div>
-            <div className="px-3 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{fixedPriceToCurrency(order.totalPrice)}</div>
-            <div className="pl-3 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap">{UTCStringToDate(order.createdAt)}</div>
-        </div>
-    </Link>
-)
-
-
 interface Props {
     initialOrders: TypeOrder[]
 }
@@ -81,17 +47,17 @@ interface Props {
 const UserProfil: NextPage<Props> = ({ initialOrders }) => {
 
     const { data: session } = useSession();
-    const [initialOrdersCopy] = useState(initialOrders)
     const user = session && session.user as TypeUser || null;
 
-    const [member, orders] = useMemo(() => {
+    const [member, orders, orderInAwait] = useMemo(() => {
         if (!user) return [0, []];
 
         const createdAt = new Date(user?.createdAt).getFullYear()
-        const orders = initialOrdersCopy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        const orders = initialOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        const orderInAwait = initialOrders.filter((order) => order.isPaid === true && order.isDelivered === false && order.isRefund === false && order.isCancel === false).slice(0, 4)
 
-        return [createdAt, orders];
-    }, [user, initialOrdersCopy]);
+        return [createdAt, orders, orderInAwait];
+    }, [user, initialOrders]);
 
     const [sendMailDisablerd, setSendMailDisablerd] = useState(false)
     const sendMailForVerify = async () => {
@@ -118,9 +84,7 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
         } else {
             setSendMailDisablerd(false)
         }
-
     }
-
 
     return (
         <BasescreenWrapper title="Profile" footer={true}>
@@ -188,16 +152,23 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
                             <h4 className='text-xl font-semibold'>Commandes en cours</h4>
                             <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
                         </div>
-                        <div className='flex flex-col items-start w-full '>
-                            {
-                                orders
-                                    .filter((order) => order.isPaid === true && order.isDelivered === false && order.isRefund === false && order.isCancel === false).slice(0, 4)
-                                    .map((item: TypeOrder) => <ProfilCurrentOrderLine
-                                        key={item._id}
-                                        order={item}
-                                    />)
-                            }
-                        </div>
+                        {
+                            orderInAwait && orderInAwait.length > 0
+                                ? (
+                                    <table>
+                                        <tbody className='w-full'>
+                                            {
+                                                orderInAwait.map((item: TypeOrder) => <TableProfilOrderLine
+                                                    key={item._id}
+                                                    order={item}
+                                                />)
+                                            }
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <p className='italic text-gray-400'>Vous n'avez pas de commande en attente</p>
+                                )
+                        }
                     </div>
 
                     <div className='inline-grid w-full border-b lg:mt-10 pb-7 mb-7'>
@@ -206,7 +177,9 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
 
                             <Link href='/user/order-history' className='font-semibold underline active:text-gray-400'>Voire plus</Link>
                         </div>
-                        <div className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide'>
+                        <div
+                            className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide'
+                        >
                             {
                                 orders
                                     .slice(0, 4)

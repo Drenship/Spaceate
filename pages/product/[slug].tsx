@@ -288,6 +288,8 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                         isOutOfStock ? "Rupture de stock" : "Ajouter au panier"
                                                     }
                                                 </button>
+
+                                                { /* Livraison details */}
                                             </article>
                                         </section>
 

@@ -12,7 +12,15 @@ module.exports = {
       'xs': '475px',
       ...defaultTheme.screens,
     },
-    extend: {},
+    extend: {
+      backgroundColor: {
+        'blue-600': '#185ee0',
+        'blue-200': '#e6eef9',
+      },
+      textColor: {
+        'blue-600': '#185ee0',
+      },
+    },
   },
   daisyui: {
     styled: true,
@@ -39,5 +47,8 @@ module.exports = {
       "light"
     ],
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"),
+    require('tailwind-scrollbar-hide')
+  ],
 }
