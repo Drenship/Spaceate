@@ -65,8 +65,5 @@ module.exports = {
         ],
       },
     ];
-  },
-  session: {
-    keepAlive: 0, // Ajoutez cette ligne pour désactiver le rafraîchissement de la session
-  },
+  }
 }

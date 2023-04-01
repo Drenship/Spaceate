@@ -46,12 +46,14 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
         setSearchResult(data)
     }
 
-    const handleRedirectSearch = async () => {
-        if (!query || query.length === 0) return;
-        if(user && query.length > 1) {
-            await fetchPostJSON('/api/user/update/search-history', { query: query })
+    interface handleRedirectSearchProps { forceQuery?: string | undefined }
+    const handleRedirectSearch = async (forceQuery: handleRedirectSearchProps = { forceQuery: undefined }) => {
+        const searchQuery = forceQuery ? forceQuery : query
+        if (!searchQuery || searchQuery.length === 0) return;
+        if (user && searchQuery.length > 1) {
+            await fetchPostJSON('/api/user/update/search-history', { query: searchQuery })
         }
-        router.push(`/search?query=${query}`)
+        router.push(`/search?query=${searchQuery}`)
     }
 
     // searchbar => call fetch reasult, add delay for saving request
@@ -136,32 +138,28 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
 
                 {
                     searchBarFocus && (searchResult.length > 0 || user?.searchHistory?.length) && (
-                    <div className='fixed top-8 sm:absolute left-0 right-0 -z-[1] w-full bg-[#f3f6fd] rounded-b-lg shadow-lg sm:top-5'>
-                        <div className='p-1.5 mt-5 space-y-0.5 overflow-hidden rounded-md flex flex-col'>
-                            {
-                                query && user && user.searchHistory.length && (
-                                    [...(user.searchHistory || [])]
-                                    .filter(history => history.toLowerCase().includes(query))
-                                    .slice(0, 4)
-                                    .map((historyQuery, key) => <button
-                                        className='flex w-full bg-white py-1 border-t shadow-lg border-[#f3f6fd] p-2 text-sm font-bold uppercase'
-                                        key={key}
-                                        onClick={() => {
-                                            const [value, allow] = querySecurMongoDB(query.trim());
-
-                                            if (allow) {
-                                                setQuery(value);
-                                                handleRedirectSearch()
-                                            }
-                                        }}
-                                    >{historyQuery}</button>)
-                                )
-                            }
-                            {
-                                searchResult.map((data: TypeProduct) => <SearchResultItem key={data._id} product={data} />)
-                            }
+                        <div className='fixed top-8 sm:absolute left-0 right-0 -z-[1] w-full bg-[#f3f6fd] rounded-b-lg shadow-lg sm:top-5'>
+                            <div className='p-1.5 mt-5 space-y-0.5 overflow-hidden rounded-md flex flex-col'>
+                                {
+                                    query && user && user.searchHistory.length && (
+                                        [...(user.searchHistory || [])]
+                                            .filter((history) => history.toLowerCase().includes(query))
+                                            .slice(0, 4)
+                                            .map((historyQuery, key) => <button
+                                                className='flex w-full bg-white py-1 border-t shadow-lg border-[#f3f6fd] p-2 text-sm font-bold uppercase'
+                                                key={key}
+                                                onClick={() => {
+                                                    setQuery(historyQuery);
+                                                    handleRedirectSearch(historyQuery)
+                                                }}
+                                            >{historyQuery}</button>)
+                                    )
+                                }
+                                {
+                                    searchResult.map((data: TypeProduct) => <SearchResultItem key={data._id} product={data} />)
+                                }
+                            </div>
                         </div>
-                    </div>
                     )
                 }
             </div>

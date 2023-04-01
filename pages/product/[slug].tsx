@@ -294,8 +294,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                                         { /* Product associate */}
                                         {
-                                            frequentlyBought.length > 0 && (
-
+                                            frequentlyBought && frequentlyBought.length > 0 && (
                                                 <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
                                                     <h2 className='mb-5 text-xl font-bold uppercase'>Fréquemment acheter avec</h2>
                                                     <CarouselProduct overflow="hidden" products={frequentlyBought} />
@@ -304,12 +303,14 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                         }
 
                                         { /* Product associate */}
-                                        <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
-                                            <h2 className='mb-5 text-xl font-bold uppercase'>Produits similaire</h2>
-                                            {
-                                                sameProducts && <CarouselProduct overflow="hidden" products={sameProducts} />
-                                            }
-                                        </section>
+                                        {
+                                            sameProducts && sameProducts.length > 0 && (
+                                                <section className='max-w-[1260px] pt-8 mt-8 border-t-2 border-dashed'>
+                                                    <h2 className='mb-5 text-xl font-bold uppercase'>Produits similaire</h2>
+                                                    <CarouselProduct overflow="hidden" products={sameProducts} />
+                                                </section>
+                                            )
+                                        }
 
                                         { /* Commentaire section */}
                                         <section className='w-full pt-8 mt-8 border-t-2 border-dashed'>
@@ -407,7 +408,7 @@ export const getServerSideProps = async (context: any) => {
             product = await Product.findOne(querySearch).populate("categorie").lean();
             const find = product ? true : false
             if (find) {
-                
+
                 frequentlyBoughtProducts = await Order.aggregate([
                     {
                         $unwind: '$orderItems',

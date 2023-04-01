@@ -55,7 +55,6 @@ async function updateIfNeeded(source, callback) {
 
     if (shouldUpdateUser(lastUpdatedAt)) {
         const updatedUser = await updateUser(source);
-        console.log(updatedUser)
         return {
             _id: updatedUser._id,
             name: updatedUser.name,
@@ -93,7 +92,6 @@ export default NextAuth({
         },
         async session({ session, token }) {
             session.user = token;
-            console.log(session)
             return session;
         },
     },

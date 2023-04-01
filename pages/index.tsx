@@ -70,8 +70,8 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
 
           <div className='absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-white/20'>
             <div className='relative w-full overflow-hidden'>
-              
-              
+
+
             </div>
           </div>
 
@@ -105,6 +105,11 @@ export const getStaticProps = async () => {
     await db.connect();
 
     const results = await Product.aggregate([
+      {
+        $match: {
+          isPublished: true,
+        },
+      },
       {
         $lookup: {
           from: 'categories',

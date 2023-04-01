@@ -36,6 +36,11 @@ const categorieSchema = new mongoose.Schema(
             unique: true,
             trim: true
         },
+        banner: {
+            type: String,
+            default: undefined,
+            trim: true
+        },
         subCategories: [subCategorieSchema],
     },
     {

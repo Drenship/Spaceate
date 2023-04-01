@@ -9,6 +9,7 @@ import '../styles/globals.css'
 import CookiePopup from '@components/ui-ux/Notifications/CookiePopup';
 import Sidebar from '@components/Sidebar';
 import { TypeUser } from '@libs/typings';
+import BodyLoader from '@components/BodyLoader';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -62,7 +63,7 @@ const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
   });
   const user = session && session.user as TypeUser || null;
   if (status === 'loading') {
-    return <div>Loading session...</div>;
+    return <BodyLoader />;
   }
   if (adminOnly && !user?.isAdmin) {
     router.push('/unauthorized?message=admin login required');

@@ -66,7 +66,7 @@ export interface TypeUser {
     wishlist: WishlistItem[];
     orders: TypeOrder[];
     reviews: Review[];
-    searchHistory: string[] | SearchHistoryItem[];
+    searchHistory: string[];
     recentlyViewed: RecentlyViewedItem[];
     security: Security;
     createdAt: Date;
