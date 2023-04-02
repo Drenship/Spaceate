@@ -92,7 +92,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
                         key={index}
                         type="text"
                         maxLength={1}
-                        className="w-10 font-mono text-3xl text-center border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+                        className={`w-10 font-mono text-3xl text-center border-b-2 focus:border-blue-500 focus:outline-none ${value ? "border-blue-500" : "border-gray-300"}`}
                         value={value}
                         onChange={(e) => handleCodeChange(e, index)}
                         onKeyDown={(e) => handleKeyDown(e, index)}
