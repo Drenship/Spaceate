@@ -18,15 +18,13 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
 
     const mobile = isMobile();
 
-    const [test, setTest] = useState<string | null | string[]>(null);
     const handleHiddenInputChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const input = e.target.value;
-        const newCode = input.split("").slice(0, 6);
+        const newCode = input.split("").slice(0, codeLength);
         const x = newCode.length !== codeLength ? codeLength - newCode.length : codeLength
         const fixNewCode = [...newCode, ...Array(x).fill('')];
-        setTest(fixNewCode)
         setCode((prevCode) => [...fixNewCode, ...prevCode.slice(newCode.length)]);
     };
 
@@ -34,7 +32,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
         e: React.ClipboardEvent<HTMLDivElement>
     ) => {
         const input = e.clipboardData.getData("text");
-        const newCode = input.split("").slice(0, 6);
+        const newCode = input.split("").slice(0, codeLength);
         setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
         const focusIndex = Math.min(newCode.length - 1, code.length - 1);
         inputRefs.current[focusIndex]?.focus();
@@ -46,7 +44,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
     ) => {
         const input = e.target.value;
         if (input.length > 1) {
-            const newCode = input.split('').slice(0, codeLength - 1);
+            const newCode = input.split('').slice(0, codeLength);
             setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
             inputRefs.current[newCode.length - 1]?.focus();
             return;
@@ -83,13 +81,12 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
             className="relative flex flex-col justify-center"
             onPaste={(e) => handlePasteOnContainer(e)}
         >
-            {test}
             {
                 mobile && (
                     <input
                         ref={hiddenInputRef}
                         type="text"
-                        className="absolute w-full h-full opacity-0 cursor-default md:z-0"
+                        className="absolute z-0 w-full h-full opacity-0 cursor-default"
                         value={code.join("")}
                         onChange={handleHiddenInputChange}
                         onKeyDown={handleKeyDown}
@@ -97,7 +94,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
                     />
                 )
             }
-            <div className="flex items-center justify-between space-x-2 md:z-10">
+            <div className="z-10 flex items-center justify-between space-x-2">
                 {code.map((value, index) => (
                     <input
                         ref={(el) => (inputRefs.current[index] = el)}
@@ -106,9 +103,8 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
                         maxLength={1}
                         className={`w-10 font-mono text-3xl text-center border-b-2 focus:border-blue-500 focus:outline-none ${value ? "border-blue-500" : "border-gray-300"}`}
                         value={value}
-                        onChange={mobile ? undefined : (e) => handleCodeChange(e, index)}
-                        onKeyDown={mobile ? undefined : (e) => handleKeyDown(e, index)}
-                        readOnly={mobile ? true : undefined}
+                        onChange={(e) => handleCodeChange(e, index)}
+                        onKeyDown={(e) => handleKeyDown(e, index)}
                     />
                 ))}
             </div>
