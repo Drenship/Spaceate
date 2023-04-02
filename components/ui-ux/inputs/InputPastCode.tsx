@@ -23,7 +23,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
     ) => {
         const input = e.target.value;
         const newCode = input.split("").slice(0, 7);
-        setCode(newCode);
+        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
     };
 
     const handleHiddenBlur = (
@@ -31,14 +31,14 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
     ) => {
         const input = (e.target as HTMLInputElement).value;
         const newCode = input.split("").slice(0, 7);
-        setCode(newCode);
+        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
     };
 
     const handlePasteOnContainer = (
         e: React.ClipboardEvent<HTMLDivElement>
     ) => {
-        const pastedData = e.clipboardData.getData("text");
-        const newCode = pastedData.split("").slice(0, 7);
+        const input = e.clipboardData.getData("text");
+        const newCode = input.split("").slice(0, 7);
         setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
         const focusIndex = Math.min(newCode.length - 1, code.length - 1);
         inputRefs.current[focusIndex]?.focus();
