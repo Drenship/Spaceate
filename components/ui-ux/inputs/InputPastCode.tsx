@@ -18,10 +18,12 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
 
     const mobile = isMobile();
 
+    const [test, setTest] = useState<string | null>('');
     const handleHiddenInputChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const input = e.target.value;
+        setTest(input)
         const newCode = input.split("").slice(0, 7);
         setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
     };
@@ -84,9 +86,10 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
 
     return (
         <div
-            className="relative flex justify-center"
+            className="relative flex flex-col justify-center"
             onPaste={(e) => handlePasteOnContainer(e)}
         >
+            {test}
             {
                 mobile && (
                     <input
@@ -101,7 +104,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
                     />
                 )
             }
-            <div className="flex space-x-2 md:z-10">
+            <div className="flex items-center justify-between space-x-2 md:z-10">
                 {code.map((value, index) => (
                     <input
                         ref={(el) => (inputRefs.current[index] = el)}
