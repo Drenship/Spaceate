@@ -23,7 +23,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             return UPDATE_PASSWORD(req, res);
 
         case 'UPDATE_INFORMATION':
-            return UPDATE_PASSWORD(req, res);
+            return UPDATE_INFORMATION(req, res);
 
 
         case 'ADD_ADDRESS':
