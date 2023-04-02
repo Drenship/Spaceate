@@ -76,6 +76,9 @@ const UserSettings: NextPage<Props> = () => {
     ) => {
         const input = e.target.value;
         if (input.length > 1) {
+            const newCode = input.split('').slice(0, 7);
+            setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+            inputRefs.current[newCode.length - 1]?.focus();
             return;
         }
 
@@ -248,7 +251,7 @@ const UserSettings: NextPage<Props> = () => {
 
             </div>
             {
-                togglePopupConfirmCodeMail && (
+                (togglePopupConfirmCodeMail || true) && (
                     <div className='fixed inset-0 z-50 flex items-center justify-center cursor-pointer bg-black/10'
                         onClick={() => setTogglePopupConfirmCodeMail(false)}
                     >
@@ -276,7 +279,7 @@ const UserSettings: NextPage<Props> = () => {
                                         value={value}
                                         onChange={(e) => handleCodeChange(e, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        onInput={handlePaste}
+                                        onPaste={handlePaste}
                                     />
                                 ))}
                             </div>
