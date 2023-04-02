@@ -69,6 +69,15 @@ const UserSettings: NextPage<Props> = () => {
 
     }
 
+    const handlePasteOnContainer = (
+        e: React.ClipboardEvent<HTMLDivElement>
+    ) => {
+        const pastedData = e.clipboardData.getData("text");
+        const newCode = pastedData.split("").slice(0, 7);
+        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+        const focusIndex = Math.min(newCode.length - 1, code.length - 1);
+        inputRefs.current[focusIndex]?.focus();
+    };
 
     const handleCodeChange = (
         e: React.ChangeEvent<HTMLInputElement>,
@@ -277,22 +286,24 @@ const UserSettings: NextPage<Props> = () => {
                             </button>
 
                             <TypographyH4 className='uppercase'>Entrez le code de vérification</TypographyH4>
-
-                            <div className="flex space-x-2">
-                                {code.map((value, index) => (
-                                    <input
-                                        ref={(el) => (inputRefs.current[index] = el)}
-                                        key={index}
-                                        type="text"
-                                        maxLength={1}
-                                        className="w-10 font-mono text-3xl text-center border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
-                                        value={value}
-                                        onChange={(e) => handleCodeChange(e, index)}
-                                        onKeyDown={(e) => handleKeyDown(e, index)}
-                                        onPaste={handlePaste}
-                                        onBlur={(e) => handleBlur(e, index)}
-                                    />
-                                ))}
+                            <div
+                                className="flex justify-center"
+                                onPaste={(e) => handlePasteOnContainer(e)}
+                            >
+                                <div className="flex space-x-2">
+                                    {code.map((value, index) => (
+                                        <input
+                                            ref={(el) => (inputRefs.current[index] = el)}
+                                            key={index}
+                                            type="text"
+                                            maxLength={1}
+                                            className="w-10 font-mono text-3xl text-center border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+                                            value={value}
+                                            onChange={(e) => handleCodeChange(e, index)}
+                                            onKeyDown={(e) => handleKeyDown(e, index)}
+                                        />
+                                    ))}
+                                </div>
                             </div>
 
                             <div className='flex flex-col items-end w-full'>
