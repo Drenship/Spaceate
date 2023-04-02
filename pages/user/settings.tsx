@@ -204,8 +204,8 @@ const UserSettings: NextPage<Props> = () => {
                 </div>
 
             </div>
-            {
-                (togglePopupConfirmCodeMail || true) && (
+            { 
+                togglePopupConfirmCodeMail && (
                     <div className='fixed inset-0 z-50 flex items-center justify-center cursor-pointer bg-black/10'
                         onClick={() => setTogglePopupConfirmCodeMail(false)}
                     >
