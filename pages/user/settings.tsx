@@ -92,6 +92,17 @@ const UserSettings: NextPage<Props> = () => {
         }
     };
 
+    const handleInput = (
+        e: React.FormEvent<HTMLInputElement>,
+        index: number
+    ) => {
+        const input = e.currentTarget.value;
+        if (input.length > 1) {
+            handlePaste(e as any, index);
+        }
+    };
+
+
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
         const paste = e.clipboardData.getData('text');
@@ -280,6 +291,7 @@ const UserSettings: NextPage<Props> = () => {
                                         onChange={(e) => handleCodeChange(e, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
                                         onPaste={handlePaste}
+                                        onInput={(e) => handleInput(e, index)}
                                     />
                                 ))}
                             </div>
