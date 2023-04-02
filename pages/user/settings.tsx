@@ -92,8 +92,8 @@ const UserSettings: NextPage<Props> = () => {
         }
     };
 
-    const handleInput = (
-        e: React.FormEvent<HTMLInputElement>,
+    const handleBlur = (
+        e: React.FocusEvent<HTMLInputElement>,
         index: number
     ) => {
         const input = e.currentTarget.value;
@@ -101,7 +101,6 @@ const UserSettings: NextPage<Props> = () => {
             handlePaste(e as any, index);
         }
     };
-
 
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -291,7 +290,7 @@ const UserSettings: NextPage<Props> = () => {
                                         onChange={(e) => handleCodeChange(e, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
                                         onPaste={handlePaste}
-                                        onInput={(e) => handleInput(e, index)}
+                                        onBlur={(e) => handleBlur(e, index)}
                                     />
                                 ))}
                             </div>
