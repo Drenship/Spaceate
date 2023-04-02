@@ -1,3 +1,4 @@
+import isMobile from 'is-mobile';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface InputPastCodeProps {
@@ -14,6 +15,8 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
     const [code, setCode] = useState<string[]>(Array(codeLength).fill(''));
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const hiddenInputRef = useRef<HTMLInputElement>(null);
+
+    const mobile = isMobile();
 
     const handleHiddenInputChange = (
         e: React.ChangeEvent<HTMLInputElement>
@@ -94,8 +97,9 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
                         maxLength={1}
                         className={`w-10 font-mono text-3xl text-center border-b-2 focus:border-blue-500 focus:outline-none ${value ? "border-blue-500" : "border-gray-300"}`}
                         value={value}
-                        onChange={(e) => handleCodeChange(e, index)}
-                        onKeyDown={(e) => handleKeyDown(e, index)}
+                        onChange={mobile ? undefined : (e) => handleCodeChange(e, index)}
+                        onKeyDown={mobile ? undefined : (e) => handleKeyDown(e, index)}
+                        readOnly={mobile ? true : undefined}
                     />
                 ))}
             </div>
