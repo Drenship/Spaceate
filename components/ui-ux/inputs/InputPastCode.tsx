@@ -23,15 +23,15 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
     ) => {
         const input = e.target.value;
         const newCode = input.split("").slice(0, 7);
-        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+        setCode(newCode);
     };
 
-    const handleHiddenInput = (
+    const handleHiddenBlur = (
         e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>
     ) => {
         const input = (e.target as HTMLInputElement).value;
         const newCode = input.split("").slice(0, 7);
-        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+        setCode(newCode);
     };
 
     const handlePasteOnContainer = (
@@ -95,7 +95,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
                         className="absolute w-full h-full opacity-0 cursor-default md:z-0"
                         value={code.join("")}
                         onChange={handleHiddenInputChange}
-                        onInput={handleHiddenInput}
+                        onBlur={handleHiddenBlur}
                         onKeyDown={handleKeyDown}
                         autoFocus
                     />
