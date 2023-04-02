@@ -18,14 +18,15 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
 
     const mobile = isMobile();
 
-    const [test, setTest] = useState<string | null>('');
+    const [test, setTest] = useState<string | null | string[]>(null);
     const handleHiddenInputChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const input = e.target.value;
-        const newCode = input.split("").slice(0, 7);
+        const newCode = input.split("").slice(0, 6);
         const x = newCode.length !== codeLength ? codeLength - newCode.length : codeLength
-        const fixNewCode = [...newCode, ...Array(x).fill('')]
+        const fixNewCode = [...newCode, ...Array(x).fill('')];
+        setTest(fixNewCode)
         setCode((prevCode) => [...fixNewCode, ...prevCode.slice(newCode.length)]);
     };
 
@@ -33,7 +34,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
         e: React.ClipboardEvent<HTMLDivElement>
     ) => {
         const input = e.clipboardData.getData("text");
-        const newCode = input.split("").slice(0, 7);
+        const newCode = input.split("").slice(0, 6);
         setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
         const focusIndex = Math.min(newCode.length - 1, code.length - 1);
         inputRefs.current[focusIndex]?.focus();
@@ -45,7 +46,7 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
     ) => {
         const input = e.target.value;
         if (input.length > 1) {
-            const newCode = input.split('').slice(0, 7);
+            const newCode = input.split('').slice(0, codeLength - 1);
             setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
             inputRefs.current[newCode.length - 1]?.focus();
             return;
