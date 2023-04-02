@@ -26,7 +26,6 @@ const UserSettings: NextPage<Props> = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const [newMail, setNewMail] = useState<string>("");
-    const [past, setpast] = useState<string>("");
     const [sendMailDisablerd, setSendMailDisablerd] = useState<boolean>(false)
     const [updateMailMessage, setUpdateMailMessage] = useState<string | null>(null)
     const [togglePopupConfirmCodeMail, setTogglePopupConfirmCodeMail] = useState<boolean>(false)
@@ -83,7 +82,6 @@ const UserSettings: NextPage<Props> = () => {
         e: React.ClipboardEvent<HTMLDivElement>
     ) => {
         const pastedData = e.clipboardData.getData("text");
-        setpast(pastedData)
         const newCode = pastedData.split("").slice(0, 7);
         setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
         const focusIndex = Math.min(newCode.length - 1, code.length - 1);
@@ -169,7 +167,7 @@ const UserSettings: NextPage<Props> = () => {
                 <div className={`flex-grow pt-5 border-t lg:mt-0 lg:w-full ${activeTab !== 1 && "hidden"}`}>
                     <div>
                         <Link href='/user'>
-                            <h3 className='inline-block text-3xl font-bold'>{past} {user?.name}</h3>
+                            <h3 className='inline-block text-3xl font-bold'>{user?.name}</h3>
                         </Link>
                     </div>
 
@@ -285,13 +283,13 @@ const UserSettings: NextPage<Props> = () => {
                                 <input
                                     ref={hiddenInputRef}
                                     type="text"
-                                    className="absolute w-full h-full opacity-0 cursor-default"
+                                    className="absolute z-0 w-full h-full opacity-0 cursor-default"
                                     value={code.join("")}
                                     onChange={handleHiddenInputChange}
                                     onKeyDown={handleKeyDown}
                                     autoFocus
                                 />
-                                <div className="flex space-x-2">
+                                <div className="z-10 flex space-x-2">
                                     {code.map((value, index) => (
                                         <input
                                             ref={(el) => (inputRefs.current[index] = el)}
