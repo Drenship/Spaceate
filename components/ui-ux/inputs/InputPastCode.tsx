@@ -79,13 +79,13 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
             <input
                 ref={hiddenInputRef}
                 type="text"
-                className="absolute w-full h-full opacity-0 cursor-default"
+                className="absolute w-full h-full opacity-0 cursor-default md:z-0"
                 value={code.join("")}
                 onChange={handleHiddenInputChange}
                 onKeyDown={handleKeyDown}
                 autoFocus
             />
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 md:z-10">
                 {code.map((value, index) => (
                     <input
                         ref={(el) => (inputRefs.current[index] = el)}
