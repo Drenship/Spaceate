@@ -70,6 +70,15 @@ const UserSettings: NextPage<Props> = () => {
 
     }
 
+    const hiddenInputRef = useRef<HTMLInputElement>(null);
+    const handleHiddenInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const input = e.target.value;
+        const newCode = input.split("").slice(0, 7);
+        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+    };
+
     const handlePasteOnContainer = (
         e: React.ClipboardEvent<HTMLDivElement>
     ) => {
@@ -101,25 +110,6 @@ const UserSettings: NextPage<Props> = () => {
             // Focus on the next input field
             inputRefs.current[index + 1]?.focus();
         }
-    };
-
-    const handleBlur = (
-        e: React.FocusEvent<HTMLInputElement>,
-        index: number
-    ) => {
-        const input = e.currentTarget.value;
-        if (input.length > 1) {
-            handlePaste(e as any, index);
-        }
-    };
-
-    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        const paste = e.clipboardData.getData('text');
-        const pastedData = paste.length > 7 ? paste.slice(0, 6) : paste;
-        const newCode = pastedData.split('');
-        setCode(newCode);
-        inputRefs.current[code.length - 1]?.focus();
     };
 
     const handleKeyDown = (
@@ -289,9 +279,18 @@ const UserSettings: NextPage<Props> = () => {
 
                             <TypographyH4 className='uppercase'>Entrez le code de vérification</TypographyH4>
                             <div
-                                className="flex justify-center"
+                                className="relative flex justify-center"
                                 onPaste={(e) => handlePasteOnContainer(e)}
-                            >
+                                >
+                                <input
+                                    ref={hiddenInputRef}
+                                    type="text"
+                                    className="absolute w-full h-full opacity-0 cursor-default"
+                                    value={code.join("")}
+                                    onChange={handleHiddenInputChange}
+                                    onKeyDown={handleKeyDown}
+                                    autoFocus
+                                />
                                 <div className="flex space-x-2">
                                     {code.map((value, index) => (
                                         <input
