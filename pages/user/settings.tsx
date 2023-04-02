@@ -220,7 +220,8 @@ const UserSettings: NextPage<Props> = () => {
                                 &times;
                             </button>
 
-                            <TypographyH4 className='uppercase'>Entrez le code de vérification</TypographyH4>
+                            <TypographyH4 className='uppercase max-md:hidden'>Entrez le code de vérification</TypographyH4>
+                            <TypographyH6 className='uppercase md:hidden'>Entrez le code de vérification</TypographyH6>
                             <InputPastCode setValue={setCode} />
                             
 
