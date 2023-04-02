@@ -69,36 +69,22 @@ const UserSettings: NextPage<Props> = () => {
 
     }
 
-    /*const handleCodeChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        index: number
-    ) => {
-        const newCode = [...code];
-        newCode[index] = e.target.value;
-        setCode(newCode);
-
-        if (e.target.value && index < code.length - 1) {
-            // Focus on the next input field
-            inputRefs.current[index + 1]?.focus();
-        } else if (
-            !e.target.value &&
-            index > 0 &&
-            e.nativeEvent.inputType === 'deleteContentBackward'
-        ) {
-            // Focus on the previous input field
-            inputRefs.current[index - 1]?.focus();
-        }
-    };*/
 
     const handleCodeChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         index: number
     ) => {
+        const input = e.target.value;
+        if (input.length > 1) {
+            return;
+        }
+
         const newCode = [...code];
-        newCode[index] = e.target.value;
+        newCode[index] = input;
         setCode(newCode);
 
-        if (e.target.value && index < code.length - 1) {
+        if (input && index < code.length - 1) {
+            // Focus on the next input field
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -290,7 +276,7 @@ const UserSettings: NextPage<Props> = () => {
                                         value={value}
                                         onChange={(e) => handleCodeChange(e, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        onPaste={handlePaste}
+                                        onInput={handlePaste}
                                     />
                                 ))}
                             </div>
