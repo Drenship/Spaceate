@@ -69,7 +69,7 @@ const UserSettings: NextPage<Props> = () => {
 
     }
 
-    const handleCodeChange = (
+    /*const handleCodeChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         index: number
     ) => {
@@ -88,33 +88,66 @@ const UserSettings: NextPage<Props> = () => {
             // Focus on the previous input field
             inputRefs.current[index - 1]?.focus();
         }
+    };*/
+
+    const handleCodeChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        index: number
+    ) => {
+        const newCode = [...code];
+        newCode[index] = e.target.value;
+        setCode(newCode);
+
+        if (e.target.value && index < code.length - 1) {
+            inputRefs.current[index + 1]?.focus();
+        }
     };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
         const paste = e.clipboardData.getData('text');
         const pastedData = paste.length > 7 ? paste.slice(0, 6) : paste;
-        console.log(pastedData)
-
         const newCode = pastedData.split('');
         setCode(newCode);
         inputRefs.current[code.length - 1]?.focus();
+    };
 
+    const handleKeyDown = (
+        e: React.KeyboardEvent<HTMLInputElement>,
+        index: number
+    ) => {
+        if (
+            e.key === 'Backspace' &&
+            !e.currentTarget.value &&
+            index > 0
+        ) {
+            // Focus on the previous input field
+            inputRefs.current[index - 1]?.focus();
+        }
     };
 
     const handleConfirmNewMail = async () => {
         try {
             setIsLoading(true)
 
-            const result = await fetchPostJSON("/api/user/update", { newEmail: newMail })
+            const result = await fetchPostJSON("/api/user/update", {
+                updateType: "UPDATE_NEW_EMAIL",
+                data: {
+                    newEmail: newMail,
+                    code: code.join('')
+                }
+            })
+            console.log(result)
 
-            if(result.success) {
+            if (result.success) {
                 setTogglePopupConfirmCodeMail(false)
                 setToggleConfirmCodeMail(false)
+            } else {
+
             }
 
         } catch (error) {
-
+            console.log(error)
         } finally {
             setIsLoading(false)
         }
@@ -140,17 +173,20 @@ const UserSettings: NextPage<Props> = () => {
                         </Link>
                     </div>
 
-                    <div className='inline-grid w-full border-b py-7'>
+                    <div className='inline-grid w-full border-b pb-7'>
                         <div className='flex flex-col items-start w-full'>
-                            <p className="block text-xl font-semibold leading-tight text-gray-800">Profil</p>
+
+                            { /* Update name and other information */}
+
+
+
                             <div className='grid w-full grid-cols-1 col-span-full md:grid-cols-2 gap-7 mt-7'>
                                 <InputEmail
-                                    title="Nouveau mail"
-                                    description="Slug du produit"
+                                    title="Nouvelle email"
                                     input={{
-                                        name: "name",
+                                        name: "new_email",
                                         defaultValue: "",
-                                        placeholder: "entrer un nom ...",
+                                        placeholder: "entrer votre nouvelle email ...",
                                     }}
                                     onChange={(e: React.BaseSyntheticEvent) => setNewMail(e.target.value)}
                                 />
@@ -172,12 +208,6 @@ const UserSettings: NextPage<Props> = () => {
                                 </div>
                                 {updateMailMessage && <p className='text-sm leading-[15px] italic'>{updateMailMessage}</p>}
                             </div>
-
-
-                            { /* Update name */}
-
-                            { /* Update Email + confirmation */}
-                            { /* Update New Email + confirmation */}
 
                             { /* Update Old pass */}
                             { /* Update New pass */}
@@ -259,6 +289,7 @@ const UserSettings: NextPage<Props> = () => {
                                         className="w-10 font-mono text-3xl text-center border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
                                         value={value}
                                         onChange={(e) => handleCodeChange(e, index)}
+                                        onKeyDown={(e) => handleKeyDown(e, index)}
                                         onPaste={handlePaste}
                                     />
                                 ))}
@@ -267,7 +298,7 @@ const UserSettings: NextPage<Props> = () => {
                             <div className='flex flex-col items-end w-full'>
                                 <DefaultSendButton
                                     title='Confirmer'
-                                    isDisabled={sendMailDisablerd || isLoading}
+                                    isDisabled={isLoading}
                                     isLoading={isLoading}
                                     onClick={handleConfirmNewMail}
                                 />

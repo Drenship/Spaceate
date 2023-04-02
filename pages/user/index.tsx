@@ -155,16 +155,18 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
                         {
                             orderInAwait && orderInAwait.length > 0
                                 ? (
-                                    <table>
-                                        <tbody className='w-full'>
-                                            {
-                                                orderInAwait.map((item: TypeOrder) => <TableProfilOrderLine
-                                                    key={item._id}
-                                                    order={item}
-                                                />)
-                                            }
-                                        </tbody>
-                                    </table>
+                                    <div className='w-full overflow-y-auto'>
+                                        <table className='w-full'>
+                                            <tbody className='w-full'>
+                                                {
+                                                    orderInAwait.map((item: TypeOrder) => <TableProfilOrderLine
+                                                        key={item._id}
+                                                        order={item}
+                                                    />)
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 ) : (
                                     <p className='italic text-gray-400'>Vous n'avez pas de commande en attente</p>
                                 )
