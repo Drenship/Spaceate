@@ -26,6 +26,14 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
         setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
     };
 
+    const handleHiddenInput = (
+        e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>
+    ) => {
+        const input = (e.target as HTMLInputElement).value;
+        const newCode = input.split("").slice(0, 7);
+        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+    };
+
     const handlePasteOnContainer = (
         e: React.ClipboardEvent<HTMLDivElement>
     ) => {
@@ -79,15 +87,20 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
             className="relative flex justify-center"
             onPaste={(e) => handlePasteOnContainer(e)}
         >
-            <input
-                ref={hiddenInputRef}
-                type="text"
-                className="absolute w-full h-full opacity-0 cursor-default md:z-0"
-                value={code.join("")}
-                onChange={handleHiddenInputChange}
-                onKeyDown={handleKeyDown}
-                autoFocus
-            />
+            {
+                mobile && (
+                    <input
+                        ref={hiddenInputRef}
+                        type="text"
+                        className="absolute w-full h-full opacity-0 cursor-default md:z-0"
+                        value={code.join("")}
+                        onChange={handleHiddenInputChange}
+                        onInput={handleHiddenInput}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                    />
+                )
+            }
             <div className="flex space-x-2 md:z-10">
                 {code.map((value, index) => (
                     <input
