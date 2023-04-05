@@ -2,9 +2,17 @@ import React from 'react'
 import Image from "next/image";
 import Rating from "@components/ui-ux/Rating"
 
-function CommentaireCard({ img, name, rating, description, date }) {
+interface CommentaireCardProps {
+    name: string,
+    img: string,
+    rating: number,
+    description: string,
+    date: string,
+}
+
+const CommentaireCard: React.FC<CommentaireCardProps> = ({ img, name, rating, description, date }) => {
     return (
-        <div className='mt-5' itemscope itemtype="http://schema.org/Review">
+        <div className='mt-5' itemScope itemType="http://schema.org/Review">
             <div className='flex justify-start space-x-3'>
                 <div className='relative w-14 h-14'>
                     <Image src={img}
@@ -14,17 +22,24 @@ function CommentaireCard({ img, name, rating, description, date }) {
                     />
                 </div>
                 <div>
-                    <h4 className='font-semibold' itemprop="author">
-                        <span itemprop="name">{name}</span>
+                    <h4 className='font-semibold' itemProp="author">
+                        <meta itemProp="name" content={name} />
+                        {name}
                     </h4>
                     <p className='flex space-x-2'>
                         <Rating rating={rating} />
                         <span className='text-gray-400'>•</span>
-                        <span className='text-gray-400' itemprop="date">{date}</span>
+                        <span className='text-gray-400' itemProp="datePublished">
+                            <meta content={date} />
+                            {date}
+                        </span>
                     </p>
                 </div>
             </div>
-            <p className='px-2 py-4' itemprop="description">{description}</p>
+            <p className='px-2 py-4' itemProp="description">
+                <meta content={description} />
+                {description}
+            </p>
         </div>
     )
 }

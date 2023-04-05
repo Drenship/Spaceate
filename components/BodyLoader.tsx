@@ -1,6 +1,8 @@
 import React from 'react';
 
-export default function BodyLoader() {
+interface BodyLoaderProps { }
+
+const BodyLoader: React.FC<BodyLoaderProps> = () => {
     return (
         <main className='flex items-center justify-center w-screen h-screen bg-white'>
             <div role="status" className="w-full max-w-md p-4 space-y-4 border border-gray-200 divide-y rounded shadow animate-pulse dark:divide-gray-400 md:p-6 dark:border-gray-400">
@@ -49,3 +51,5 @@ export default function BodyLoader() {
         </main>
     );
 }
+
+export default BodyLoader;

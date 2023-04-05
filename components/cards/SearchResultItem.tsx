@@ -1,12 +1,16 @@
-'use client';
-
 import React from 'react'
 import Link from 'next/link'
 import BlurImage from '@components/ui-ux/BlurImage';
 import { replaceURL } from '@libs/utils';
+import { TypeProduct } from '@libs/typings';
 
-export default function SearchResultItem({ product }) {
-    if(!product) return;
+interface SearchResultItemProps {
+    product: TypeProduct
+}
+
+const SearchResultItem: React.FC<SearchResultItemProps> = ({ product }) => {
+
+    if (!product) return null;
 
     return (
         <Link href={`/product/${product.slug}`}>
@@ -21,3 +25,4 @@ export default function SearchResultItem({ product }) {
         </Link>
     )
 }
+export default SearchResultItem;

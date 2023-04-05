@@ -1,7 +1,16 @@
 import Link from 'next/link';
 import React from 'react';
 
-export default function ServiceCard({ service }: any) {
+interface ServiceCardProps { 
+    service: {
+        title: string,
+        link: string,
+        src: string,
+    }
+}
+
+const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
+
     return (
         <Link href={service.link}  className='z-10 mt-5 rounded-lg shadow-md sm:mt-0'>
             <div className='w-full'>
@@ -16,3 +25,5 @@ export default function ServiceCard({ service }: any) {
         </Link>
     );
 }
+
+export default ServiceCard

@@ -6,15 +6,20 @@ import { useRouter } from 'next/dist/client/router';
 import { CART_ADD_ITEM, setCartState } from '@atoms/setStates/setCartState';
 import { replaceURL } from '@libs/utils';
 import Rating from '@components/ui-ux/Rating';
+import { TypeProduct } from '@libs/typings';
 
-export default function BestsellerCard({ product }) {
+
+interface BestsellerCardProps {
+    product: TypeProduct
+}
+const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
 
     const router = useRouter()
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
-    const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
+    const isOutOfStock = useMemo<boolean>(() => product.countInStock <= 0, [product]);
 
-    const addItemsToCart = (e) => {
+    const addItemsToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (isOutOfStock) {
@@ -76,4 +81,6 @@ export default function BestsellerCard({ product }) {
             </div>
         </Link>
     );
-} 
+}
+
+export default BestsellerCard;

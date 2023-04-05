@@ -3,12 +3,19 @@ import Link from 'next/link';
 import { useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
 import { setCartState, CART_ADD_ITEM, CART_REMOVE_ITEM } from "@atoms/setStates/setCartState"
+
 import { useNotifys } from '@libs/hooks/notify';
+import { replaceURL } from '@libs/utils';
+import { TypeCartItem } from '@libs/typings'
+
 import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import BlurImage from '@components/ui-ux/BlurImage'
-import { replaceURL } from '@libs/utils';
 
-export default function CartItemCard({ product }) {
+interface CartItemCardProps {
+    product: TypeCartItem
+}
+
+const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
 
     const { pushNotify } = useNotifys();
     const [notify, setNotify] = useState(false);
@@ -125,3 +132,5 @@ export default function CartItemCard({ product }) {
         </div>
     )
 }
+
+export default CartItemCard;

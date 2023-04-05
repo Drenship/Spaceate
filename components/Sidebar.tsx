@@ -11,9 +11,9 @@ import { TypeUser } from '@libs/typings';
 import useLoginModal from '@libs/hooks/useLoginModal';
 import useRegisterModal from '@libs/hooks/useRegisterModal';
 
+interface SidebarProps { }
 
-export default function Sidebar() {
-    
+const Sidebar: React.FC<SidebarProps> = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
 
@@ -59,3 +59,5 @@ export default function Sidebar() {
         </aside>
     );
 }
+
+export default Sidebar;

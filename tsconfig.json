@@ -68,7 +68,7 @@
     "next-sitemap.config.js",
     "pages/api/auth/[...nextauth].js",
     "libs/database/dbConnect.js",
-    "components/Cards/SearchResultItem.jsx" 
+    "components/Cards/SearchResultItem.tsx" 
 ],
   "exclude": [
     "node_modules"

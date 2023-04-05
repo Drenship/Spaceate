@@ -18,13 +18,11 @@ interface refundOrder {
     message?: string,
 }
 
-
-type ItemOrderProps = {
+type IUserOrderCardProps = {
     order: TypeOrder,
     setOrders: React.Dispatch<React.SetStateAction<TypeOrder[]>>
 }
-
-const UserOrderCard = ({ order, setOrders }: ItemOrderProps) => {
+const UserOrderCard: React.FC<IUserOrderCardProps> = ({ order, setOrders }) => {
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);

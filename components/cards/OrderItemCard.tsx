@@ -6,8 +6,8 @@ import React from 'react';
 interface OrderItemCardProps {
     item: any
 }
+const OrderItemCard: React.FC<OrderItemCardProps> = ({ item }) => {
 
-export default function OrderItemCard({ item }: OrderItemCardProps) {
     return (
         <div className="flex flex-row items-center w-full mt-4 space-x-3 border-b md:mt-6 md:space-x-6 xl:space-x-8 last:border-none">
             <div className="w-full pb-4 md:pb-8 max-w-[120px]">
@@ -45,3 +45,5 @@ export default function OrderItemCard({ item }: OrderItemCardProps) {
         </div>
     );
 }
+
+export default OrderItemCard;
