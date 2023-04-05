@@ -44,7 +44,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "pages/api/hello.js",
     "pages/order/pay.tsx",
     "pages/order/index.jsx",
     "pages/product/[slug].tsx",
@@ -60,7 +59,6 @@
     "pages/cart.tsx",
     "pages/api/checkout_sessions/checkout_sessions.js",
     "pages/api/admin/products/index.js",
-    "pages/admin/index.js",
     "pages/admin/index.jsx",
     "components/Layouts/BasescreenLayout.tsx",
     "components/TableLines/TableProductLine.jsx",
@@ -69,8 +67,9 @@
     "components/navbar.tsx",
     "next-sitemap.config.js",
     "pages/api/auth/[...nextauth].js",
-    "libs/database/dbConnect.js"
-, "components/Cards/SearchResultItem.jsx"  ],
+    "libs/database/dbConnect.js",
+    "components/Cards/SearchResultItem.jsx" 
+],
   "exclude": [
     "node_modules"
   ]

@@ -8,6 +8,7 @@ import { TypeProduct, TypeUser } from '@libs/typings';
 
 import SearchResultItem from '@components/Cards/SearchResultItem';
 
+
 interface SearchbarProps {
     user: TypeUser | null,
     placeholderSearch?: string

@@ -1,9 +1,11 @@
 import React from 'react'
 import Head from 'next/head'
-import Navbar from "@components/Navbar/Navbar"
-import Footer from "@components/Footer"
+
 import { TypeProduct } from '@libs/typings';
+
+import Navbar from "@components/Navbar/Navbar"
 import MobileNavbar from '@components/MobileNavbar';
+import Footer from "@components/Footer"
 
 interface Props {
     title?: string;
