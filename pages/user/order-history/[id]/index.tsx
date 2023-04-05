@@ -9,7 +9,7 @@ import { fixedPriceToCurrency, splitString } from '@libs/utils';
 import { TypeOrder } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
-import OrderItemCard from '@components/cards/OrderItemCard';
+import OrderItemCard from '@components/Cards/OrderItemCard';
 import { getStripe } from '@libs/utils/stripe-helpers';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
 import OrderStatus from '@components/contents/orderStatus';

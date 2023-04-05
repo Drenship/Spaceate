@@ -65,12 +65,12 @@
     "components/Layouts/BasescreenLayout.tsx",
     "components/TableLines/TableProductLine.jsx",
     "components/PrintObject.tsx",
-    "components/footer.tsx",
+    "components/Footer.tsx",
     "components/navbar.tsx",
     "next-sitemap.config.js",
     "pages/api/auth/[...nextauth].js",
     "libs/database/dbConnect.js"
-, "components/cards/SearchResultItem.jsx"  ],
+, "components/Cards/SearchResultItem.jsx"  ],
   "exclude": [
     "node_modules"
   ]

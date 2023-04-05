@@ -6,7 +6,7 @@ import Product from '@libs/models/Product';
 import { TypeProduct } from '@libs/typings';
 
 import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
-import TableProductLine from '@components/tables/TableProductLine';
+import TableProductLine from '@components/TableLines/TableProductLine';
 import AdminControlPannel from '@components/AdminContents/AdminControlPannel';
 import Pagination from '@components/ui-ux/Pagination';
 

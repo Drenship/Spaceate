@@ -11,7 +11,7 @@ import { fetchPostJSON } from "@libs/utils/api-helpers";
 import { getStripe } from "@libs/utils/stripe-helpers";
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
-import CartItemCard from '@components/cards/CartItemCard';
+import CartItemCard from '@components/Cards/CartItemCard';
 import { useSession } from 'next-auth/react';
 
 

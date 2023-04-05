@@ -13,7 +13,7 @@ import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import { TypeOrder, TypeUser } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
-import CommentaireCard from '@components/cards/CommentaireCard';
+import CommentaireCard from '@components/Cards/CommentaireCard';
 import TableProfilOrderLine from '@components/TableLines/TableProfilOrderLine';
 
 
