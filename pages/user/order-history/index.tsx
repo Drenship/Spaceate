@@ -9,7 +9,7 @@ import { TypeUser, TypeOrder } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import Pagination from '@components/ui-ux/Pagination';
-import UserOrderCard from '@components/Cards/UserOrderCard';
+import UserOrderCard from '@components/cards/UserOrderCard';
 
 // default params
 const PAGE_SIZE = 20;
