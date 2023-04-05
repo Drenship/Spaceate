@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { NextPage } from 'next';
+import Head from 'next/head';
 import { BlobProvider } from '@react-pdf/renderer';
 import { getSession } from 'next-auth/react';
 
 import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
 import { TypeOrder } from '@libs/typings';
+import { splitString } from '@libs/utils';
 
 import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
-import { splitString } from '@libs/utils';
-import Head from 'next/head';
 
 interface Props {
     order: TypeOrder | null

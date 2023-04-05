@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import Navbar from "@components/navbar"
+import Navbar from "@components/Navbar/Navbar"
 import Footer from "@components/footer"
 import { TypeProduct } from '@libs/typings';
 import MobileNavbar from '@components/MobileNavbar';

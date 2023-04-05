@@ -85,7 +85,7 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
             setSendMailDisablerd(false)
         }
     }
-
+    console.group(user)
     return (
         <BasescreenWrapper title="Profile" footer={true}>
             <div className='block px-5 my-12 lg:flex max-w-[1400px] w-full'>
@@ -105,7 +105,7 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
 
                         <div className='flex flex-col items-end justify-end lg:items-center lg:w-full'>
                             <div className='relative w-20 h-20 lg:w-32 lg:h-32'>
-                                <Image src='https://a0.muscache.com/defaults/user_pic-225x225.png?v=3'
+                                <Image src={user?.image || 'https://a0.muscache.com/defaults/user_pic-225x225.png?v=3'}
                                     layout='fill'
                                     objectFit='cover'
                                     className='rounded-full'

@@ -8,7 +8,7 @@ type Props = {
         name: string,
         checked: boolean
     }
-    onChange: (e: React.BaseSyntheticEvent) => void
+    onChange?: (e: React.BaseSyntheticEvent) => void
 }
 
 export default function InputCheckbox({ title, description, input, onChange }: Props) {

@@ -1,5 +1,5 @@
 import { NextPage } from 'next/types';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import { TypeCategorie } from '@libs/typings';
@@ -12,6 +12,7 @@ import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
 import InputText from '@components/ui-ux/inputs/InputText';
 import InputSelect from '@components/ui-ux/inputs/InputSelect';
 import TableSubCategorieLine from '@components/tables/TableSubCategorieLine';
+import { textToSLug } from '@libs/utils';
 
 type Props = {
     slug: string | null
@@ -100,6 +101,8 @@ const EditCartegorieScreen: NextPage<Props> = ({ slug, initialCategorie }) => {
             console.log(err);
         }
     }
+    const [automatiqueSlug, setAutomatiqueSlug] = useState<string>("");
+    const [newSubCategorieSlugName, setNewSubCategorieSlugName] = useState<string>("");
 
 
     return (
@@ -111,7 +114,7 @@ const EditCartegorieScreen: NextPage<Props> = ({ slug, initialCategorie }) => {
                     <p className="text-xl font-semibold leading-tight text-gray-800">Categorie Details: {slug && <span className='italic font-bold underline uppercase text-sky-600'>{slug}</span>}</p>
 
                     <div className="grid w-full grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-7 mt-7 ">
-     
+
                         <InputText
                             title="Nom"
                             description="Nom de la catégorie"
@@ -120,7 +123,7 @@ const EditCartegorieScreen: NextPage<Props> = ({ slug, initialCategorie }) => {
                                 defaultValue: categorie?.name || "",
                                 placeholder: "entrer un nom ...",
                             }}
-                            onChange={() => { }}
+                            onChange={(e: React.BaseSyntheticEvent) => setAutomatiqueSlug(textToSLug(e.target.value))}
                         />
 
                         <InputText
@@ -128,10 +131,10 @@ const EditCartegorieScreen: NextPage<Props> = ({ slug, initialCategorie }) => {
                             description="Slug de la catégorie"
                             input={{
                                 name: "slug",
-                                defaultValue: categorie?.slug || "",
+                                defaultValue: automatiqueSlug ||  categorie?.slug || "",
+                                forceValue: automatiqueSlug ||  categorie?.slug,
                                 placeholder: "entrer un slug ...",
                             }}
-                            onChange={() => { }}
                         />
                     </div>
                 </div>
@@ -168,18 +171,17 @@ const EditCartegorieScreen: NextPage<Props> = ({ slug, initialCategorie }) => {
                                             defaultValue: "",
                                             placeholder: "entrer un nom ...",
                                         }}
-                                        onChange={() => { }}
+                                        onChange={(e: React.BaseSyntheticEvent) => setNewSubCategorieSlugName(textToSLug(e.target.value))}
                                     />
-
                                     <InputText
                                         title="Slug"
                                         description="Slug de la sous catégorie"
                                         input={{
                                             name: "slug",
-                                            defaultValue: "",
+                                            defaultValue: newSubCategorieSlugName || "",
+                                            forceValue: newSubCategorieSlugName,
                                             placeholder: "entrer un slug ...",
                                         }}
-                                        onChange={() => { }}
                                     />
                                 </div>
                                 <hr className="h-[1px] bg-gray-100 my-14" />

@@ -107,13 +107,8 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
         }
     }
 
-    const [newName, setNewName] = useState<string | null>(null);
-    const automatiqueSlug = useMemo(() => {
-        const text = newName || product?.name || ""
-        const slug = textToSLug(text)
-        console.log(slug)
-        return slug
-    }, [newName, product]);
+    const [automatiqueSlug, setAutomatiqueSlug] = useState<string>("");
+
 
 
     const [price, setPrice] = useState<number | null>(initialProduct ? initialProduct.price : null);
@@ -193,7 +188,7 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                         defaultValue: product?.name || "",
                                         placeholder: "entrer un nom ...",
                                     }}
-                                    onChange={(e: React.BaseSyntheticEvent) => setNewName(e.target.value)}
+                                    onChange={(e: React.BaseSyntheticEvent) => setAutomatiqueSlug(textToSLug(e.target.value))}
                                 />
 
                                 <InputText
@@ -201,11 +196,10 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                     description="Slug du produit"
                                     input={{
                                         name: "slug",
-                                        defaultValue: automatiqueSlug || "",
-                                        forceValue: automatiqueSlug,
+                                        defaultValue: automatiqueSlug || product?.slug || "",
+                                        forceValue: automatiqueSlug || product?.slug,
                                         placeholder: "entrer un slug ...",
                                     }}
-                                    onChange={() => { }}
                                 />
 
                                 <InputSelect
@@ -227,7 +221,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                         defaultValue: currentSubCategorie || currentCategorie.subCategories[0],
                                     }}
                                     options={currentCategorie.subCategories}
-                                    setChange={() => { }}
                                 />
                             </div>
 
@@ -241,7 +234,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 defaultValue: product?.description.replace(/<br>/g, '\n') || "",
                                 placeholder: "entrer une description ...",
                             }}
-                            onChange={() => { }}
                         />
 
                         <div className='col-span-full'>
@@ -288,7 +280,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 defaultValue: { name: product?.price_in || 'Kg' },
                             }}
                             options={[{ name: 'g' }, { name: 'Kg' }, { name: 'Unité' }]}
-                            setChange={() => { }}
                         />
 
                         <InputNumber
@@ -334,7 +325,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 step: 0.01,
                                 placeholder: "entrer la marge ...",
                             }}
-                            onChange={() => { }}
                         />
 
                         <InputSelect
@@ -360,7 +350,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                 step: 0.01,
                                 placeholder: "entrer la marge ...",
                             }}
-                            onChange={() => { }}
                         />
 
                         {
@@ -452,7 +441,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                     name: "isFeatured",
                                     checked: product?.isFeatured || false,
                                 }}
-                                onChange={() => { }}
                             />
 
                             <InputCheckbox
@@ -462,7 +450,6 @@ const AdminEditProduct: NextPage<Props> = ({ slug, productFind, initialProduct, 
                                     name: "isPublished",
                                     checked: product?.isPublished || false,
                                 }}
-                                onChange={() => { }}
                             />
                         </div>
                     </div>

@@ -2,14 +2,14 @@ import React from 'react';
 
 type Props = {
     title: string,
-    description: string,
+    description?: string,
     input: {
         name: string,
         defaultValue: string,
         forceValue?: string,
         placeholder: string
     }
-    onChange: (e: React.BaseSyntheticEvent) => void
+    onChange?: (e: React.BaseSyntheticEvent) => void
 }
 
 export default function InputText({ title, description, input, onChange }: Props) {

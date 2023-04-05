@@ -1,15 +1,22 @@
+import '../styles/globals.css'
+import { ReactNode, useEffect } from 'react';
 import type { AppProps } from 'next/app'
+import { NextComponentType, NextPageContext } from 'next';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { Router, useRouter } from 'next/router';
 import ProgressBar from "@badrap/bar-of-progress";
-import { RecoilRoot, RecoilEnv } from 'recoil';
+import { RecoilRoot, RecoilEnv, useRecoilCallback } from 'recoil';
+
 import { NotifyContextProvider } from '@libs/hooks/notify';
-import { Analytics } from '@vercel/analytics/react';
-import '../styles/globals.css'
+import { TypeUser } from '@libs/typings';
+
 import CookiePopup from '@components/ui-ux/Notifications/CookiePopup';
 import Sidebar from '@components/Sidebar';
-import { TypeUser } from '@libs/typings';
 import BodyLoader from '@components/BodyLoader';
+
+import { Analytics } from '@vercel/analytics/react';
+import LoginModal from '@components/Modals/LoginModal';
+import RegisterModal from '@components/Modals/RegisterModal';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -24,10 +31,20 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
+interface MyAppProps extends AppProps {
+  Component: NextComponentType<NextPageContext, any, any> & {
+    auth?: {
+      adminOnly?: boolean;
+    };
+  };
+}
+
+const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }: MyAppProps) => {
+
   return (
     <SessionProvider session={session}>
       <RecoilRoot>
+
         <NotifyContextProvider>
           {/* Higher Order Component */}
           {
@@ -42,7 +59,12 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
           <Analytics />
           <CookiePopup />
           <Sidebar />
+          <LoginModal />
+          <RegisterModal />
+
         </NotifyContextProvider>
+
+
       </RecoilRoot>
     </SessionProvider>
   )
@@ -58,7 +80,7 @@ const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
   const { status, data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push('/unauthorized?message=login required');
+      router.push('/auth/login');
     },
   });
   const user = session && session.user as TypeUser || null;
@@ -66,7 +88,7 @@ const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
     return <BodyLoader />;
   }
   if (adminOnly && !user?.isAdmin) {
-    router.push('/unauthorized?message=admin login required');
+    router.push('/auth/login');
   }
 
   return children;

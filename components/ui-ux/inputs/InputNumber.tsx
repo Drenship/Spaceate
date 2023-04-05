@@ -19,7 +19,7 @@ type InputNumber = {
         max: number | '',
         step?: number
     }
-    onChange: (e: React.BaseSyntheticEvent) => void
+    onChange?: (e: React.BaseSyntheticEvent) => void
 }
 
 

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export { default } from "next-auth/middleware"
+
 
 
 // If the incoming request has the "beta" cookie
 // then we'll rewrite the request to /beta
 export function middleware(req: NextRequest, res: NextResponse) {
-  console.log('Middleware executed!', req.url);
+  //console.log('Middleware executed!', req.url);
 
   // Continuer à traiter la requête
   return;
@@ -25,3 +27,12 @@ export const config = {
     '/',
   ],
 };
+//
+//export const config = { 
+//  matcher: [
+//    "/trips",
+//    "/reservations",
+//    "/properties",
+//    "/favorites"
+//  ]
+//};

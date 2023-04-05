@@ -1,12 +1,22 @@
-import bcryptjs from 'bcryptjs';
+import { NextApiRequest, NextApiResponse } from 'next';
+import bcrypt from 'bcrypt';
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
 import axios from 'axios';
 
-async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return;
+
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    switch (req.method) {
+        case 'POST':
+            return handlePostRequest(req, res);
+        default:
+            return res.status(400).send({ message: 'Method not allowed' });
     }
+};
+
+const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+
     const { name, email, password } = req.body;
     if (
         !name ||
@@ -30,10 +40,12 @@ async function handler(req, res) {
         return;
     }
 
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     const newUser = new User({
         name,
         email,
-        password: bcryptjs.hashSync(password),
+        password: hashedPassword,
         isAdmin: false,
     });
 

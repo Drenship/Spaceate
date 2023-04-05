@@ -14,7 +14,7 @@
     "@stripe/stripe-js": "^1.46.0",
     "@vercel/analytics": "^0.1.10",
     "axios": "^1.2.2",
-    "bcryptjs": "^2.4.3",
+    "bcrypt": "^5.1.0",
     "chart.js": "^4.2.1",
     "daisyui": "^2.47.0",
     "firebase": "^9.18.0",
@@ -34,6 +34,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.42.1",
+    "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
     "recoil": "^0.7.6",
     "recoil-persist": "^4.2.0",
@@ -41,7 +42,8 @@
     "stripe": "^11.7.0",
     "swiper": "^9.1.0",
     "swr": "^2.0.3",
-    "tailwind-scrollbar-hide": "^1.1.7"
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "zustand": "^4.3.7"
   },
   "devDependencies": {
     "@types/micro-cors": "^0.1.2",

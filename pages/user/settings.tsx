@@ -6,14 +6,17 @@ import { useSession } from 'next-auth/react';
 
 import { fetchPostJSON } from '@libs/utils/api-helpers';
 import { TypeUser } from '@libs/typings';
+import { validateEmail } from '@libs/utils/formvalidate';
 
 import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
 import Tabs from '@components/contents/Tab';
 import { TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6, TypographyP, TypographySmall, TypographyTiny } from '@components/ui-ux/Typography';
 import InputEmail from '@components/ui-ux/inputs/InputEmail';
 import DefaultSendButton from '@components/ui-ux/buttons/DefaultSendButton';
-import { validateEmail } from '@libs/utils/formvalidate';
 import InputPastCode from '@components/ui-ux/inputs/InputPastCode';
+import PopupWrapper from '@components/Wrapper/PopupWrapper';
+import InputText from '@components/ui-ux/inputs/InputText';
+import ScrollShadowWrapper from '@components/Wrapper/ScrollShadowWrapper';
 
 
 interface Props { }
@@ -26,12 +29,14 @@ const UserSettings: NextPage<Props> = () => {
     const [activeTab, setActiveTab] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
+    const [code, setCode] = useState<string | null>(null);
     const [newMail, setNewMail] = useState<string>("");
     const [sendMailDisablerd, setSendMailDisablerd] = useState<boolean>(false)
     const [updateMailMessage, setUpdateMailMessage] = useState<string | null>(null)
-    const [togglePopupConfirmCodeMail, setTogglePopupConfirmCodeMail] = useState<boolean>(false)
     const [toggleConfirmCodeMail, setToggleConfirmCodeMail] = useState<boolean>(false)
-    const [code, setCode] = useState<string | null>(null);
+    const [togglePopupConfirmCodeMail, setTogglePopupConfirmCodeMail] = useState<boolean>(false)
+
+    const [togglePopupAddress, setTogglePopupAddress] = useState<boolean>(false)
 
     const handleUpdateNewMail = async () => {
         try {
@@ -96,6 +101,15 @@ const UserSettings: NextPage<Props> = () => {
         }
     }
 
+    const handleAddAddress = async () => {}
+    const handlePutAddress = async () => {}
+    const handleRemoveAddress = async () => {}
+
+    const getAddress = (address) => {
+        if (!address?.address) return "";
+        return `${address.address}, ${address.city} ${address.postalCode}, ${address.country}`
+    }
+
     return (
         <BasescreenWrapper title="Profile">
             <div className='flex flex-col px-5 my-12 lg:flex max-w-[1400px] w-full'>
@@ -116,14 +130,12 @@ const UserSettings: NextPage<Props> = () => {
                         </Link>
                     </div>
 
-                    <div className='inline-grid w-full border-b pb-7'>
+                    <div className='inline-grid w-full pb-7'>
                         <div className='flex flex-col items-start w-full'>
 
                             { /* Update name and other information */}
 
-
-
-                            <div className='grid w-full grid-cols-1 col-span-full md:grid-cols-2 gap-7 mt-7'>
+                            <div className='grid w-full grid-cols-1 mt-5 col-span-full md:grid-cols-2'>
                                 <InputEmail
                                     title="Nouvelle email"
                                     input={{
@@ -155,6 +167,25 @@ const UserSettings: NextPage<Props> = () => {
                             { /* Update Old pass */}
                             { /* Update New pass */}
                             { /* Update Confif new pass */}
+
+
+                            <div className='grid w-full grid-cols-1 py-5 mt-5 border-t col-span-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5'>
+                                <div className='flex items-center justify-end w-full space-x-2 col-span-full'>
+                                    <DefaultSendButton
+                                        title='Ajouter un Addresse'
+                                        isDisabled={isLoading}
+                                        isLoading={isLoading}
+                                        onClick={() => setTogglePopupAddress(true)}
+                                    />
+                                </div>
+
+                                <div>d</div>
+                                <div>d</div>
+                                <div>d</div>
+                                <div>d</div>
+                                <div>d</div>
+
+                            </div>
 
                         </div>
                     </div>
@@ -204,40 +235,108 @@ const UserSettings: NextPage<Props> = () => {
                 </div>
 
             </div>
-            { 
+
+            {
                 togglePopupConfirmCodeMail && (
-                    <div className='fixed inset-0 z-50 flex items-center justify-center cursor-pointer bg-black/10'
-                        onClick={() => setTogglePopupConfirmCodeMail(false)}
+                    <PopupWrapper
+                        toggleModal={togglePopupConfirmCodeMail}
+                        setToggleModal={setTogglePopupConfirmCodeMail}
                     >
-                        <div
-                            className='relative w-full max-w-md p-5 bg-white rounded-md cursor-default'
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <button
-                                className="absolute text-2xl font-bold leading-none text-gray-400 transition-colors duration-300 top-5 right-5 hover:text-red-600"
-                                onClick={() => setTogglePopupConfirmCodeMail(false)}
-                            >
-                                &times;
-                            </button>
 
-                            <TypographyH4 className='uppercase max-md:hidden'>Entrez le code de vérification</TypographyH4>
-                            <TypographyH6 className='uppercase md:hidden'>Entrez le code de vérification</TypographyH6>
-                            <InputPastCode setValue={setCode} />
-                            
+                        <TypographyH4 className='uppercase select-none max-md:hidden'>Entrez le code de vérification</TypographyH4>
+                        <TypographyH6 className='uppercase select-none md:hidden'>Entrez le code de vérification</TypographyH6>
+                        <InputPastCode setValue={setCode} />
 
-                            <div className='flex flex-col items-end w-full'>
-                                <DefaultSendButton
-                                    title='Confirmer'
-                                    isDisabled={isLoading}
-                                    isLoading={isLoading}
-                                    onClick={handleConfirmNewMail}
-                                />
-                            </div>
+                        <div className='flex flex-col items-end w-full mt-5'>
+                            <DefaultSendButton
+                                title='Confirmer'
+                                isDisabled={isLoading}
+                                isLoading={isLoading}
+                                onClick={handleConfirmNewMail}
+                            />
                         </div>
-                    </div>
+                    </PopupWrapper>
                 )
             }
-        </BasescreenWrapper>
+
+            {
+                togglePopupAddress && (
+                    <PopupWrapper
+                        toggleModal={togglePopupAddress}
+                        setToggleModal={setTogglePopupAddress}
+                    >
+
+                        <TypographyH4 className='uppercase select-none max-md:hidden'>Ajouter un nouvelle addresse</TypographyH4>
+                        <TypographyH6 className='uppercase select-none md:hidden'>Ajouter un nouvelle addresse</TypographyH6>
+
+                        <ScrollShadowWrapper className='w-full'>
+                            <div className='grid w-full grid-cols-1 gap-5 py-5 mt-5 col-span-full md:grid-cols-2'>
+                                <InputText
+                                    title="Address"
+                                    input={{
+                                        name: "address",
+                                        defaultValue: "",
+                                        placeholder: "address ...",
+                                    }}
+                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
+                                />
+                                <InputText
+                                    title="Address 2"
+                                    input={{
+                                        name: "address2",
+                                        defaultValue: "",
+                                        placeholder: "address 2 ...",
+                                    }}
+                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
+                                />
+
+                                <InputText
+                                    title="Ville"
+                                    input={{
+                                        name: "city",
+                                        defaultValue: "",
+                                        placeholder: "entrer une ville ...",
+                                    }}
+                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
+                                />
+
+                                <InputText
+                                    title="Code postal"
+                                    input={{
+                                        name: "postalCode",
+                                        defaultValue: "",
+                                        placeholder: "entrer votre code postal ...",
+                                    }}
+                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
+                                />
+
+                                <InputText
+                                    title="Pays"
+                                    input={{
+                                        name: "country",
+                                        defaultValue: "",
+                                        placeholder: "entrer un pays ...",
+                                    }}
+                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
+                                />
+
+                            </div>
+
+                        </ScrollShadowWrapper>
+
+                        <div className='flex flex-col items-end w-full mt-5'>
+                            <DefaultSendButton
+                                title='Ajouter'
+                                isDisabled={isLoading}
+                                isLoading={isLoading}
+                                onClick={handleConfirmNewMail}
+                            />
+                        </div>
+                    </PopupWrapper>
+                )
+            }
+
+        </BasescreenWrapper >
     )
 }
 

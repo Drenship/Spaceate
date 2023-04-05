@@ -56,6 +56,7 @@ interface Security {
 export interface TypeUser {
     _id: string;
     name: string;
+    image: string | null,
     gender: 'male' | 'female' | 'other' | 'preferNotToSay' | 'unknown';
     email: string;
     email_is_verified: boolean;

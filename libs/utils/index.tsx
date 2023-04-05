@@ -40,7 +40,6 @@ export function UTCStringToDate(utcString: string) {
     return date.toLocaleDateString(dateForma);
 };
 
-
 export async function teinteDeLimage(urlImage: string): Promise<string> {
     try {
         // Utilisez l'API route pour récupérer les données de l'image

@@ -17,7 +17,7 @@ DefaultSendButton.defaultProps = {
 export default function DefaultSendButton({ title, type, onClick, isLoading, isDisabled }: Props) {
     return (
         <button
-            className='flex items-center justify-center px-8 py-4 mt-5 font-semibold text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100'
+            className='flex items-center justify-center px-8 py-4 font-semibold text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100'
             type={type}
             disabled={isDisabled}
             onClick={onClick}

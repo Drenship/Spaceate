@@ -68,7 +68,7 @@
     "components/footer.tsx",
     "components/navbar.tsx",
     "next-sitemap.config.js"
-  ],
+, "pages/api/auth/[...nextauth].js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,16 +1,22 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { signOut, useSession } from 'next-auth/react';
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
 import { CART_EMPTY, setCartState } from '@atoms/setStates/setCartState';
-import { HomeIcon, LoginIcon, LogoutIcon } from '@heroicons/react/solid';
+import { HomeIcon, LoginIcon, LogoutIcon, UserAddIcon } from '@heroicons/react/solid';
 import { BsPerson, BsTools } from 'react-icons/bs';
 import { BiBox } from 'react-icons/bi';
 import { TypeUser } from '@libs/typings';
+import useLoginModal from '@libs/hooks/useLoginModal';
+import useRegisterModal from '@libs/hooks/useRegisterModal';
 
 
 export default function Sidebar() {
+    
+    const loginModal = useLoginModal();
+    const registerModal = useRegisterModal();
+
     const { data: session } = useSession();
     const user = session && session.user as TypeUser || null;
     const [cartItem, setCartItem] = useRecoilState(cartState)
@@ -22,8 +28,9 @@ export default function Sidebar() {
             cartItem: cartItem,
             setCartItem: setCartItem
         })
-        signOut({ callbackUrl: '/auth/login' });
+        signOut({ callbackUrl: '/' });
     };
+
 
     return (
         <aside className="fixed top-16 z-40 h-[calc(100vh-124px)] sm:h-[calc(100vh-64px)] bg-white border-l shadow-xl w-[300px] text-black user-sidebar">
@@ -43,10 +50,12 @@ export default function Sidebar() {
                     </>
                 ) : (
                     <>
-                        <Link href="/auth/login" className="flex items-center p-4 font-semibold border-b cursor-pointer button-click-effect"><LoginIcon className="w-5 mr-2" />Connection</Link>
+                        <button onClick={loginModal.onOpen} className="flex items-center w-full p-4 font-semibold border-b cursor-pointer button-click-effect"><LoginIcon className="w-5 mr-2" />Connection</button>
+                        <button onClick={registerModal.onOpen} className="flex items-center w-full p-4 font-semibold border-b cursor-pointer button-click-effect"><UserAddIcon className="w-5 mr-2" />S'inscrire</button>
                     </>
                 )
             }
+
         </aside>
     );
 }

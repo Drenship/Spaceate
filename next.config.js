@@ -6,7 +6,12 @@ module.exports = {
   },
   images: {
     domains: [
+      // GOOGLE CLOUD STORAGE
       'firebasestorage.googleapis.com',
+
+      // GOOGLE login picture
+      "lh3.googleusercontent.com",
+
 
       // delete after
       'rb.gy', 'pbs.twimg.com',

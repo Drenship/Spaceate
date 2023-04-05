@@ -20,7 +20,7 @@ type PropsInput = {
         value?: OptionType
     },
     options: OptionType[]
-    setChange: (value: OptionType) => void
+    setChange?: (value: OptionType) => void
 }
 
 function Option({ option, setUpdate }: PropsOption) {
@@ -38,9 +38,13 @@ function Option({ option, setUpdate }: PropsOption) {
     )
 }
 
+InputSelect.defaultProps = {
+    setChange: (value: OptionType) => { }
+}
+
 export default function InputSelect({ title, description, input, options, setChange }: PropsInput) {
 
-    const { name, defaultValue, value  } = input;
+    const { name, defaultValue, value } = input;
 
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState(false);

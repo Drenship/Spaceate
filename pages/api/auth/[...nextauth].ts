@@ -1,6 +1,7 @@
-import bcrypt from 'bcryptjs';
-import NextAuth from 'next-auth';
+import bcrypt from "bcrypt"
+import NextAuth, { AuthOptions } from "next-auth"
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from "next-auth/providers/google"
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
 
@@ -17,17 +18,16 @@ async function updateUser(user) {
     try {
         await db.connect();
 
-        const userLastInfo = await User.findById(user._id, {
+        if (!user.email) {
+            return user;
+        }
+
+        const userLastInfo = await User.findOne({ email: user.email }, {
             _id: 1,
             name: 1,
-            gender: 1,
             email: 1,
             email_is_verified: 1,
             isAdmin: 1,
-            cart: 1,
-            searchHistory: 1,
-            wishlist: 1,
-            recentlyViewed: 1,
             updatedAt: 1,
             createdAt: 1,
         });
@@ -36,12 +36,10 @@ async function updateUser(user) {
             return user;
         }
 
-        const updatedUser = {
+        return {
             ...userLastInfo._doc,
             updatedAt: new Date().toISOString()
         };
-
-        return updatedUser;
 
     } catch (err) {
         return user;
@@ -58,14 +56,9 @@ async function updateIfNeeded(source, callback) {
         return {
             _id: updatedUser._id,
             name: updatedUser.name,
-            gender: updatedUser.gender,
             email: updatedUser.email,
             email_is_verified: updatedUser.email_is_verified,
             isAdmin: updatedUser.isAdmin,
-            cart: updatedUser.cart,
-            searchHistory: updatedUser.searchHistory.map(x => x.query),
-            wishlist: updatedUser.wishlist,
-            recentlyViewed: updatedUser.recentlyViewed,
             updatedAt: updatedUser.updatedUser,
             createdAt: updatedUser.createdAt
         }
@@ -73,14 +66,23 @@ async function updateIfNeeded(source, callback) {
     return callback;
 }
 
-export default NextAuth({
-    session: {
-        strategy: 'jwt',
-    },
+export const authOptions: AuthOptions = {
+
     callbacks: {
         async jwt({ token, user }) {
-            if (!token.updatedAt) token.updatedAt = new Date().toISOString();
+            if (!token.updatedAt) {
+                const getUser = await updateUser(token)
 
+                return {
+                    ...token,
+                    image: user?.image || token?.picture || null,
+                    _id: getUser._id,
+                    isAdmin: getUser.isAdmin,
+                    email_is_verified: getUser.email_is_verified,
+                    updatedAt: getUser.updatedAt,
+                    createdAt: getUser.createdAt,
+                };
+            }
             if (user) {
                 return await updateIfNeeded(user, token);
             }
@@ -96,8 +98,22 @@ export default NextAuth({
         },
     },
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        }),
         CredentialsProvider({
+            name: 'credentials',
+            credentials: {
+                email: { label: 'email', type: 'text' },
+                password: { label: 'password', type: 'password' }
+            },
             async authorize(credentials) {
+
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error('Invalid credentials');
+                }
+
                 await db.connect();
                 const user = await User.findOne({ email: credentials.email }, {
                     _id: 1,
@@ -115,12 +131,32 @@ export default NextAuth({
                     createdAt: 1,
                 });
                 await db.disconnect();
-                if (user && bcrypt.compareSync(credentials.password, user.password)) {
-                    return user._doc;
+
+                if (!user || !user?.password) {
+                    throw new Error('Invalid credentials');
                 }
-                throw new Error('Invalid email or password');
+
+                const isCorrectPassword = await bcrypt.compare(
+                    credentials.password,
+                    user.password
+                );
+
+                if (!isCorrectPassword) {
+                    throw new Error('Invalid credentials');
+                }
+
+                return user;
             },
         }),
     ],
+    pages: {
+        signIn: '/',
+    },
+    debug: process.env.NODE_ENV === 'development',
+    session: {
+        strategy: "jwt",
+    },
     secret: process.env.NEXTAUTH_SECRET,
-});
+}
+
+export default NextAuth(authOptions);
