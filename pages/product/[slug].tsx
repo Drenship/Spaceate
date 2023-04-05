@@ -19,7 +19,7 @@ import { replaceURL, teinteDeLimage } from '@libs/utils';
 import { useClickOutside, useEscapeGallery, useEscapeListener, useSwipeAndDoubleTap } from '@libs/hooks';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
-import CommentaireCard from '@components/Cards/CommentaireCard'
+import CommentaireCard from '@components/cards/CommentaireCard'
 import BlurImage from '@components/ui-ux/BlurImage'
 import InputNumber from '@components/ui-ux/inputs/InputNumber'
 import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct';

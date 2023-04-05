@@ -6,7 +6,7 @@ import { querySecurMongoDB } from '@libs/utils';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
 import { TypeProduct, TypeUser } from '@libs/typings';
 
-import SearchResultItem from '@components/Cards/SearchResultItem';
+import SearchResultItem from '@components/cards/SearchResultItem';
 
 
 interface SearchbarProps {

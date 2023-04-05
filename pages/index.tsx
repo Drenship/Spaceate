@@ -7,7 +7,7 @@ import { TypeCategorie, TypeProduct } from '@libs/typings'
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct'
-import ServiceCard from '@components/Cards/ServiceCard'
+import ServiceCard from '@components/cards/ServiceCard'
 
 type Props = {
   homePageDetails: {
