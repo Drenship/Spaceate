@@ -9,7 +9,7 @@ import { replaceURL } from '@libs/utils';
 import { TypeCartItem } from '@libs/typings'
 
 import InputNumber from '@components/ui-ux/inputs/InputNumber'
-import BlurImage from '@components/ui-ux/BlurImage'
+import BlurImage from '@components/contents/BlurImage'
 
 interface CartItemCardProps {
     product: TypeCartItem

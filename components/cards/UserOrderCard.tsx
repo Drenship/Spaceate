@@ -8,7 +8,7 @@ import { fixedPriceToCurrency, replaceURL, splitString } from '@libs/utils';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
 import { useEscapeListener } from '@libs/hooks';
 
-import BlurImage from '@components/ui-ux/BlurImage';
+import BlurImage from '@components/contents/BlurImage';
 import OrderStatus from '@components/contents/orderStatus';
 import Invoice from '@components/DocumentsPDF/Invoice';
 

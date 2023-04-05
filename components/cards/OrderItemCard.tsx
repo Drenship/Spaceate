@@ -1,4 +1,4 @@
-import BlurImage from '@components/ui-ux/BlurImage';
+import BlurImage from '@components/contents/BlurImage';
 import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import Link from 'next/link';
 import React from 'react';

@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import BlurImage from '@components/ui-ux/BlurImage';
+import BlurImage from '@components/contents/BlurImage';
 import { replaceURL } from '@libs/utils';
 import { TypeProduct } from '@libs/typings';
 

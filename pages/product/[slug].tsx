@@ -20,10 +20,10 @@ import { useClickOutside, useEscapeGallery, useEscapeListener, useSwipeAndDouble
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import CommentaireCard from '@components/cards/CommentaireCard'
-import BlurImage from '@components/ui-ux/BlurImage'
+import BlurImage from '@components/contents/BlurImage'
 import InputNumber from '@components/ui-ux/inputs/InputNumber'
-import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct';
-import Rating from "@components/ui-ux/Rating"
+import CarouselProduct from '@components/Carousel/CarouselProduct';
+import Rating from "@components/contents/Rating"
 import { getSession, useSession } from 'next-auth/react';
 import Order from '@libs/models/Order';
 

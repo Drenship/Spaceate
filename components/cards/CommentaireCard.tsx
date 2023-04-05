@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from "next/image";
-import Rating from "@components/ui-ux/Rating"
+import Rating from "@components/contents/Rating"
 
 interface CommentaireCardProps {
     name: string,

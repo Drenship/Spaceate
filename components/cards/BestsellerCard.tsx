@@ -5,7 +5,7 @@ import { cartState } from "@atoms/cartState"
 import { useRouter } from 'next/dist/client/router';
 import { CART_ADD_ITEM, setCartState } from '@atoms/setStates/setCartState';
 import { replaceURL } from '@libs/utils';
-import Rating from '@components/ui-ux/Rating';
+import Rating from '@components/contents/Rating';
 import { TypeProduct } from '@libs/typings';
 
 

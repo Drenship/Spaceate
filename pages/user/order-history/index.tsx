@@ -8,7 +8,7 @@ import Order from '@libs/models/Order';
 import { TypeUser, TypeOrder } from '@libs/typings';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
-import Pagination from '@components/ui-ux/Pagination';
+import Pagination from '@components/contents/Pagination';
 import UserOrderCard from '@components/cards/UserOrderCard';
 
 // default params

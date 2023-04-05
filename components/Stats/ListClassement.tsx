@@ -1,6 +1,6 @@
 import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import React from 'react';
-import BlurImage from './BlurImage';
+import BlurImage from '../contents/BlurImage';
 
 const ItemOfClassement = ({ item, index }) => (
     <div className="flex items-center py-1 text-sm leading-4 tracking-normal text-gray-800 whitespace-no-wrap border-t">

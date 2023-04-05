@@ -6,7 +6,7 @@ import { replaceURL, UTCStringToDate } from '@libs/utils';
 import { useNotifys } from '@libs/hooks/notify';
 import { fetchDeleteJSON } from '@libs/utils/api-helpers';
 
-import BlurImage from '@components/ui-ux/BlurImage';
+import BlurImage from '@components/contents/BlurImage';
 
 export default function TableProductLine({ product, checkAll, updateMainProducts }) {
 

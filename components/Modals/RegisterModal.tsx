@@ -18,7 +18,7 @@ import useLoginModal from "@libs/hooks/useLoginModal";
 
 
 import Modal from "@components/Modals/Modal";
-import Button from "@components/ui-ux/buttons/button";
+import Button from "@components/buttons/button";
 import Input from "@components/ui-ux/inputs/Input";
 import Heading from "@components/Modals//Frags/Heading";
 

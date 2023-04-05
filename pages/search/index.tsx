@@ -11,7 +11,7 @@ import { querySecurMongoDB } from '@libs/utils';
 import { TypeCategorie, TypeProduct } from '@libs/typings';
 import { BsSliders } from 'react-icons/bs';
 import { RxEyeClosed } from 'react-icons/rx';
-import Pagination from '@components/ui-ux/Pagination';
+import Pagination from '@components/contents/Pagination';
 import { useLeftSwipe, useRightSwipe, useSwipeAxeX } from '@libs/hooks';
 
 const PAGE_SIZE = 20;

@@ -5,13 +5,13 @@ import Order from '@libs/models/Order';
 import { TypeOrder } from '@libs/typings';
 
 import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
-import LineChart from '@components/ui-ux/charts/LineChart';
+import LineChart from '@components/charts/LineChart';
 import TableOrderLIne from '@components/TableLines/TableOrderLIne';
 import { useRouter } from 'next/router';
 import AdminControlPannel from '@components/AdminContents/AdminControlPannel';
-import Pagination from '@components/ui-ux/Pagination';
+import Pagination from '@components/contents/Pagination';
 import axios from 'axios';
-import ListClassement from '@components/ui-ux/ListClassement';
+import ListClassement from '@components/Stats/ListClassement';
 import { formatChartDate, getLastSevenDaysDateUTC } from '@libs/utils/chart';
 
 interface Props {

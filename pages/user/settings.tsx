@@ -10,9 +10,9 @@ import { validateEmail } from '@libs/utils/formvalidate';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import Tabs from '@components/contents/Tab';
-import { TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6, TypographyP, TypographySmall, TypographyTiny } from '@components/ui-ux/Typography';
+import { TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6, TypographyP, TypographySmall, TypographyTiny } from '@components/Typography/Typography';
 import InputEmail from '@components/ui-ux/inputs/InputEmail';
-import DefaultSendButton from '@components/ui-ux/buttons/DefaultSendButton';
+import DefaultSendButton from '@components/buttons/DefaultSendButton';
 import InputPastCode from '@components/ui-ux/inputs/InputPastCode';
 import PopupWrapper from '@components/Wrapper/PopupWrapper';
 import InputText from '@components/ui-ux/inputs/InputText';
