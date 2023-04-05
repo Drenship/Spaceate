@@ -63,7 +63,7 @@
     "components/Layouts/BasescreenLayout.tsx",
     "components/TableLines/TableProductLine.jsx",
     "components/PrintObject.tsx",
-    "components/Footer.tsx",
+    "components/footer.tsx",
     "components/navbar.tsx",
     "next-sitemap.config.js",
     "pages/api/auth/[...nextauth].js",
