@@ -15,7 +15,7 @@ import { useRecoilCallback, useRecoilState } from "recoil";
 
 import Modal from "@components/Modals/Modal";
 import Button from "@components/buttons/button";
-import Input from "@components/ui-ux/inputs/Input";
+import Input from "@components/inputs/Input";
 import Heading from "@components/Modals//Frags/Heading";
 
 import useRegisterModal from "@libs/hooks/useRegisterModal";
