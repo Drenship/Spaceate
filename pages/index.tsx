@@ -3,8 +3,8 @@ import React from 'react'
 
 import { TypeCategorie, TypeProduct } from '@libs/typings'
 
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
-import ServiceCard from '@components/cards/ServiceCard'
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
+import ServiceCard from '@components/Cards/ServiceCard'
 
 import db from '@libs/database/dbConnect'
 import Product from '@libs/models/Product'

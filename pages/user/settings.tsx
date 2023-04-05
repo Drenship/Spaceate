@@ -8,7 +8,7 @@ import { fetchPostJSON } from '@libs/utils/api-helpers';
 import { TypeUser } from '@libs/typings';
 import { validateEmail } from '@libs/utils/formvalidate';
 
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import Tabs from '@components/contents/Tab';
 import { TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6, TypographyP, TypographySmall, TypographyTiny } from '@components/ui-ux/Typography';
 import InputEmail from '@components/ui-ux/inputs/InputEmail';

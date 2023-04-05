@@ -10,7 +10,7 @@ import { RecoilRoot, RecoilEnv, useRecoilCallback } from 'recoil';
 import { NotifyContextProvider } from '@libs/hooks/notify';
 import { TypeUser } from '@libs/typings';
 
-import CookiePopup from '@components/ui-ux/Notifications/CookiePopup';
+import CookiePopup from '@components/Modals/CookiePopup';
 import Sidebar from '@components/Sidebar';
 import BodyLoader from '@components/BodyLoader';
 
@@ -57,8 +57,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
             )
           }
           <Analytics />
-          <CookiePopup />
           <Sidebar />
+          <CookiePopup />
           <LoginModal />
           <RegisterModal />
 

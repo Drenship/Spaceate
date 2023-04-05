@@ -10,7 +10,7 @@ import { useEscapeListener } from '@libs/hooks';
 
 import BlurImage from '@components/ui-ux/BlurImage';
 import OrderStatus from '@components/contents/orderStatus';
-import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
+import Invoice from '@components/DocumentsPDF/Invoice';
 
 
 interface refundOrder {

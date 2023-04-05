@@ -62,13 +62,15 @@
     "pages/api/admin/products/index.js",
     "pages/admin/index.js",
     "pages/admin/index.jsx",
-    "components/Wrapper/BasescreenWrapper.tsx",
-    "components/tables/TableProductLine.jsx",
+    "components/Layouts/BasescreenLayout.tsx",
+    "components/TableLines/TableProductLine.jsx",
     "components/PrintObject.tsx",
     "components/footer.tsx",
     "components/navbar.tsx",
-    "next-sitemap.config.js"
-, "pages/api/auth/[...nextauth].js"  ],
+    "next-sitemap.config.js",
+    "pages/api/auth/[...nextauth].js",
+    "libs/database/dbConnect.js"
+  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { NextPage } from 'next/types'
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import BlurImage from '@components/ui-ux/BlurImage'
 
 const MyColis: NextPage = () => {

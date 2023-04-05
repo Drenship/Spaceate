@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper';
+import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout';
 
 function AdminOrdersIdScreen() {
     return (

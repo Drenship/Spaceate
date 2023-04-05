@@ -4,9 +4,9 @@ import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
 import { TypeOrder } from '@libs/typings';
 
-import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
 import LineChart from '@components/ui-ux/charts/LineChart';
-import TableOrderLIne from '@components/tables/TableOrderLIne';
+import TableOrderLIne from '@components/TableLines/TableOrderLIne';
 import { useRouter } from 'next/router';
 import AdminControlPannel from '@components/AdminContents/AdminControlPannel';
 import Pagination from '@components/ui-ux/Pagination';

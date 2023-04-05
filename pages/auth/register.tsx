@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 
 
 const RegisterScreen: NextPage = () => {

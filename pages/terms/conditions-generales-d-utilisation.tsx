@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { BsSliders } from "react-icons/bs";
 import { useResize, useSwipeAxeX } from "@libs/hooks";
 
-import BasescreenWrapper from "@components/Wrapper/BasescreenWrapper";
+import BasescreenWrapper from "@components/Layouts/BasescreenLayout";
 
 import jsonFileCGU from "@datassets/CGU.json"
 

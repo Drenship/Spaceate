@@ -8,7 +8,7 @@ import { useRecoilState } from 'recoil';
 import { cartState } from '@atoms/cartState';
 import { CART_EMPTY, setCartState } from '@atoms/setStates/setCartState';
 
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import { fetchGetJSON } from '@libs/utils/api-helpers';
 
 const Success: NextPage = () => {

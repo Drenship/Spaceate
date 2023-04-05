@@ -11,21 +11,18 @@ async function connect() {
     }
 
     if (connection.isConnected) {
-        //console.log('already connected');
         return;
     }
 
     if (mongoose.connections.length > 0) {
         connection.isConnected = mongoose.connections[0].readyState;
         if (connection.isConnected === 1) {
-            //console.log('use previous connection');
             return;
         }
         await mongoose.disconnect();
     }
 
     const db = await mongoose.connect(process.env.MONGODB_URI);
-    //console.log('new connection');
     connection.isConnected = db.connections[0].readyState;
 }
 
@@ -35,32 +32,35 @@ async function disconnect() {
             await mongoose.disconnect();
             connection.isConnected = false;
         }
-        //console.log('not disconnected');
     }
-    //console.log('not connect');
 }
 
 function convertDocToObj(doc) {
     if (Array.isArray(doc)) {
-        return doc.map(item => convertDocToObj(item));
+        return doc.map(convertDocToObj);
     }
 
-    if (doc instanceof Object) {
-        doc._id = doc._id.toString();
-        doc.createdAt = doc?.createdAt?.toString() || "";
-        doc.updatedAt = doc?.updatedAt?.toString() || "";
+    if (typeof doc === 'object' && doc !== null) {
+        const newObj = {};
 
         for (const key in doc) {
             if (doc.hasOwnProperty(key)) {
-                if (Array.isArray(doc[key]) || doc[key] instanceof Object) {
-                    doc[key] = convertDocToObj(doc[key]);
+                if (key === '_id') {
+                    newObj[key] = doc[key].toString();
+                } else if (key === 'createdAt' || key === 'updatedAt') {
+                    newObj[key] = doc[key]?.toString() || "";
+                } else if (Array.isArray(doc[key]) || doc[key] instanceof Object) {
+                    newObj[key] = convertDocToObj(doc[key]);
+                } else {
+                    newObj[key] = doc[key];
                 }
             }
         }
+        return newObj;
     }
-
     return doc;
 }
+
 
 const db = { connect, disconnect, convertDocToObj };
 export default db;

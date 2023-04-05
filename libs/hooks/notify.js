@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Notification from '@components/ui-ux/Notifications/Notification'
+import Notification from '@components/Notifications/Notification'
 
 
 const defaultPush = (notify) => { }; // Méthode de base que l'on mettra dans le contexte par défaut

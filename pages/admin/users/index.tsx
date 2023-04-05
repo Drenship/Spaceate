@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
 import { TypeUser } from '@libs/typings';
-import TableUserLine from '@components/tables/TableUserLine';
+import TableUserLine from '@components/TableLines/TableUserLine';
 
 type Props = {
     initialUsers: TypeUser[]

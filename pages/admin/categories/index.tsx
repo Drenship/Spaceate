@@ -1,11 +1,11 @@
 import { NextPage } from 'next/types';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link'
-import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
 import Categorie from '@libs/models/Categorie';
 import db from '@libs/database/dbConnect';
 import { TypeCategorie } from '@libs/typings';
-import TableCategorieLine from '@components/tables/TableCategorieLine';
+import TableCategorieLine from '@components/TableLines/TableCategorieLine';
 
 type Props = {
     categories: TypeCategorie[]

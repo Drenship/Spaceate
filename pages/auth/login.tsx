@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { NextPage } from 'next';
 
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 
 
 const LoginScreen: NextPage = () => {

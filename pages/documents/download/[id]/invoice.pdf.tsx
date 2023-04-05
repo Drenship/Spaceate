@@ -9,7 +9,7 @@ import Order from '@libs/models/Order';
 import { TypeOrder } from '@libs/typings';
 import { splitString } from '@libs/utils';
 
-import Invoice from '@components/ui-ux/DocumentsPDF/Invoice';
+import Invoice from '@components/DocumentsPDF/Invoice';
 
 interface Props {
     order: TypeOrder | null

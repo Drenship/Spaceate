@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { NextPage } from 'next/types'
 import { useRouter } from 'next/router'
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper'
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import Product from '@libs/models/Product';
 import db from '@libs/database/dbConnect';
-import BestsellerCard from '@components/cards/BestsellerCard';
+import BestsellerCard from '@components/Cards/BestsellerCard';
 import { XCircleIcon } from '@heroicons/react/solid';
 import Categorie from '@libs/models/Categorie';
 import { querySecurMongoDB } from '@libs/utils';

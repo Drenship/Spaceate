@@ -7,9 +7,9 @@ import db from '@libs/database/dbConnect';
 import Order from '@libs/models/Order';
 import { TypeUser, TypeOrder } from '@libs/typings';
 
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import Pagination from '@components/ui-ux/Pagination';
-import UserOrderCard from '@components/cards/UserOrderCard';
+import UserOrderCard from '@components/Cards/UserOrderCard';
 
 // default params
 const PAGE_SIZE = 20;

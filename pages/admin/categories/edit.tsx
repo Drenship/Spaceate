@@ -8,10 +8,10 @@ import Categorie from '@libs/models/Categorie';
 import { fetchPostJSON, fetchPutJSON } from '@libs/utils/api-helpers';
 import { useNotifys } from '@libs/hooks/notify';
 
-import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
 import InputText from '@components/ui-ux/inputs/InputText';
 import InputSelect from '@components/ui-ux/inputs/InputSelect';
-import TableSubCategorieLine from '@components/tables/TableSubCategorieLine';
+import TableSubCategorieLine from '@components/TableLines/TableSubCategorieLine';
 import { textToSLug } from '@libs/utils';
 
 type Props = {

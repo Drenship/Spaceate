@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
 import { fetchPostJSON } from '@libs/utils/api-helpers';
-import BasescreenWrapper from '@components/Wrapper/BasescreenWrapper';
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 
 const Recovery: NextPage = () => {
 

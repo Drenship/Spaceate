@@ -9,7 +9,7 @@ import Product from '@libs/models/Product';
 import Categorie from '@libs/models/Categorie';
 import { fixedPriceToCurrency, textToSLug } from '@libs/utils';
 
-import AdminscreenWrapper from '@components/Wrapper/AdminscreenWrapper'
+import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
 import InputText from '@components/ui-ux/inputs/InputText';
 import InputSelect from '@components/ui-ux/inputs/InputSelect';
 import InputFiles from '@components/ui-ux/inputs/InputFiles';
