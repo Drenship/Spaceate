@@ -1,8 +1,8 @@
-import OrderStatus from '@components/contents/orderStatus';
-import { TypeOrder } from '@libs/typings';
-import { UTCStringToDate, fixedPriceToCurrency, replaceURL } from '@libs/utils';
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+import { UTCStringToDate, fixedPriceToCurrency, replaceURL } from '@libs/utils';
+import { TypeOrder } from '@libs/typings';
+import OrderStatus from '@components/contents/orderStatus';
 
 
 interface TableProfilOrderLineProps {

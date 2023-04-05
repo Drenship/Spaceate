@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { fetchDeleteJSON, fetchPutJSON } from '@libs/utils/api-helpers';
 import { useEscapeListener } from '@libs/hooks';
-import InputText from '@components/ui-ux/inputs/InputText';
+import InputText from '@components/inputs/InputText';
 
 export default function TableSubCategorieLine({ checkAll, parentCategorie, subCategorie, updateMainCategorie }) {
 

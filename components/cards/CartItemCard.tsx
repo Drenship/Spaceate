@@ -8,7 +8,7 @@ import { useNotifys } from '@libs/hooks/notify';
 import { replaceURL } from '@libs/utils';
 import { TypeCartItem } from '@libs/typings'
 
-import InputNumber from '@components/ui-ux/inputs/InputNumber'
+import InputNumber from '@components/inputs/InputNumber'
 import BlurImage from '@components/contents/BlurImage'
 
 interface CartItemCardProps {

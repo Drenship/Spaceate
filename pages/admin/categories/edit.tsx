@@ -9,8 +9,7 @@ import { fetchPostJSON, fetchPutJSON } from '@libs/utils/api-helpers';
 import { useNotifys } from '@libs/hooks/notify';
 
 import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
-import InputText from '@components/ui-ux/inputs/InputText';
-import InputSelect from '@components/ui-ux/inputs/InputSelect';
+import InputText from '@components/inputs/InputText';
 import TableSubCategorieLine from '@components/TableLines/TableSubCategorieLine';
 import { textToSLug } from '@libs/utils';
 

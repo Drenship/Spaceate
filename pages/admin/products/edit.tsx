@@ -10,12 +10,12 @@ import Categorie from '@libs/models/Categorie';
 import { fixedPriceToCurrency, textToSLug } from '@libs/utils';
 
 import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
-import InputText from '@components/ui-ux/inputs/InputText';
-import InputSelect from '@components/ui-ux/inputs/InputSelect';
-import InputFiles from '@components/ui-ux/inputs/InputFiles';
-import InputTextarea from '@components/ui-ux/inputs/InputTextarea';
-import { InputNumber } from '@components/ui-ux/inputs/InputNumber';
-import InputCheckbox from '@components/ui-ux/inputs/InputCheckbox';
+import InputText from '@components/inputs/InputText';
+import InputSelect from '@components/inputs/InputSelect';
+import InputFiles from '@components/inputs/InputFiles';
+import InputTextarea from '@components/inputs/InputTextarea';
+import { InputNumber } from '@components/inputs/InputNumber';
+import InputCheckbox from '@components/inputs/InputCheckbox';
 
 import { useNotifys } from '@libs/hooks/notify';
 import { fetchPostJSON, fetchPutJSON } from '@libs/utils/api-helpers';
