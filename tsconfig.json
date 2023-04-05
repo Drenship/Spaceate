@@ -42,34 +42,11 @@
   },
   "include": [
     "next-env.d.ts",
+    "**/*.js",
+    "**/*.jsx",
     "**/*.ts",
-    "**/*.tsx",
-    "pages/order/pay.tsx",
-    "pages/order/index.jsx",
-    "pages/product/[slug].tsx",
-    "pages/search/index.tsx",
-    "pages/index.tsx",
-    "pages/_app.tsx",
-    "pages/auth/recovery.tsx",
-    "pages/auth/register.tsx",
-    "pages/api/auth/[...nexthauth].jhs",
-    "pages/auth/signin.ts",
-    "hooks/useAuth.js",
-    "atoms/cartState.tsx",
-    "pages/cart.tsx",
-    "pages/api/checkout_sessions/checkout_sessions.js",
-    "pages/api/admin/products/index.js",
-    "pages/admin/index.jsx",
-    "components/Layouts/BasescreenLayout.tsx",
-    "components/TableLines/TableProductLine.jsx",
-    "components/PrintObject.tsx",
-    "components/footer.tsx",
-    "components/navbar.tsx",
-    "next-sitemap.config.js",
-    "pages/api/auth/[...nextauth].js",
-    "libs/database/dbConnect.js",
-    "components/Cards/SearchResultItem.tsx" 
-],
+    "**/*.tsx"
+  ],
   "exclude": [
     "node_modules"
   ]
