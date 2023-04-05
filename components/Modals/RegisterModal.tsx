@@ -13,8 +13,8 @@ import {
 } from "react-hook-form";
 import { useRecoilState, useRecoilCallback } from 'recoil';
 
-import useRegisterModal from "@libs/hooks/useRegisterModal";
-import useLoginModal from "@libs/hooks/useLoginModal";
+import useRegisterModal from "@libs/hooks/modals/useRegisterModal";
+import useLoginModal from "@libs/hooks/modals/useLoginModal";
 
 
 import Modal from "@components/Modals/Modal";

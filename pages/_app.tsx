@@ -12,11 +12,12 @@ import { TypeUser } from '@libs/typings';
 
 import CookiePopup from '@components/Modals/CookiePopup';
 import Sidebar from '@components/Sidebar';
-import BodyLoader from '@components/BodyLoader';
+import BodySkeleton from '@components/Loader/BodySkeleton';
 
 import { Analytics } from '@vercel/analytics/react';
 import LoginModal from '@components/Modals/LoginModal';
 import RegisterModal from '@components/Modals/RegisterModal';
+import EditUserAddressModal from '@components/Modals/EditUserAddressModal';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -57,10 +58,13 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
             )
           }
           <Analytics />
+
           <Sidebar />
           <CookiePopup />
+
           <LoginModal />
           <RegisterModal />
+          <EditUserAddressModal />
 
         </NotifyContextProvider>
 
@@ -85,7 +89,7 @@ const Auth: React.FC<AuthProps> = ({ children, adminOnly = false }) => {
   });
   const user = session && session.user as TypeUser || null;
   if (status === 'loading') {
-    return <BodyLoader />;
+    return <BodySkeleton />;
   }
   if (adminOnly && !user?.isAdmin) {
     router.push('/auth/login');

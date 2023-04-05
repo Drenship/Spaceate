@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 
 import { useEscapeListener, useResize } from '@libs/hooks/index'
 
-
 import { TypeUser } from '@libs/typings';
 import { BiMenuAltRight } from 'react-icons/bi';
 import { useSession } from 'next-auth/react';

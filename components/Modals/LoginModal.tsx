@@ -18,8 +18,8 @@ import Button from "@components/buttons/button";
 import Input from "@components/inputs/Input";
 import Heading from "@components/Modals//Frags/Heading";
 
-import useRegisterModal from "@libs/hooks/useRegisterModal";
-import useLoginModal from "@libs/hooks/useLoginModal";
+import useRegisterModal from "@libs/hooks/modals/useRegisterModal";
+import useLoginModal from "@libs/hooks/modals/useLoginModal";
 
 const LoginModal = () => {
     const router = useRouter();

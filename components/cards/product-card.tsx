@@ -11,7 +11,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return (
         <Link href={`/product/${product.slug}`}>
-            <a className="bg-white group">
+            <div className="bg-white group">
                 <div className='overflow-hidden rounded-lg shadow-md'>
                     <div className='relative aspect-square h-[210px] w-full object-cover'>
                         <BlurImage
@@ -27,7 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         </div>
                     </div>
                 </div>
-            </a>
+            </div>
         </Link>
     )
 }

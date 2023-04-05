@@ -8,8 +8,8 @@ import { HomeIcon, LoginIcon, LogoutIcon, UserAddIcon } from '@heroicons/react/s
 import { BsPerson, BsTools } from 'react-icons/bs';
 import { BiBox } from 'react-icons/bi';
 import { TypeUser } from '@libs/typings';
-import useLoginModal from '@libs/hooks/useLoginModal';
-import useRegisterModal from '@libs/hooks/useRegisterModal';
+import useLoginModal from '@libs/hooks/modals/useLoginModal';
+import useRegisterModal from '@libs/hooks/modals/useRegisterModal';
 
 interface SidebarProps { }
 

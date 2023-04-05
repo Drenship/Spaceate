@@ -1,5 +1,5 @@
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -15,9 +15,8 @@ import InputEmail from '@components/inputs/InputEmail';
 import DefaultSendButton from '@components/buttons/DefaultSendButton';
 import InputPastCode from '@components/inputs/InputPastCode';
 import PopupWrapper from '@components/Wrapper/PopupWrapper';
-import InputText from '@components/inputs/InputText';
-import ScrollShadowWrapper from '@components/Wrapper/ScrollShadowWrapper';
 
+import useEditUserAddressModal from '@libs/hooks/modals/useEditUserAddressModal';
 
 interface Props { }
 
@@ -36,7 +35,8 @@ const UserSettings: NextPage<Props> = () => {
     const [toggleConfirmCodeMail, setToggleConfirmCodeMail] = useState<boolean>(false)
     const [togglePopupConfirmCodeMail, setTogglePopupConfirmCodeMail] = useState<boolean>(false)
 
-    const [togglePopupAddress, setTogglePopupAddress] = useState<boolean>(false)
+
+    const eitUserAddressModal = useEditUserAddressModal();
 
     const handleUpdateNewMail = async () => {
         try {
@@ -105,10 +105,6 @@ const UserSettings: NextPage<Props> = () => {
     const handlePutAddress = async () => {}
     const handleRemoveAddress = async () => {}
 
-    const getAddress = (address) => {
-        if (!address?.address) return "";
-        return `${address.address}, ${address.city} ${address.postalCode}, ${address.country}`
-    }
 
     return (
         <BasescreenWrapper title="Profile">
@@ -175,7 +171,7 @@ const UserSettings: NextPage<Props> = () => {
                                         title='Ajouter un Addresse'
                                         isDisabled={isLoading}
                                         isLoading={isLoading}
-                                        onClick={() => setTogglePopupAddress(true)}
+                                        onClick={eitUserAddressModal.onOpenAdd}
                                     />
                                 </div>
 
@@ -250,83 +246,6 @@ const UserSettings: NextPage<Props> = () => {
                         <div className='flex flex-col items-end w-full mt-5'>
                             <DefaultSendButton
                                 title='Confirmer'
-                                isDisabled={isLoading}
-                                isLoading={isLoading}
-                                onClick={handleConfirmNewMail}
-                            />
-                        </div>
-                    </PopupWrapper>
-                )
-            }
-
-            {
-                togglePopupAddress && (
-                    <PopupWrapper
-                        toggleModal={togglePopupAddress}
-                        setToggleModal={setTogglePopupAddress}
-                    >
-
-                        <TypographyH4 className='uppercase select-none max-md:hidden'>Ajouter un nouvelle addresse</TypographyH4>
-                        <TypographyH6 className='uppercase select-none md:hidden'>Ajouter un nouvelle addresse</TypographyH6>
-
-                        <ScrollShadowWrapper className='w-full'>
-                            <div className='grid w-full grid-cols-1 gap-5 py-5 mt-5 col-span-full md:grid-cols-2'>
-                                <InputText
-                                    title="Address"
-                                    input={{
-                                        name: "address",
-                                        defaultValue: "",
-                                        placeholder: "address ...",
-                                    }}
-                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
-                                />
-                                <InputText
-                                    title="Address 2"
-                                    input={{
-                                        name: "address2",
-                                        defaultValue: "",
-                                        placeholder: "address 2 ...",
-                                    }}
-                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
-                                />
-
-                                <InputText
-                                    title="Ville"
-                                    input={{
-                                        name: "city",
-                                        defaultValue: "",
-                                        placeholder: "entrer une ville ...",
-                                    }}
-                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
-                                />
-
-                                <InputText
-                                    title="Code postal"
-                                    input={{
-                                        name: "postalCode",
-                                        defaultValue: "",
-                                        placeholder: "entrer votre code postal ...",
-                                    }}
-                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
-                                />
-
-                                <InputText
-                                    title="Pays"
-                                    input={{
-                                        name: "country",
-                                        defaultValue: "",
-                                        placeholder: "entrer un pays ...",
-                                    }}
-                                    onChange={(e: React.BaseSyntheticEvent) => console.log(e.target.value)}
-                                />
-
-                            </div>
-
-                        </ScrollShadowWrapper>
-
-                        <div className='flex flex-col items-end w-full mt-5'>
-                            <DefaultSendButton
-                                title='Ajouter'
                                 isDisabled={isLoading}
                                 isLoading={isLoading}
                                 onClick={handleConfirmNewMail}
