@@ -1,14 +1,13 @@
 import type { NextPage } from 'next/types'
 import React from 'react'
 
+import db from '@libs/database/dbConnect'
+import Product from '@libs/models/Product'
 import { TypeCategorie, TypeProduct } from '@libs/typings'
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
-import ServiceCard from '@components/Cards/ServiceCard'
-
-import db from '@libs/database/dbConnect'
-import Product from '@libs/models/Product'
 import CarouselProduct from '@components/ui-ux/Carousel/CarouselProduct'
+import ServiceCard from '@components/Cards/ServiceCard'
 
 type Props = {
   homePageDetails: {
