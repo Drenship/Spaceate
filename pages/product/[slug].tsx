@@ -21,7 +21,7 @@ import { useClickOutside, useEscapeGallery, useEscapeListener, useSwipeAndDouble
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import CommentaireCard from '@components/cards/CommentaireCard'
 import BlurImage from '@components/contents/BlurImage'
-import InputNumber from '@components/ui-ux/inputs/InputNumber'
+import InputNumber from '@components/inputs/InputNumber'
 import CarouselProduct from '@components/Carousel/CarouselProduct';
 import Rating from "@components/contents/Rating"
 import { getSession, useSession } from 'next-auth/react';
