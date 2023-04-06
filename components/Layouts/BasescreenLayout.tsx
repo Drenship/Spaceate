@@ -6,6 +6,7 @@ import { TypeProduct } from '@libs/typings';
 import Navbar from "@components/Navbar/Navbar"
 import MobileNavbar from '@components/MobileNavbar';
 import Footer from "@components/footer"
+import ClientOnly from '@components/ClientOnly';
 
 interface Props {
     title?: string;

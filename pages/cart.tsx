@@ -21,6 +21,9 @@ interface Update {
 }
 
 const Cart: NextPage = () => {
+    const [hasMounted, setHasMounted] = useState(false);
+    useEffect(() => setHasMounted(true), [])
+
     const [loading, setLoading] = useState(false)
     const { data: session } = useSession();
     const user = session && session.user as TypeUser || null;
@@ -40,7 +43,7 @@ const Cart: NextPage = () => {
 
     const createCheckoutSession = async () => {
 
-        if(!user) return;
+        if (!user) return;
 
         setLoading(true);
 
@@ -49,15 +52,15 @@ const Cart: NextPage = () => {
             return i;
         })
 
-        if(itemsForCheckout.length <= 0) return;
-        
+        if (itemsForCheckout.length <= 0) return;
+
         // init stripe
         const stripe = await getStripe();
         if (!stripe) {
             setLoading(false);
             return;
         }
-        
+
         // Put order
         const createOrder = await fetchPostJSON("/api/order", { items: itemsForCheckout });
         if (!createOrder || createOrder.err) {
@@ -101,7 +104,6 @@ const Cart: NextPage = () => {
             })
 
             const findItem: TypeCartItem = oldCartData.filter(i => i.slug === item.slug)[0]
-            console.log(findItem.quantity, item.countInStock)
 
             if (findItem && findItem.price !== item.price || findItem && findItem.quantity > item.countInStock || item.countInStock <= 0) {
                 setPriceChange(prev => {
@@ -134,7 +136,7 @@ const Cart: NextPage = () => {
     }
 
     // PB double rendu de checkUpdateCart
-    useEffect(() => { checkUpdateCart() }, []);
+    useEffect(() => { hasMounted && checkUpdateCart() }, [hasMounted]);
 
     return (
         <BasescreenWrapper title="Panier" footer={true}>

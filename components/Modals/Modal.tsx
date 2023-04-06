@@ -89,7 +89,11 @@ const Modal: React.FC<ModalProps> = ({
 
                     {/*content*/}
                     <div className={`translate duration-300 h-full ${showModal ? 'translate-y-0' : 'translate-y-full'} ${showModal ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="relative flex flex-col w-full h-full bg-white border-0 rounded-lg shadow-lg outline-none translate lg:h-auto md:h-auto focus:outline-none"
+                        <form
+                            onSubmit={e => { 
+                                e.preventDefault();
+                            }}
+                            className="relative flex flex-col w-full h-full bg-white border-0 rounded-lg shadow-lg outline-none translate lg:h-auto md:h-auto focus:outline-none"
                         >
                             {/*header*/}
                             <div className="flex items-center p-6 rounded-t justify-center relative border-b-[1px] text-black">
@@ -126,7 +130,7 @@ const Modal: React.FC<ModalProps> = ({
                                 </div>
                                 {footer}
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

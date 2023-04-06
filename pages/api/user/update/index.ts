@@ -107,9 +107,14 @@ const ADD_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { user, data } = req.body;
         db.connect()
+        const getUser = await User.findById(user._id);
+        getUser.addresses.push(data.address);
+        await getUser.save();
+
+        return res.status(200).json({ success: true, message: "Votre address a bien été ajouter." });
 
     } catch (error) {
-
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
     } finally {
         db.disconnect()
     }
@@ -118,9 +123,14 @@ const PUT_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { user, data } = req.body;
         db.connect()
+        const getUser = await User.findById(user._id);
+        const address = getUser.addresses.id(data.addressId);
+        address.set(data.address);
+        const result = await getUser.save();
 
+        return res.status(200).json({ success: true, message: "Votre address a bien été mise à ajouter.", result });
     } catch (error) {
-
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
     } finally {
         db.disconnect()
     }
@@ -129,9 +139,14 @@ const REMOVE_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { user, data } = req.body;
         db.connect()
+        const getUser = await User.findById(user._id);
+        getUser.addresses.id(data.addressId).remove();
+        await getUser.save();
+
+        return res.status(200).json({ success: true, message: "Votre address a bien été supprimer." });
 
     } catch (error) {
-
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
     } finally {
         db.disconnect()
     }

@@ -17,6 +17,7 @@ import InputPastCode from '@components/inputs/InputPastCode';
 import PopupWrapper from '@components/Wrapper/PopupWrapper';
 
 import useEditUserAddressModal from '@libs/hooks/modals/useEditUserAddressModal';
+import useUserStore from '@libs/hooks/modals/useUserStore';
 
 interface Props { }
 
@@ -24,6 +25,8 @@ const UserSettings: NextPage<Props> = () => {
 
     const { data: session } = useSession();
     const user = session && session.user as TypeUser || null;
+
+    const useUser = useUserStore();
 
     const [activeTab, setActiveTab] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -101,9 +104,9 @@ const UserSettings: NextPage<Props> = () => {
         }
     }
 
-    const handleAddAddress = async () => {}
-    const handlePutAddress = async () => {}
-    const handleRemoveAddress = async () => {}
+    const handleAddAddress = async () => { }
+    const handlePutAddress = async () => { }
+    const handleRemoveAddress = async () => { }
 
 
     return (
@@ -175,11 +178,30 @@ const UserSettings: NextPage<Props> = () => {
                                     />
                                 </div>
 
-                                <div>d</div>
-                                <div>d</div>
-                                <div>d</div>
-                                <div>d</div>
-                                <div>d</div>
+                                {
+                                    useUser.user?.addresses.map((address) => (
+                                        <div
+                                            key={address._id}
+                                            className='border'
+                                        >
+                                            {address.fullName}
+
+                                            <DefaultSendButton
+                                                title='Modifier'
+                                                isDisabled={isLoading}
+                                                isLoading={isLoading}
+                                                onClick={() => eitUserAddressModal.onOpenEdit(address)}
+                                            />
+
+                                            <DefaultSendButton
+                                                title='Supprimer'
+                                                isDisabled={isLoading}
+                                                isLoading={isLoading}
+                                                onClick={() => eitUserAddressModal.onOpenDelete(address)}
+                                            />
+                                        </div>
+                                    ))
+                                }
 
                             </div>
 

@@ -1,23 +1,24 @@
 import '../styles/globals.css'
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import type { AppProps } from 'next/app'
 import { NextComponentType, NextPageContext } from 'next';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { Router, useRouter } from 'next/router';
 import ProgressBar from "@badrap/bar-of-progress";
-import { RecoilRoot, RecoilEnv, useRecoilCallback } from 'recoil';
+import { RecoilRoot, RecoilEnv } from 'recoil';
 
 import { NotifyContextProvider } from '@libs/hooks/notify';
 import { TypeUser } from '@libs/typings';
+import useUserStore from '@libs/hooks/modals/useUserStore';
 
 import CookiePopup from '@components/Modals/CookiePopup';
 import Sidebar from '@components/Sidebar';
 import BodySkeleton from '@components/Loader/BodySkeleton';
 
-import { Analytics } from '@vercel/analytics/react';
 import LoginModal from '@components/Modals/LoginModal';
 import RegisterModal from '@components/Modals/RegisterModal';
 import EditUserAddressModal from '@components/Modals/EditUserAddressModal';
+import { Analytics } from '@vercel/analytics/react';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -42,12 +43,25 @@ interface MyAppProps extends AppProps {
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }: MyAppProps) => {
 
+  const [hasMounted, setHasMounted] = useState(false);
+  const useUser = useUserStore();
+
+  useEffect(() => setHasMounted(true), [])
+
+  useEffect(() => {
+    if (!useUser.user && useUser.isLoading === false && hasMounted) {
+      useUser.setIsLoading(true)
+      useUser.fetchUser();
+    }
+  }, [hasMounted])
+
   return (
     <SessionProvider session={session}>
       <RecoilRoot>
 
         <NotifyContextProvider>
           {/* Higher Order Component */}
+
           {
             Component.auth ? (
               <Auth adminOnly={Component.auth.adminOnly}>

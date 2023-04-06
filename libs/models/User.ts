@@ -56,10 +56,6 @@ const userSchema = new mongoose.Schema(
                     type: String,
                     required: true
                 },
-                state: {
-                    type: String,
-                    required: true
-                },
                 postalCode: {
                     type: String,
                     required: true
@@ -70,7 +66,8 @@ const userSchema = new mongoose.Schema(
                 },
                 phone: {
                     type: String,
-                    required: true
+                    required: false,
+                    trim: true,
                 },
                 addressType: {
                     type: String,

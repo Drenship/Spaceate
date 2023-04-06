@@ -1,12 +1,13 @@
+import { Address } from '@libs/typings';
 import { create } from 'zustand';
 
 interface EditUserAddressModalStore {
   isOpen: boolean;
   mode: 'add' | 'edit' | 'delete';
-  address: Record<string, any> | null;
+  address: Address | null;
   onOpenAdd: () => void;
-  onOpenEdit: (data: Record<string, any>) => void;
-  onOpenDelete: (data: Record<string, any>) => void;
+  onOpenEdit: (data: Address) => void;
+  onOpenDelete: (data: Address) => void;
   onClose: () => void;
 }
 

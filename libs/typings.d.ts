@@ -1,14 +1,13 @@
 
 interface Address {
-    _id: string;
-    fullName: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-    phone: string;
-    addressType: 'shipping' | 'billing';
+    _id?:string;
+    fullName: string | null,
+    streetAddress: string | null;
+    city: string | null;
+    postalCode: string | null;
+    country: string | null;
+    phone: string | null;
+    addressType: 'shipping' | 'billing'
     isDefault: boolean;
 }
 
