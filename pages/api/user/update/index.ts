@@ -155,9 +155,9 @@ const PUT_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
         const getUser = await User.findById(user._id);
         const address = getUser.addresses.id(data.addressId);
         address.set(data.address);
-        const result = await getUser.save();
+        await getUser.save();
 
-        return res.status(200).json({ success: true, message: "Votre address a bien été mise à ajouter.", result });
+        return res.status(200).json({ success: true, message: "Votre address a bien été mise à ajouter." });
     } catch (error) {
         return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
     } finally {

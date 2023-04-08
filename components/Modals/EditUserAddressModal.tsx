@@ -73,10 +73,10 @@ const EditUserAddressModal = () => {
                     }
                 })
                 if (result.success) {
-                    toast.success('Addresse mise à jour');
+                    toast.success(result.message || 'Addresse mise à jour');
                     editUserAddressModal.onClose();
                 } else {
-                    toast.error('Echec de la mise à jour');
+                    toast.error(result.message || 'Echec de la mise à jour');
                 }
             }
 

@@ -60,7 +60,7 @@ const UserSettings: NextPage<Props> = () => {
     const [isValidePasswords, isValidConditions] = useMemo(() => {
 
         const hasOldPassword = updatePassword.oldPassword.length > 0
-        const isSamePassWord = updatePassword.newPassword === updatePassword.confirmPassword
+        const isSamePassWord = updatePassword.newPassword === updatePassword.confirmPassword && updatePassword.confirmPassword.length > 0
         const [isValidate, isValidConditions] = verifyPassword(updatePassword.newPassword, PASSWORD_REQUIRED)
 
         return [isValidate && isSamePassWord && hasOldPassword, {
@@ -110,7 +110,10 @@ const UserSettings: NextPage<Props> = () => {
         }
 
     }
-    const handleConfirmCodeOfNewEmail = async (data) => {
+    const handleConfirmCodeOfNewEmail = async (data: {
+        newEmail: string,
+        code: string
+    }) => {
         try {
             console.log(data)
             if (!data.code) return;
