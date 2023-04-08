@@ -30,7 +30,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (error) {
         return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
     } finally {
-        db.disconnect()
+        await db.disconnect()
     }
 };
 

@@ -67,7 +67,6 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
         if (order) {
             // verify is order is pay
             if (order.isPaid === true) {
-                await db.disconnect();
                 return res.send({ message: 'This order is already paid' });
             }
 
@@ -106,7 +105,6 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
                     }
                 }
                 await updateStatsAndStockProducts();
-                await db.disconnect();
 
                 const result = await sendMail({
                     from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
@@ -119,18 +117,17 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
                 return res.send({ message: 'Order update successfully', email: result.message });
 
             } catch (err) {
-                await db.disconnect();
                 return res.send({ message: 'update Stats And Stock Products fail' });
             }
 
 
         } else {
-            await db.disconnect();
             return res.status(400).send({ message: "Order not found" });
         }
     } catch (err) {
-        await db.disconnect();
         return res.status(400).send({ err: err, message: "Error Webhook insert order payment" });
+    } finally {
+        await db.disconnect();
     }
 }
 
@@ -143,7 +140,6 @@ const handleStripeChargeRefunded = async (req: NextApiRequest, res: NextApiRespo
         if (order) {
             // verify is order is pay
             if (order.isRefund === true) {
-                await db.disconnect();
                 return res.send({ message: 'This order is already refund' });
             }
 
@@ -166,8 +162,6 @@ const handleStripeChargeRefunded = async (req: NextApiRequest, res: NextApiRespo
 
             const user = await User.findById(order.user, { email: 1 })
 
-            await db.disconnect();
-
             if (user && user?.email) {
                 const result = await sendMail({
                     from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
@@ -182,12 +176,12 @@ const handleStripeChargeRefunded = async (req: NextApiRequest, res: NextApiRespo
             return res.send({ message: "Order refund is successfully updated" });
 
         } else {
-            await db.disconnect();
             return res.status(404).send({ message: "Order is not found " + session.id });
         }
     } catch (error) {
-        await db.disconnect();
         return res.status(500).send({ message: "A error is occured", error: error });
+    } finally {
+        await db.disconnect();
     }
 }
 
