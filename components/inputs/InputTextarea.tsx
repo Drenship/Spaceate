@@ -1,36 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEventHandler } from 'react';
 
 type Props = {
-    title: string,
-    description: string,
+    title: string;
+    description: string;
     input: {
-        name: string,
-        defaultValue: string,
-        placeholder: string
-    }
-    onChange: (e: React.BaseSyntheticEvent) => void
-}
+        name: string;
+        defaultValue: string;
+        placeholder: string;
+    };
+    onChange?: ChangeEventHandler<HTMLTextAreaElement>;
+};
 
-export default function InputTextarea({ title, description, input, onChange }: Props) {
+const InputTextarea: React.FC<Props> = ({ title, description, input, onChange = () => {} }) => {
     const { name, defaultValue, placeholder } = input;
 
-    const [height, setHeight] = useState(0);
+    const [height, setHeight] = useState<number>(0);
 
     const onResize = () => {
         const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-        textarea.style.height = 'auto';
-        textarea.style.height = (textarea.scrollHeight+30) + 'px';
+        if (textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 30 + 'px';
+        }
     };
-    
-    useEffect(onResize, [height]);
 
+    useEffect(onResize, [height]);
     useEffect(() => {
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
     }, []);
 
     return (
-        <div className='col-span-full'>
+        <div className="col-span-full">
             <p className="text-base font-medium leading-none text-gray-800">{title}</p>
             <textarea
                 name={name}
@@ -39,11 +40,15 @@ export default function InputTextarea({ title, description, input, onChange }: P
                 className="w-full p-3 mt-4 border border-gray-300 rounded outline-none focus:bg-gray-50"
                 style={{ height }}
                 onChange={(event) => {
-                    setHeight(event.target.scrollHeight)
-                    onChange(event)
+                    setHeight(event.target.scrollHeight);
+                    onChange(event);
                 }}
             />
-            {description && <p className="mt-3 text-xs leading-[15px] text-gray-600">{description}</p>}
+            {description && (
+                <p className="mt-3 text-xs leading-[15px] text-gray-600">{description}</p>
+            )}
         </div>
     );
-}
+};
+
+export default InputTextarea;

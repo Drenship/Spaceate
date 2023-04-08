@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { generateUUID, replaceURL } from '@libs/utils';
 
 type Props = {
@@ -31,14 +31,16 @@ type SIProps = {
 }
 
 const ShowImage = ({ image, imageClass, setRemoveItem, setUrls }: SIProps) => {
-    const removeHandler = (e: React.BaseSyntheticEvent) => {
+    const removeHandler = useCallback((e: React.BaseSyntheticEvent) => {
         e.preventDefault();
-        setRemoveItem(image)
-        setUrls(prev => prev.filter(c => c !== image))
-    }
+        setRemoveItem(image);
+        setUrls(prev => prev.filter(c => c !== image));
+    }, [image, setRemoveItem, setUrls]);
 
     return (
-        <img className={`rounded-lg cursor-pointer ${imageClass}`} alt="" src={replaceURL(image)} onDoubleClick={removeHandler} />
+        <React.Fragment>
+            <img className={`rounded-lg cursor-pointer ${imageClass}`} alt="" src={image} onDoubleClick={removeHandler} />
+        </React.Fragment>
     )
 }
 
@@ -50,6 +52,24 @@ export default function InputFiles({ multiple, input, onChange, setRemoveItem }:
     const [files, setReturnFiles] = useState<any>([]);
     const uuid = useMemo(generateUUID, []);
 
+    const [base64Images, setBase64Images] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (files.length === 0) return;
+        const newImages: string[] = [];
+    
+        for (let index = 0; index < files.length; index++) {
+            const reader = new FileReader();
+            reader.onload = function (e: any) {
+                newImages.push(e.target.result);
+                setBase64Images([...newImages]);
+            };
+            reader.readAsDataURL(files[index]);
+        }
+    }, [files]);
+
+    const combinedImages = useMemo(() => [...urls, ...base64Images], [urls, base64Images]);
+
     const _ShowMiniature = (e: React.BaseSyntheticEvent) => {
         if (!e.currentTarget.files[0]) return;
         if (multiple === true) {
@@ -59,22 +79,6 @@ export default function InputFiles({ multiple, input, onChange, setRemoveItem }:
         }
     };
 
-    useEffect(() => {
-        if (files.length === 0) return;
-        document.getElementById(uuid)!.innerHTML = "";
-        if (multiple === true) {
-            for (let index = 0; index < urls.length; index++) {
-                document.getElementById(uuid)!.innerHTML += `<img class="rounded-lg ${imageClass}" alt="" src="${replaceURL(urls[index])}"/>`;
-            }
-        }
-        for (let index = 0; index < files.length; index++) {
-            const reader = new FileReader();
-            reader.onload = function (e: any) {
-                document.getElementById(uuid)!.innerHTML += `<img class="rounded-lg ${imageClass}" alt="" src="${e.target.result}"/>`;
-            };
-            reader.readAsDataURL(files[index]);
-        }
-    }, [files]);
 
     const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
@@ -88,15 +92,15 @@ export default function InputFiles({ multiple, input, onChange, setRemoveItem }:
     return (
         <div className='flex flex-col w-full'>
             <div id={uuid} className="grid self-center w-full grid-cols-3 gap-5 md:grid-cols-5">
-                {
-                    urls?.map((data, key) => <ShowImage
+                {combinedImages.map((data, key) => (
+                    <ShowImage
                         key={key}
                         imageClass={imageClass}
                         image={data}
                         setRemoveItem={setRemoveItem}
                         setUrls={setUrls}
-                    />)
-                }
+                    />
+                ))}
             </div>
             <input
                 type='file'

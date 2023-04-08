@@ -30,25 +30,25 @@ interface Review {
 interface SearchHistoryItem {
     _id: string;
     query: string;
-    date: Date;
+    date: string;
 }
 
 interface RecentlyViewedItem {
     _id: string;
     productId: Types.ObjectId;
-    date: Date;
+    date: string;
 }
 
 interface Security {
     code: string;
-    codeEndDate: Date;
+    codeEndDate: string;
     _notif_connect: boolean;
     _2fa: boolean;
     _2fa_type: 'email' | 'phone';
     login_history: {
         ip: string | null;
         location: string | null;
-        date: Date;
+        date: string;
     }[];
 }
 
@@ -69,8 +69,8 @@ export interface TypeUser {
     searchHistory: string[];
     recentlyViewed: RecentlyViewedItem[];
     security: Security;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 
@@ -112,8 +112,8 @@ export interface TypeProduct {
     };
     isFeatured: boolean;
     isPublished: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface TypeCartItem extends TypeProduct {
@@ -187,14 +187,14 @@ export interface TypeOrder {
     isDelivered: boolean;
     isRefund: boolean;
     isRefundAsked: boolean;
-    cancelAt?: Date;
-    paidAt?: Date;
-    sendedAt?: Date;
-    deliveredAt?: Date;
-    refundAskAt?: Date;
-    refundAt?: Date;
-    createdAt: Date;
-    updatedAt: Date;
+    cancelAt?: string;
+    paidAt?: string;
+    sendedAt?: string;
+    deliveredAt?: string;
+    refundAskAt?: string;
+    refundAt?: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface FileInfo {
@@ -202,5 +202,5 @@ export interface FileInfo {
     size: number;
     url: string;
     mimetype: any,
-    uploadedAt: Date;
+    uploadedAt: string;
 }

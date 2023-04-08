@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-type Props = {
-    title: string,
-    description?: string,
+type InputTextProps = {
+    title: string;
+    description?: string;
     input: {
-        name: string,
-        defaultValue: string,
-        forceValue?: string,
-        placeholder: string
-    }
-    onChange?: (e: React.BaseSyntheticEvent) => void
-}
+        name: string;
+        defaultValue: string;
+        forceValue?: string;
+        placeholder: string;
+    };
+    onChange: (e: React.BaseSyntheticEvent) => void
+};
 
-export default function InputText({ title, description, input, onChange }: Props) {
-    const { name, defaultValue, forceValue, placeholder } = input;
-
+const InputText: FC<InputTextProps> = ({
+    title,
+    description,
+    input: { name, defaultValue, forceValue, placeholder },
+    onChange,
+}) => {
     return (
         <div>
             <p className="text-base font-medium leading-none text-gray-800">{title}</p>
@@ -26,11 +29,11 @@ export default function InputText({ title, description, input, onChange }: Props
                 placeholder={placeholder}
                 onChange={onChange}
             />
-            {description && <p className="mt-3 text-xs leading-[15px] text-gray-600">{description}</p>}
+            {description && (
+                <p className="mt-3 text-xs leading-[15px] text-gray-600">{description}</p>
+            )}
         </div>
     );
-}
-
-InputText.defaultProps = {
-    forceValue: '',
 };
+
+export default InputText;

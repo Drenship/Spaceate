@@ -8,9 +8,12 @@ import InputText from "@components/inputs/InputText";
 import InputCheckbox from "@components/inputs/InputCheckbox";
 import { Address } from "@libs/typings";
 import { fetchPostJSON } from "@libs/utils/api-helpers";
+import useUserStore from "@libs/hooks/modals/useUserStore";
+import InputRadio from "@components/inputs/InputRadio";
 
 
 const EditUserAddressModal = () => {
+    const useUser = useUserStore();
     const editUserAddressModal = useEditUserAddressModal();
     const [isLoading, setIsLoading] = useState(false);
     const [address, setAddress] = useState<Address>({
@@ -23,7 +26,7 @@ const EditUserAddressModal = () => {
         addressType: 'shipping',
         isDefault: false
     });
-    
+
     useEffect(() => {
         if (['edit', 'delete'].includes(editUserAddressModal.mode) && editUserAddressModal.address) {
             setAddress(editUserAddressModal.address)
@@ -95,12 +98,13 @@ const EditUserAddressModal = () => {
 
         } finally {
             setIsLoading(false)
+            useUser.fetchUser();
         }
     }
 
     const bodyContent = (
         <div className="flex flex-col gap-4">
-            <div className='grid w-full grid-cols-1 gap-5 py-5 mt-5 col-span-full md:grid-cols-2'>
+            <div className='grid w-full grid-cols-1 gap-5 py-5 mt-5 text-black col-span-full md:grid-cols-2'>
 
                 <InputText
                     title="Nom prénom"
@@ -170,7 +174,25 @@ const EditUserAddressModal = () => {
                     onChange={(e: React.BaseSyntheticEvent) => setAddress(prev => ({ ...prev, country: e.target.value }))}
                 />
 
+                <InputRadio
+                    label="Address de livraison"
+                    input={{
+                        name: "addressType",
+                        value: "shipping",
+                        checked: address.addressType === "shipping" ? true : false,
+                    }}
+                    onChange={(e: React.BaseSyntheticEvent) => setAddress(prev => ({ ...prev, addressType: e.target.value }))}
+                />
 
+                <InputRadio
+                    label="Address de facturation"
+                    input={{
+                        name: "addressType",
+                        value: "billing",
+                        checked: address.addressType === "billing" ? true : false,
+                    }}
+                    onChange={(e: React.BaseSyntheticEvent) => setAddress(prev => ({ ...prev, addressType: e.target.value }))}
+                />
 
                 <div className="text-black col-span-full">
                     <InputCheckbox

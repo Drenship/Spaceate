@@ -11,7 +11,7 @@ type PropsOption = {
     setUpdate: (value: OptionType) => void
 }
 
-type PropsInput = {
+type InputSelectProps = {
     title: string,
     description: string,
     input: {
@@ -19,7 +19,7 @@ type PropsInput = {
         defaultValue: OptionType,
         value?: OptionType
     },
-    options: OptionType[]
+    options: OptionType[],
     setChange?: (value: OptionType) => void
 }
 
@@ -38,11 +38,7 @@ function Option({ option, setUpdate }: PropsOption) {
     )
 }
 
-InputSelect.defaultProps = {
-    setChange: (value: OptionType) => { }
-}
-
-export default function InputSelect({ title, description, input, options, setChange }: PropsInput) {
+const InputSelect: React.FC<InputSelectProps> = ({ title, description, input, options, setChange }) => {
 
     const { name, defaultValue, value } = input;
 
@@ -50,9 +46,12 @@ export default function InputSelect({ title, description, input, options, setCha
     const [seeMenu, setSeeMenu] = useState(false);
     const [inputValue, setInputValue] = useState<OptionType>(value || defaultValue);
 
-    useEscapeListener(seeMenuRef, () => setSeeMenu(false))
+    useEscapeListener(seeMenuRef, () => setSeeMenu(false));
     useEffect(() => { setInputValue(value || defaultValue) }, [defaultValue, value]);
-    useEffect(() => { setChange(inputValue) }, [inputValue]);
+    useEffect(() => { setChange && setChange(inputValue) }, [inputValue, setChange]);
+
+    const getValue = (option: OptionType) => option._id || option.name;
+    const cachedValue = useMemo(() => getValue(value || inputValue), [value, inputValue]);
 
     return (
         <div>
@@ -93,7 +92,7 @@ export default function InputSelect({ title, description, input, options, setCha
                         type="hidden"
                         className='hidden'
                         name={name}
-                        value={value ? value._id || value.name : inputValue._id || inputValue.name}
+                        value={cachedValue}
                     />
                 </div>
             </div>
@@ -102,3 +101,9 @@ export default function InputSelect({ title, description, input, options, setCha
         </div>
     );
 }
+
+InputSelect.defaultProps = {
+    setChange: (value: OptionType) => { }
+}
+
+export default InputSelect;

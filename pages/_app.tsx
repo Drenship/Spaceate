@@ -19,6 +19,7 @@ import LoginModal from '@components/Modals/LoginModal';
 import RegisterModal from '@components/Modals/RegisterModal';
 import EditUserAddressModal from '@components/Modals/EditUserAddressModal';
 import { Analytics } from '@vercel/analytics/react';
+import ConfirmCodeModal from '@components/Modals/ConfirmCodeModal';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -50,7 +51,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
 
   useEffect(() => {
     if (!useUser.user && useUser.isLoading === false && hasMounted) {
-      useUser.setIsLoading(true)
       useUser.fetchUser();
     }
   }, [hasMounted])
@@ -79,6 +79,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
           <LoginModal />
           <RegisterModal />
           <EditUserAddressModal />
+          <ConfirmCodeModal />
 
         </NotifyContextProvider>
 

@@ -19,7 +19,6 @@ const useUserStore = create<UserStore>((set) => ({
     clearUser: () => set({ user: null }),
     fetchUser: async () => {
         set({ isLoading: true })
-        console.log('fetchUser called')
         try {
             const { user } = await fetchGetJSON("/api/user");
             if(user) {
@@ -28,7 +27,7 @@ const useUserStore = create<UserStore>((set) => ({
         } catch (error) {
             console.error(error);
         } finally {
-            //set({ isLoading: false })
+            set({ isLoading: false })
         }
     },
 }));

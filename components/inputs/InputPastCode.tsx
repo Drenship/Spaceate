@@ -1,99 +1,75 @@
 import isMobile from 'is-mobile';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 interface InputPastCodeProps {
-    setValue: (code: string) => void
-    codeLength: number
+    setValue: (code: string) => void;
+    codeLength?: number;
 }
 
-InputPastCode.defaultProps = {
-    codeLength: 7
-}
-
-export default function InputPastCode({ setValue, codeLength }: InputPastCodeProps) {
-
+const InputPastCode: FC<InputPastCodeProps> = ({ setValue, codeLength = 7 }) => {
     const [code, setCode] = useState<string[]>(Array(codeLength).fill(''));
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const hiddenInputRef = useRef<HTMLInputElement>(null);
 
     const mobile = isMobile();
 
-    const handleHiddenInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleHiddenInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value;
-        const newCode = input.split("").slice(0, codeLength);
-        const x = newCode.length !== codeLength ? codeLength - newCode.length : codeLength
-        const fixNewCode = [...newCode, ...Array(x).fill('')];
-        setCode((prevCode) => [...fixNewCode, ...prevCode.slice(newCode.length)]);
+        const newCode = input.split('').slice(0, codeLength);
+        const remaining = codeLength - newCode.length;
+        setCode([...newCode, ...Array(remaining).fill('')]);
     };
 
-    const handlePasteOnContainer = (
-        e: React.ClipboardEvent<HTMLDivElement>
-    ) => {
-        const input = e.clipboardData.getData("text");
-        const newCode = input.split("").slice(0, codeLength);
-        setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+    const handlePasteOnContainer = (e: React.ClipboardEvent<HTMLDivElement>) => {
+        const input = e.clipboardData.getData('text');
+        const newCode = input.split('').slice(0, codeLength);
+        setCode(newCode);
         const focusIndex = Math.min(newCode.length - 1, code.length - 1);
         inputRefs.current[focusIndex]?.focus();
     };
 
-    const handleCodeChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        index: number
-    ) => {
+    const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const input = e.target.value;
+
         if (input.length > 1) {
             const newCode = input.split('').slice(0, codeLength);
-            setCode((prevCode) => [...newCode, ...prevCode.slice(newCode.length)]);
+            setCode(newCode);
             inputRefs.current[newCode.length - 1]?.focus();
             return;
         }
 
-        const newCode = [...code];
-        newCode[index] = input;
-        setCode(newCode);
+        setCode((prevCode) => {
+            const newCode = [...prevCode];
+            newCode[index] = input;
+            return newCode;
+        });
 
         if (input && index < code.length - 1) {
-            // Focus on the next input field
             inputRefs.current[index + 1]?.focus();
         }
     };
 
-    const handleKeyDown = (
-        e: React.KeyboardEvent<HTMLInputElement>,
-        index: number
-    ) => {
-        if (
-            e.key === 'Backspace' &&
-            !e.currentTarget.value &&
-            index > 0
-        ) {
-            // Focus on the previous input field
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === 'Backspace' && !e.currentTarget.value && index > 0) {
             inputRefs.current[index - 1]?.focus();
         }
     };
 
-    useEffect(() => setValue(code.join('')), [code]);
+    useEffect(() => setValue(code.join('')), [code, setValue]);
 
     return (
-        <div
-            className="relative flex flex-col justify-center"
-            onPaste={(e) => handlePasteOnContainer(e)}
-        >
-            {
-                mobile && (
-                    <input
-                        ref={hiddenInputRef}
-                        type="text"
-                        className="absolute z-0 w-full h-full opacity-0 cursor-default"
-                        value={code.join("")}
-                        onChange={handleHiddenInputChange}
-                        onKeyDown={handleKeyDown}
-                        autoFocus
-                    />
-                )
-            }
+        <div className="relative flex flex-col justify-center" onPaste={handlePasteOnContainer}>
+            {mobile && (
+                <input
+                    ref={hiddenInputRef}
+                    type="text"
+                    className="absolute z-0 w-full h-full opacity-0 cursor-default"
+                    value={code.join('')}
+                    onChange={handleHiddenInputChange}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                />
+            )}
             <div className="z-10 flex items-center justify-between space-x-2">
                 {code.map((value, index) => (
                     <input
@@ -101,7 +77,8 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
                         key={index}
                         type="text"
                         maxLength={1}
-                        className={`w-10 font-mono text-3xl text-center border-b-2 focus:border-blue-500 focus:outline-none ${value ? "border-blue-500" : "border-gray-300"}`}
+                        className={`w-10 font-mono text-3xl text-center border-b-2 focus:border-blue-500 focus:outline-none ${value ? 'border-blue-500' : 'border-gray-300'
+                            }`}
                         value={value}
                         onChange={(e) => handleCodeChange(e, index)}
                         onKeyDown={(e) => handleKeyDown(e, index)}
@@ -111,3 +88,5 @@ export default function InputPastCode({ setValue, codeLength }: InputPastCodePro
         </div>
     );
 }
+
+export default InputPastCode;

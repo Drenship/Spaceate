@@ -1,20 +1,34 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { generateUUID } from '@libs/utils';
 
-type Props = {
+type InputCheckboxProps = {
     title: string,
     description?: string,
     input: {
         name: string,
-        checked: boolean
+        checked: boolean,
     }
     onChange?: (e: React.BaseSyntheticEvent) => void
 }
 
-export default function InputCheckbox({ title, description, input, onChange }: Props) {
-    const { name, checked } = input;
+const InputCheckbox: React.FC<InputCheckboxProps> = ({ title, description, input, onChange }) => {
+    const { name } = input;
 
+    const [checked, setChecked] = useState(input.checked);
     const uuid = useMemo(generateUUID, []);
+
+    useEffect(() => {
+        setChecked(input.checked);
+    }, [input.checked]);
+
+    const handleChange = useCallback((e: React.BaseSyntheticEvent) => {
+        const newChecked = e.target.checked;
+        setChecked(newChecked);
+
+        if (onChange) {
+            onChange(e);
+        }
+    }, [onChange]);
 
     return (
         <div className="flex">
@@ -24,15 +38,17 @@ export default function InputCheckbox({ title, description, input, onChange }: P
                     aria-describedby={"helper-" + uuid}
                     name={name}
                     type="checkbox"
-                    defaultChecked={checked}
-                    onChange={onChange}
+                    checked={checked}
+                    onChange={handleChange}
                     className="w-4 h-4 rounded outline-none"
                 />
             </div>
             <div className="ml-2 text-sm">
                 <label htmlFor={uuid} className="font-medium text-gray-90">{title}</label>
-                {description && <p id={"helper-" + uuid} className="text-xs font-normal text-gray-500">{description}</p> }
+                {description && <p id={"helper-" + uuid} className="text-xs font-normal text-gray-500">{description}</p>}
             </div>
         </div>
     );
 }
+
+export default InputCheckbox;

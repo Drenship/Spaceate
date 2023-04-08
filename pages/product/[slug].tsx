@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil"
 import isMobile from "is-mobile";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard } from "swiper";
+import { getSession, useSession } from 'next-auth/react';
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -17,6 +18,7 @@ import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
 import { replaceURL, teinteDeLimage } from '@libs/utils';
 import { useClickOutside, useEscapeGallery, useEscapeListener, useSwipeAndDoubleTap } from '@libs/hooks';
+import Order from '@libs/models/Order';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import CommentaireCard from '@components/cards/CommentaireCard'
@@ -24,8 +26,6 @@ import BlurImage from '@components/contents/BlurImage'
 import InputNumber from '@components/inputs/InputNumber'
 import CarouselProduct from '@components/Carousel/CarouselProduct';
 import Rating from "@components/contents/Rating"
-import { getSession, useSession } from 'next-auth/react';
-import Order from '@libs/models/Order';
 
 
 type Props = {

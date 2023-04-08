@@ -85,7 +85,7 @@ const UserOrderCard: React.FC<IUserOrderCardProps> = ({ order, setOrders }) => {
                                 <Link href={`/documents/download/${splitString(order._id)}/invoice.pdf`} className="hidden md:block">
                                     <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">Voire la facture</li>
                                 </Link>
-                                
+
                                 <li className="px-3 py-3 text-sm font-normal leading-3 tracking-normal text-gray-600 cursor-pointer hover:bg-indigo-700 hover:text-white">
                                     <PDFDownloadLink
                                         document={<Invoice order={order} />}

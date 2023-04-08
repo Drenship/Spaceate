@@ -2,43 +2,21 @@ import React, { useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getSession, useSession } from 'next-auth/react';
+import { getSession } from 'next-auth/react';
 import { AnnotationIcon, CheckIcon } from '@heroicons/react/solid';
 import { RxCross1 } from 'react-icons/rx';
 
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
 import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import { TypeOrder, TypeUser } from '@libs/typings';
+import useUserStore from '@libs/hooks/modals/useUserStore';
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import CommentaireCard from '@components/cards/CommentaireCard';
 import TableProfilOrderLine from '@components/TableLines/TableProfilOrderLine';
+import UserProfilOrderCard from '@components/cards/UserProfilOrderCard';
 
-
-interface ProfilOrderCardProps {
-    order: TypeOrder
-}
-
-const ProfilOrderCard = ({ order }: ProfilOrderCardProps) => (
-    <div className="flex flex-col overflow-hidden border rounded-xl shadow-lg md:max-w-[320px] max-w-[80vw] min-w-[320px] w-full cursor-pointer button-click-effect">
-
-        <div className="relative w-full h-40">
-            <Image
-                src={replaceURL(order.orderItems[0].image)}
-                layout='fill'
-                objectFit="cover"
-            />
-        </div>
-        <div className="p-5">
-            <h3 className="text-lg font-bold">{order.shippingAddress.fullName}</h3>
-            <p className="text-sm text-gray-600 truncate">{order.shippingAddress.address}</p>
-            <p className="font-bold text-right">{fixedPriceToCurrency(order.totalPrice)}</p>
-        </div>
-
-    </div>
-)
 
 interface Props {
     initialOrders: TypeOrder[]
@@ -46,8 +24,8 @@ interface Props {
 
 const UserProfil: NextPage<Props> = ({ initialOrders }) => {
 
-    const { data: session } = useSession();
-    const user = session && session.user as TypeUser || null;
+    const useUser = useUserStore();
+    const user = useUser.user;
 
     const [member, orders, orderInAwait] = useMemo(() => {
         if (!user) return [0, []];
@@ -60,16 +38,11 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
     }, [user, initialOrders]);
 
     const [sendMailDisablerd, setSendMailDisablerd] = useState(false)
+
     const sendMailForVerify = async () => {
-
-        if (!user) {
-            return;
-        }
-
-        if (user?.email_is_verified) {
-            return;
-        }
-
+        if (!user) return;
+        if (user?.email_is_verified) return;
+        
         setSendMailDisablerd(true)
 
         const result = await fetchPostJSON("/api/mailer", {
@@ -85,11 +58,10 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
             setSendMailDisablerd(false)
         }
     }
-    console.group(user)
+
     return (
         <BasescreenWrapper title="Profile" footer={true}>
             <div className='block px-5 my-12 lg:flex max-w-[1400px] w-full'>
-
 
                 { /* Left */}
                 <div className='flex flex-col items-center justify-start rounded-xl w-full lg:max-w-[320px] mr-0 lg:mr-16 lg:py-4 lg:px-6 lg:border flex-shrink-0'>
@@ -127,7 +99,7 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
                             <p>Adresse e-mail</p>
                         </div>
                         {
-                            !user?.email_is_verified && <button
+                            !user?.email_is_verified && !useUser.isLoading && <button
                                 className='py-3 mt-2 font-semibold border border-black rounded-lg px-7 button-click-effect'
                                 onClick={sendMailForVerify}
                                 disabled={sendMailDisablerd}
@@ -185,8 +157,8 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
                             {
                                 orders
                                     .slice(0, 4)
-                                    .map((item: any, key: any) => <ProfilOrderCard
-                                        key={key}
+                                    .map(item => <UserProfilOrderCard
+                                        key={item._id}
                                         order={item}
                                     />)
                             }
