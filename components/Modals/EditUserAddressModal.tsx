@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 import Modal from "@components/Modals/Modal";
 import useEditUserAddressModal from "@libs/hooks/modals/useEditUserAddressModal";
@@ -56,10 +57,10 @@ const EditUserAddressModal = () => {
                     }
                 })
                 if (result.success) {
+                    toast.success('Addresse ajouté avec succée');
                     editUserAddressModal.onClose();
-                    // toast
                 } else {
-                    // toast
+                    toast.error('Echec de l\'insertion');
                 }
             }
 
@@ -72,10 +73,10 @@ const EditUserAddressModal = () => {
                     }
                 })
                 if (result.success) {
+                    toast.success('Addresse mise à jour');
                     editUserAddressModal.onClose();
-                    // toast
                 } else {
-                    // toast
+                    toast.error('Echec de la mise à jour');
                 }
             }
 
@@ -87,10 +88,10 @@ const EditUserAddressModal = () => {
                     }
                 })
                 if (result.success) {
+                    toast.success('Addresse supprimer');
                     editUserAddressModal.onClose();
-                    // toast
                 } else {
-                    // toast
+                    toast.error('Echec de la suppression');
                 }
             }
 
@@ -201,7 +202,7 @@ const EditUserAddressModal = () => {
                             name: "isDefault",
                             checked: address.isDefault || false,
                         }}
-                        onChange={(e: React.BaseSyntheticEvent) => setAddress(prev => ({ ...prev, isDefault: e.target.value ? true : false }))}
+                        onChange={(e: React.BaseSyntheticEvent) => setAddress(prev => ({ ...prev, isDefault: e.target.checked ? true : false }))}
                     />
                 </div>
 

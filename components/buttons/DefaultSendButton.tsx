@@ -3,6 +3,7 @@ import React from 'react';
 interface Props {
     title: string,
     type?: 'submit' | 'button',
+    className?: string,
     isDisabled?: boolean
     isLoading?: boolean
     onClick?: (e: React.BaseSyntheticEvent) => void;
@@ -14,10 +15,10 @@ DefaultSendButton.defaultProps = {
     isLoading: false
 }
 
-export default function DefaultSendButton({ title, type, onClick, isLoading, isDisabled }: Props) {
+export default function DefaultSendButton({ title, type, className, onClick, isLoading, isDisabled }: Props) {
     return (
         <button
-            className='flex items-center justify-center px-8 py-4 font-semibold text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100'
+            className={`flex items-center justify-center px-8 py-4 font-semibold text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100 ${className}`}
             type={type}
             disabled={isDisabled}
             onClick={onClick}

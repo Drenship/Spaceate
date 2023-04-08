@@ -1,8 +1,9 @@
+import { PASSWORD_REQUIRED } from '@config/index';
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
 import { verifyPassword } from '@libs/utils/formvalidate';
 import React, { useCallback, useState } from 'react';
 
-type InputPasswordProps = {
+interface InputPasswordProps {
     title: string,
     description?: string,
     input: {
@@ -20,21 +21,23 @@ type InputPasswordProps = {
     onChange?: (e: React.BaseSyntheticEvent) => void
 }
 
+
 const InputPassword: React.FC<InputPasswordProps> = ({ title, description, input, onChange }) => {
     const { name, defaultValue, placeholder, rules } = input;
+    const [rulesByDefault] = useState(rules || PASSWORD_REQUIRED)
 
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isValid, setIsValid] = useState<boolean | null>(null);
 
     const getIsVerifyPassword = useCallback(() => {
-        if(!rules) return;
-        const [valid, object] = password.length > 0 ? verifyPassword(password, rules) : [null, {}]
+        if (!rulesByDefault) return;
+        const [valid, object] = password.length > 0 ? verifyPassword(password, rulesByDefault) : [null, {}]
         setIsValid(valid);
     }, [password]);
 
     return (
-        <div>
+        <div className='w-full'>
             <p className="text-base font-medium leading-none text-gray-800">{title}</p>
             <div className='relative mt-4'>
                 <input
@@ -48,10 +51,10 @@ const InputPassword: React.FC<InputPasswordProps> = ({ title, description, input
                     placeholder={placeholder}
                     onChange={(e) => {
                         onChange(e);
-                        if(!rules) return;
                         const value = e.target.value;
                         setPassword(value);
-                        const [valid] = verifyPassword(value, rules)
+                        if (!rulesByDefault) return;
+                        const [valid] = verifyPassword(value, rulesByDefault)
                         setIsValid(valid);
                     }}
                     onBlur={getIsVerifyPassword}

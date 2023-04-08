@@ -9,9 +9,7 @@ import {
     useForm
 } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { AiFillGithub } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-import { useRecoilCallback, useRecoilState } from "recoil";
 
 import Modal from "@components/Modals/Modal";
 import Button from "@components/buttons/button";
@@ -52,7 +50,7 @@ const LoginModal = () => {
                     setIsLoading(false);
 
                     if (callback?.ok) {
-                        toast.success('Logged in');
+                        toast.success('Connecté');
                         router.refresh();
                         loginModal.onClose();
                     }

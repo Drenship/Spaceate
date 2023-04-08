@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 
 import { fetchPostJSON } from '@libs/utils/api-helpers';
-import { validateEmail } from '@libs/utils/formvalidate';
+import { validateEmail, verifyPassword } from '@libs/utils/formvalidate';
 import useEditUserAddressModal from '@libs/hooks/modals/useEditUserAddressModal';
 import useConfirmCodeModal from "@libs/hooks/modals/useConfirmCodeModal";
 import useUserStore from '@libs/hooks/modals/useUserStore';
@@ -16,6 +16,10 @@ import InputEmail from '@components/inputs/InputEmail';
 import DefaultSendButton from '@components/buttons/DefaultSendButton';
 import UserAddressCard from '@components/cards/UserAddressCard';
 import InputPassword from '@components/inputs/InputPassword';
+import { PASSWORD_REQUIRED } from '@config/index';
+import { CheckIcon } from '@heroicons/react/solid';
+import { RxCross1 } from 'react-icons/rx';
+import { toast } from 'react-hot-toast';
 
 interface Props { }
 
@@ -25,10 +29,13 @@ const UserSettings: NextPage<Props> = () => {
     const user = useUser.user;
 
     const useCodeStore = useConfirmCodeModal();
+    const editUserAddressModal = useEditUserAddressModal();
 
-    const [activeTab, setActiveTab] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(false)
-
+    const [isLoadingPassword, setIsLoadingPassword] = useState<boolean>(false)
+    const [activeTab, setActiveTab] = useState<number>(1);
+    
+    const formEmailRef = useRef<HTMLFormElement>(null);
     const [updateEmail, setUpdateEmail] = useState<{
         newEmail: string | null,
         message: string | null,
@@ -39,9 +46,31 @@ const UserSettings: NextPage<Props> = () => {
         isSendedEmail: false
     });
 
-    
+    const formPasswordRef = useRef<HTMLFormElement>(null);
+    const [updatePassword, setUpdatePassword] = useState<{
+        oldPassword: string,
+        newPassword: string,
+        confirmPassword: string,
+    }>({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
 
-    const editUserAddressModal = useEditUserAddressModal();
+    const [isValidePasswords, isValidConditions] = useMemo(() => {
+
+        const hasOldPassword = updatePassword.oldPassword.length > 0
+        const isSamePassWord = updatePassword.newPassword === updatePassword.confirmPassword
+        const [isValidate, isValidConditions] = verifyPassword(updatePassword.newPassword, PASSWORD_REQUIRED)
+
+        return [isValidate && isSamePassWord && hasOldPassword, {
+            hasOldPassword,
+            ...isValidConditions,
+            isSamePassWord
+        }]
+    }, [updatePassword])
+
+
 
     const handleUpdateNewEmail = async () => {
         try {
@@ -69,6 +98,9 @@ const UserSettings: NextPage<Props> = () => {
                 })
 
                 setUpdateEmail(prev => ({ ...prev, isSendedEmail: true }))
+                toast.success(result.message || "Un email vous à été envoyer.");
+            } else {
+                toast.error(result.message || "Une erreur est survenue.");
             }
             setUpdateEmail(prev => ({ ...prev, message: result.message }))
         } catch (error) {
@@ -78,7 +110,6 @@ const UserSettings: NextPage<Props> = () => {
         }
 
     }
-
     const handleConfirmCodeOfNewEmail = async (data) => {
         try {
             console.log(data)
@@ -91,16 +122,55 @@ const UserSettings: NextPage<Props> = () => {
             })
 
             if (result.success) {
+                if (formEmailRef.current) {
+                    formEmailRef.current.reset();
+                }
                 useCodeStore.onClose()
-                setUpdateEmail(prev => ({ ...prev, isSendedEmail: false }))
+                setUpdateEmail({
+                    newEmail: null,
+                    message: null,
+                    isSendedEmail: false
+                })
                 useUser.fetchUser()
+                toast.success(result.message || "Votre email à bien été mit à jour.");
             } else {
-
+                toast.error(result.message || "Une erreur est survenue.");
             }
         } catch (error) {
-            console.log(error)
+            toast.error(error?.message || "Une erreur est survenue.");
         } finally {
             useCodeStore.setLoading(false)
+        }
+    }
+
+    const handleSubmitPassword = async () => {
+        try {
+            if (!isValidePasswords) return toast.error("Les conditions ne sont pas remplit.");
+            setIsLoadingPassword(true)
+
+            const result = await fetchPostJSON("/api/user/update", {
+                updateType: "UPDATE_PASSWORD",
+                data: updatePassword
+            })
+
+            if (result.success) {
+                if (formPasswordRef.current) {
+                    formPasswordRef.current.reset();
+                }
+                toast.success(result.message);
+                setUpdatePassword({
+                    oldPassword: "",
+                    newPassword: "",
+                    confirmPassword: ""
+                })
+            } else {
+                toast.error(result.message || "Une erreur est survenue.");
+            }
+
+        } catch (error) {
+            toast.error(error?.message || "Une erreur est survenue.");
+        } finally {
+            setIsLoadingPassword(false)
         }
     }
 
@@ -129,7 +199,12 @@ const UserSettings: NextPage<Props> = () => {
                             { /* Update name and other information */}
 
                             <div className='grid w-full grid-cols-1 mt-5 col-span-full md:grid-cols-2'>
-                                <div className='w-full max-w-lg'>
+                                <TypographyH4 className='font-semibold col-span-full'>Changer d'addresse email</TypographyH4>
+                                <form 
+                                    ref={formEmailRef}
+                                    onSubmit={e => e.preventDefault()} 
+                                    className='w-full max-w-lg'
+                                    >
                                     <InputEmail
                                         title="Nouvelle email"
                                         input={{
@@ -137,9 +212,9 @@ const UserSettings: NextPage<Props> = () => {
                                             defaultValue: "",
                                             placeholder: "entrer votre nouvelle email ...",
                                         }}
-                                        onChange={(e: React.BaseSyntheticEvent) => setUpdateEmail(prev => ({ ...prev, newEmail: e.target.value })) }
+                                        onChange={(e: React.BaseSyntheticEvent) => setUpdateEmail(prev => ({ ...prev, newEmail: e.target.value }))}
                                     />
-                                </div>
+                                </form>
                                 <div className='flex items-center justify-end w-full space-x-2'>
                                     {
                                         updateEmail.isSendedEmail ? (
@@ -165,44 +240,92 @@ const UserSettings: NextPage<Props> = () => {
 
 
                             <div className='w-full pt-5 mt-5 border-t'>
-                                <div className='grid w-full max-w-lg grid-cols-1 space-y-5 col-span-full'>
-                                    <InputPassword
-                                        title="Ancien mot de passe"
-                                        input={{
-                                            name: "old_password",
-                                            defaultValue: "",
-                                            placeholder: "Ancien mot de passe ...",
-                                        }}
-                                    />
+                                <TypographyH4 className='font-semibold col-span-full'>Modifier le mot de passe</TypographyH4>
+                                <div className='flex justify-between max-md:flex-col'>
+                                    <form
+                                        ref={formPasswordRef}
+                                        onSubmit={e => e.preventDefault()}
+                                        className='flex flex-col items-center justify-center w-full max-w-lg space-y-5 col-span-full'
+                                    >
+                                        <InputPassword
+                                            title="Ancien mot de passe"
+                                            input={{
+                                                name: "oldPassword",
+                                                defaultValue: "",
+                                                placeholder: "Ancien mot de passe ...",
+                                            }}
+                                            onChange={(e: React.BaseSyntheticEvent) => setUpdatePassword(prev => ({ ...prev, oldPassword: e.target.value }))}
+                                        />
+                                        <InputPassword
+                                            title="Nouveau mot de passe"
+                                            input={{
+                                                name: "newPassword",
+                                                defaultValue: "",
+                                                placeholder: "Nouveau mot de passe ...",
+                                            }}
+                                            onChange={(e: React.BaseSyntheticEvent) => setUpdatePassword(prev => ({ ...prev, newPassword: e.target.value }))}
+                                        />
+                                        <InputPassword
+                                            title="Confirmer le mot de passe"
+                                            input={{
+                                                name: "confirmPassword",
+                                                defaultValue: "",
+                                                placeholder: "Confirmer le mot de passe ...",
+                                            }}
+                                            onChange={(e: React.BaseSyntheticEvent) => setUpdatePassword(prev => ({ ...prev, confirmPassword: e.target.value }))}
 
-                                    <InputPassword
-                                        title="Nouveau mot de passe"
-                                        input={{
-                                            name: "new_password",
-                                            defaultValue: "",
-                                            placeholder: "Nouveau mot de passe ...",
-                                        }}
-                                    />
+                                        />
+                                        <DefaultSendButton
+                                            title='Mettre à jour le mot de passe'
+                                            className="w-full"
+                                            isDisabled={isLoadingPassword}
+                                            isLoading={isLoadingPassword}
+                                            onClick={handleSubmitPassword}
+                                        />
+                                    </form>
 
-                                    <InputPassword
-                                        title="Confirmer le mot de passe"
-                                        input={{
-                                            name: "new_conf_password",
-                                            defaultValue: "",
-                                            placeholder: "Confirmer le mot de passe ...",
-                                        }}
-                                    />
-
-                                    <DefaultSendButton
-                                        title='Mettre à jour le mot de passe'
-                                        isDisabled={isLoading}
-                                        isLoading={isLoading}
-                                        onClick={editUserAddressModal.onOpenAdd}
-                                    />
+                                    <div className='flex items-center justify-center w-full'>
+                                        <div className='w-full max-w-lg p-4 space-y-3'>
+                                            <TypographyH6 className='font-semibold col-span-full'>Modifier le mot de passe</TypographyH6>
+                                            <div className='flex items-center space-x-2'>
+                                                {isValidConditions.hasOldPassword ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
+                                                <span className={`text-base leading-[15px] ${isValidConditions.hasOldPassword && 'line-through'}`}>Entrer votre ancien mot de passe.</span>
+                                            </div>
+                                            <div className='flex items-center space-x-2'>
+                                                {isValidConditions.isLength ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
+                                                <span className={`text-base leading-[15px] ${isValidConditions.isLength && 'line-through'}`}>Doit contenir au moins {PASSWORD_REQUIRED.minLength} caractère(s).</span>
+                                            </div>
+                                            <div className='flex items-center space-x-2'>
+                                                {isValidConditions.isUpperCase ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
+                                                <span className={`text-base leading-[15px] ${isValidConditions.isUpperCase && 'line-through'}`}>Doit contenir au moins {PASSWORD_REQUIRED.minUpperCase} caractère(s) en MAJUSCULE.</span>
+                                            </div>
+                                            <div className='flex items-center space-x-2'>
+                                                {isValidConditions.isLowerCase ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
+                                                <span className={`text-base leading-[15px] ${isValidConditions.isLowerCase && 'line-through'}`}>Doit contenir au moins {PASSWORD_REQUIRED.minLowerCase} caractère(s) en minuscule.</span>
+                                            </div>
+                                            <div className='flex items-center space-x-2'>
+                                                {isValidConditions.isNumbers ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
+                                                <span className={`text-base leading-[15px] ${isValidConditions.isNumbers && 'line-through'}`}>Doit contenir au moins {PASSWORD_REQUIRED.minNumbers} nombre(s).</span>
+                                            </div>
+                                            <div className='flex items-center space-x-2'>
+                                                {isValidConditions.isSpecialChars ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
+                                                <span className={`text-base leading-[15px] ${isValidConditions.isSpecialChars && 'line-through'}`}>Doit contenir au moins {PASSWORD_REQUIRED.minSpecialChars} caractère(s) spéciaux.</span>
+                                            </div>
+                                            <div className='flex items-center space-x-2'>
+                                                {isValidConditions.isSamePassWord ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
+                                                <span className={`text-base leading-[15px] ${isValidConditions.isSamePassWord && 'line-through'}`}>Confirmer le mot de passe.</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className='grid w-full grid-cols-1 gap-4 py-5 mt-5 border-t col-span-full sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+                                <TypographyH4 className='font-semibold col-span-full'>Mes addresses</TypographyH4>
+
+                                {
+                                    useUser.user?.addresses?.map((address) => <UserAddressCard key={address._id} address={address} />)
+                                }
                                 <div className='flex items-center justify-end w-full mb-5 space-x-2 col-span-full'>
                                     <DefaultSendButton
                                         title='Ajouter un Addresse'
@@ -211,10 +334,6 @@ const UserSettings: NextPage<Props> = () => {
                                         onClick={editUserAddressModal.onOpenAdd}
                                     />
                                 </div>
-
-                                {
-                                    useUser.user?.addresses?.map((address) => <UserAddressCard key={address._id} address={address} />)
-                                }
                             </div>
 
                         </div>

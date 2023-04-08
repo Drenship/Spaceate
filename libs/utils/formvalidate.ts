@@ -1,3 +1,4 @@
+import { PASSWORD_REQUIRED } from "@config/index";
 
 export const validateEmail = (email: string): boolean => {
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
@@ -11,13 +12,13 @@ export function verifyPassword(password: string, rules: {
   minLowerCase?: number;
   minNumbers?: number;
   minSpecialChars?: number;
-}): [boolean, {
-  isLength: boolean,
-  isUpperCase: boolean,
-  isLowerCase: boolean,
-  isNumbers: boolean,
-  isSpecialChars: boolean,
-}] {
+} = PASSWORD_REQUIRED): [boolean, {
+    isLength: boolean,
+    isUpperCase: boolean,
+    isLowerCase: boolean,
+    isNumbers: boolean,
+    isSpecialChars: boolean,
+  }] {
   const isLength = rules.minLength ? password.length >= rules.minLength : true;
   const isUpperCase = rules.minUpperCase ? (password.match(/[A-Z]/g) || []).length >= rules.minUpperCase : true;
   const isLowerCase = rules.minLowerCase ? (password.match(/[a-z]/g) || []).length >= rules.minLowerCase : true;

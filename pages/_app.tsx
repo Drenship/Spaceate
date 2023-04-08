@@ -6,6 +6,7 @@ import { SessionProvider, useSession } from 'next-auth/react';
 import { Router, useRouter } from 'next/router';
 import ProgressBar from "@badrap/bar-of-progress";
 import { RecoilRoot, RecoilEnv } from 'recoil';
+import { Toaster } from 'react-hot-toast';
 
 import { NotifyContextProvider } from '@libs/hooks/notify';
 import { TypeUser } from '@libs/typings';
@@ -60,6 +61,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
       <RecoilRoot>
 
         <NotifyContextProvider>
+          <Toaster
+            position="bottom-center"
+            reverseOrder={false}
+            gutter={8}
+          />
           {/* Higher Order Component */}
 
           {

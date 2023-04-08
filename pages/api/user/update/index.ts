@@ -1,7 +1,8 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import bcrypt from 'bcrypt';
 import { authSessionMiddleware } from "@libs/Middleware/Api.Middleware.auth-session";
 import db from "@libs/database/dbConnect";
 import User from "@libs/models/User";
-import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     authSessionMiddleware({ authOnly: true, adminOnly: false })(req, res, () => {
@@ -95,10 +96,38 @@ const UPDATE_INFORMATION = async (req: NextApiRequest, res: NextApiResponse) => 
 const UPDATE_PASSWORD = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { user, data } = req.body;
+        const { oldPassword, newPassword, confirmPassword } = data;
+
+        if (newPassword !== confirmPassword) {
+            return res.status(404).json({ message: "Les 2 mots de passe ne sont pas identique !" });
+        }
+
+        if (oldPassword === newPassword) {
+            return res.status(404).json({ message: "Le nouveau mot de passe est identique au précédent !" });
+        }
+
         db.connect()
 
-    } catch (error) {
+        const getUser = await User.findById(user._id, { password: 1 });
 
+        const isCorrectPassword = await bcrypt.compare(
+            oldPassword,
+            getUser.password
+        );
+
+        if (!isCorrectPassword) {
+            return res.status(404).json({ message: "Votre ancien mot de passe est incorrect." });
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+
+        getUser.password = hashedNewPassword;
+        await getUser.save();
+
+        return res.status(200).json({ success: true, message: "Votre mot de passe a bien été mis à jour." });
+
+    } catch (error) {
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
     } finally {
         db.disconnect()
     }
