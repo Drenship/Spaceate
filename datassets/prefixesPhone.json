@@ -1,0 +1,157 @@
+[
+    {
+        "name": "Austria",
+        "countryCode": "AT",
+        "prefix": "+43"
+    },
+    {
+        "name": "Belgium",
+        "countryCode": "BE",
+        "prefix": "+32"
+    },
+    {
+        "name": "Bulgaria",
+        "countryCode": "BG",
+        "prefix": "+359"
+    },
+    {
+        "name": "Croatia",
+        "countryCode": "HR",
+        "prefix": "+385"
+    },
+    {
+        "name": "Cyprus",
+        "countryCode": "CY",
+        "prefix": "+357"
+    },
+    {
+        "name": "Czech Republic",
+        "countryCode": "CZ",
+        "prefix": "+420"
+    },
+    {
+        "name": "Denmark",
+        "countryCode": "DK",
+        "prefix": "+45"
+    },
+    {
+        "name": "Estonia",
+        "countryCode": "EE",
+        "prefix": "+372"
+    },
+    {
+        "name": "Finland",
+        "countryCode": "FI",
+        "prefix": "+358"
+    },
+    {
+        "name": "France",
+        "countryCode": "FR",
+        "prefix": "+33"
+    },
+    {
+        "name": "Germany",
+        "countryCode": "DE",
+        "prefix": "+49"
+    },
+    {
+        "name": "Greece",
+        "countryCode": "GR",
+        "prefix": "+30"
+    },
+    {
+        "name": "Hungary",
+        "countryCode": "HU",
+        "prefix": "+36"
+    },
+    {
+        "name": "Iceland",
+        "countryCode": "IS",
+        "prefix": "+354"
+    },
+    {
+        "name": "Ireland",
+        "countryCode": "IE",
+        "prefix": "+353"
+    },
+    {
+        "name": "Italy",
+        "countryCode": "IT",
+        "prefix": "+39"
+    },
+    {
+        "name": "Latvia",
+        "countryCode": "LV",
+        "prefix": "+371"
+    },
+    {
+        "name": "Lithuania",
+        "countryCode": "LT",
+        "prefix": "+370"
+    },
+    {
+        "name": "Luxembourg",
+        "countryCode": "LU",
+        "prefix": "+352"
+    },
+    {
+        "name": "Malta",
+        "countryCode": "MT",
+        "prefix": "+356"
+    },
+    {
+        "name": "Netherlands",
+        "countryCode": "NL",
+        "prefix": "+31"
+    },
+    {
+        "name": "Norway",
+        "countryCode": "NO",
+        "prefix": "+47"
+    },
+    {
+        "name": "Poland",
+        "countryCode": "PL",
+        "prefix": "+48"
+    },
+    {
+        "name": "Portugal",
+        "countryCode": "PT",
+        "prefix": "+351"
+    },
+    {
+        "name": "Romania",
+        "countryCode": "RO",
+        "prefix": "+40"
+    },
+    {
+        "name": "Slovakia",
+        "countryCode": "SK",
+        "prefix": "+421"
+    },
+    {
+        "name": "Slovenia",
+        "countryCode": "SI",
+        "prefix": "+386"
+    },
+    {
+        "name": "Spain",
+        "countryCode": "ES",
+        "prefix": "+34"
+    },
+    {
+        "name": "Sweden",
+        "countryCode": "SE",
+        "prefix": "+46"
+    },
+    {
+        "name": "Switzerland",
+        "countryCode": "CH",
+        "prefix": "+41"
+    },
+    {
+        "name": "United Kingdom",
+        "countryCode": "GB",
+        "prefix": "+44"
+    }
+]

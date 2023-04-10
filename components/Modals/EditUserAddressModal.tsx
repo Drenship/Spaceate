@@ -11,6 +11,7 @@ import { Address } from "@libs/typings";
 import { fetchPostJSON } from "@libs/utils/api-helpers";
 import useUserStore from "@libs/hooks/modals/useUserStore";
 import InputRadio from "@components/inputs/InputRadio";
+import InputPhone from "@components/inputs/InputPhone";
 
 
 const EditUserAddressModal = () => {
@@ -118,12 +119,11 @@ const EditUserAddressModal = () => {
                     onChange={(e: React.BaseSyntheticEvent) => setAddress(prev => ({ ...prev, fullName: e.target.value }))}
                 />
 
-                <InputText
+                <InputPhone
                     title="Téléphone"
                     input={{
                         name: "phone",
                         defaultValue: address.phone || '',
-                        forceValue: address.phone || '',
                         placeholder: "entrer votre numéro de téléphone...",
                     }}
                     onChange={(e: React.BaseSyntheticEvent) => setAddress(prev => ({ ...prev, phone: e.target.value }))}

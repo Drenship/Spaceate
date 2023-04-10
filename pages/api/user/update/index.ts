@@ -76,7 +76,7 @@ const UPDATE_NEW_EMAIL = async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(400).json({ success: false, message: "Impossible de mettre à jour votre email. Le code n'est pas valide.", result });
         }
     } catch (error) {
-        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
     } finally {
         await db.disconnect();
     }
@@ -127,7 +127,7 @@ const UPDATE_PASSWORD = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({ success: true, message: "Votre mot de passe a bien été mis à jour." });
 
     } catch (error) {
-        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
     } finally {
         await db.disconnect()
     }
@@ -143,7 +143,7 @@ const ADD_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({ success: true, message: "Votre address a bien été ajouter." });
 
     } catch (error) {
-        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
     } finally {
         await db.disconnect()
     }
@@ -159,7 +159,7 @@ const PUT_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.status(200).json({ success: true, message: "Votre address a bien été mise à ajouter." });
     } catch (error) {
-        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
     } finally {
         await db.disconnect()
     }
@@ -175,7 +175,7 @@ const REMOVE_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({ success: true, message: "Votre address a bien été supprimer." });
 
     } catch (error) {
-        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
+        return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
     } finally {
         await db.disconnect()
     }

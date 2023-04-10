@@ -7,14 +7,19 @@ import { fetchPostJSON } from '@libs/utils/api-helpers';
 import { TypeProduct, TypeUser } from '@libs/typings';
 
 import SearchResultItem from '@components/cards/SearchResultItem';
+import useUserStore from '@libs/hooks/modals/useUserStore';
 
 
 interface SearchbarProps {
-    user: TypeUser | null,
     placeholderSearch?: string
 }
 
-export default function Searchbar({ user, placeholderSearch }: SearchbarProps) {
+
+export default function Searchbar({ placeholderSearch }: SearchbarProps) {
+
+    const useUser = useUserStore();
+    const user = useUser.user;
+
     const router = useRouter()
 
     const searchBarMenuRef = useRef(null);
@@ -32,13 +37,16 @@ export default function Searchbar({ user, placeholderSearch }: SearchbarProps) {
         setSearchResult(data)
     }
 
-    interface handleRedirectSearchProps { forceQuery?: string | undefined }
-    const handleRedirectSearch = async (forceQuery: handleRedirectSearchProps = { forceQuery: undefined }) => {
+    const handleRedirectSearch = async (forceQuery: string | undefined = undefined) => {
         const searchQuery = forceQuery ? forceQuery : query
-        if (!searchQuery || searchQuery.length === 0) return;
-        if (user && searchQuery.length > 1) {
-            await fetchPostJSON('/api/user/update/search-history', { query: searchQuery })
+
+        if (!searchQuery || searchQuery?.toString().length === 0) return;
+        if (user && searchQuery?.toString().length > 1) {
+            alert('user/update')
+            await fetchPostJSON('/api/user/update/search-history', { query: searchQuery?.toString() })
+            useUser.fetchUser()
         }
+
         router.push(`/search?query=${searchQuery}`)
     }
 
@@ -85,16 +93,16 @@ export default function Searchbar({ user, placeholderSearch }: SearchbarProps) {
                             {
                                 query && user && user?.searchHistory && user.searchHistory.length && (
                                     [...(user.searchHistory || [])]
-                                        .filter((history) => history.toLowerCase().includes(query))
+                                        .filter((history) => history.query.toLowerCase().includes(query))
                                         .slice(0, 4)
-                                        .map((historyQuery, key) => <button
+                                        .map((history, key) => <button
                                             className='flex w-full bg-white py-1 border-t shadow-lg border-[#f3f6fd] p-2 text-sm font-bold uppercase'
                                             key={key}
                                             onClick={() => {
-                                                setQuery(historyQuery);
-                                                handleRedirectSearch(historyQuery)
+                                                setQuery(history.query);
+                                                handleRedirectSearch(history.query)
                                             }}
-                                        >{historyQuery}</button>)
+                                        >{history.query}</button>)
                                 )
                             }
                             {

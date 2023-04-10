@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { sendMail } from '@libs/utils/email-sendgrid';
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
-import { generateCode } from '@libs/utils';
+import { generateCode, generateUUID } from '@libs/utils';
 import { validateEmail } from '@libs/utils/formvalidate';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -32,7 +32,6 @@ const VERIFY_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: "we need data for send mail" });
     }
 
-    const token = generateUUID();
 
     await db.connect();
 
@@ -42,6 +41,7 @@ const VERIFY_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(404).json({ message: "this email is not found" });
     }
 
+    const token = generateUUID();
     dbUser.emailVerificationToken = token;
     dbUser.emailVerificationTokenExpires = Date.now() + 60 * 60 * 1000; // 1H
     await dbUser.save();

@@ -8,3 +8,9 @@ export const PASSWORD_REQUIRED = {
     minNumbers: 1,
     minSpecialChars: 1,
 }
+
+export const PHONE_REQUIRED = {
+    format: /^(\+|00)[1-9]\d{1,14}$/,
+    minLength: 9,
+    maxLength: 15,
+}

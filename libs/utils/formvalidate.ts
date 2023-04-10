@@ -1,4 +1,4 @@
-import { PASSWORD_REQUIRED } from "@config/index";
+import { PASSWORD_REQUIRED, PHONE_REQUIRED } from "@config/index";
 
 export const validateEmail = (email: string): boolean => {
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
@@ -13,12 +13,12 @@ export function verifyPassword(password: string, rules: {
   minNumbers?: number;
   minSpecialChars?: number;
 } = PASSWORD_REQUIRED): [boolean, {
-    isLength: boolean,
-    isUpperCase: boolean,
-    isLowerCase: boolean,
-    isNumbers: boolean,
-    isSpecialChars: boolean,
-  }] {
+  isLength: boolean,
+  isUpperCase: boolean,
+  isLowerCase: boolean,
+  isNumbers: boolean,
+  isSpecialChars: boolean,
+}] {
   const isLength = rules.minLength ? password.length >= rules.minLength : true;
   const isUpperCase = rules.minUpperCase ? (password.match(/[A-Z]/g) || []).length >= rules.minUpperCase : true;
   const isLowerCase = rules.minLowerCase ? (password.match(/[a-z]/g) || []).length >= rules.minLowerCase : true;
@@ -40,11 +40,11 @@ export function verifyPhone(phone: string, options: {
   format?: RegExp,
   minLength?: number,
   maxLength?: number,
-}): [boolean, {
+} = PHONE_REQUIRED): [boolean, {
   isFormat: boolean,
   isLength: boolean,
 }] {
-  const defaultFormat = /^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$/;
+  const defaultFormat = /^(\+|00)?((3[0-46-9]\d{8,11})|(4[013-9]\d{8,11})|(5[1-8]\d{8,11})|(6[0-6]\d{8,11})|(7[1-79]\d{8,11})|(8[124-9]\d{8,11})|(9[0-58]\d{8,11}))$/;
   const format = options.format || defaultFormat;
 
   const isFormat = phone.match(format) !== null;

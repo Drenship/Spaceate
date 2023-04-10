@@ -14,7 +14,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const query = req.body.query;
-        console.log(query)
         const regex = new RegExp(`^${query.split('').join('.*')}$`, 'i');
         const regex2 = `\^${query}\i`;
         await db.connect();
@@ -31,11 +30,11 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             name: 1,
             slug: 1,
         }).limit(7)
-        await db.disconnect();
-        console.log(products)
-        res.send({ message: 'Successfully finded', data: products });
+        return res.send({ message: 'Successfully finded', data: products });
     } catch (error) {
-
+        return res.status(500).send({ message: 'Une erreur est survenue' });
+    } finally {
+        await db.disconnect();
     }
 };
 

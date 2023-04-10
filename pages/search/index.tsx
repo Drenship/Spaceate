@@ -12,7 +12,7 @@ import { TypeCategorie, TypeProduct } from '@libs/typings';
 import { BsSliders } from 'react-icons/bs';
 import { RxEyeClosed } from 'react-icons/rx';
 import Pagination from '@components/contents/Pagination';
-import { useLeftSwipe, useRightSwipe, useSwipeAxeX } from '@libs/hooks';
+import { useSwipeAxeX } from '@libs/hooks';
 
 const PAGE_SIZE = 20;
 const ratings = [1, 2, 3, 4, 5];

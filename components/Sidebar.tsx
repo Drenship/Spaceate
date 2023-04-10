@@ -10,15 +10,16 @@ import { BiBox } from 'react-icons/bi';
 import { TypeUser } from '@libs/typings';
 import useLoginModal from '@libs/hooks/modals/useLoginModal';
 import useRegisterModal from '@libs/hooks/modals/useRegisterModal';
+import useUserStore from '@libs/hooks/modals/useUserStore';
 
 interface SidebarProps { }
 
 const Sidebar: React.FC<SidebarProps> = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
+    const useUser = useUserStore();
+    const user = useUser.user;
 
-    const { data: session } = useSession();
-    const user = session && session.user as TypeUser || null;
     const [cartItem, setCartItem] = useRecoilState(cartState)
 
     const logoutClickHandler = () => {

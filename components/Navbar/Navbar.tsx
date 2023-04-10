@@ -22,8 +22,6 @@ Navbar.defaultProps = {
 }
 
 function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
-    const { data: session } = useSession();
-    const user = session && session.user as TypeUser || null;
 
     const handleToggleSidebar = () => document.body.classList.toggle('user-sidebar-open');
     const handleRemoveSidebar = () => document.body.classList.remove('user-sidebar-open')
@@ -59,7 +57,7 @@ function Navbar({ leftButton, placeholderSearch }: NavbarProps) {
                 <Logo />
             </div>
 
-            <Searchbar placeholderSearch={placeholderSearch} user={user} />
+            <Searchbar placeholderSearch={placeholderSearch} />
 
             <div className="flex-none space-x-1 md:space-x-4">
 

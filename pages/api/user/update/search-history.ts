@@ -18,12 +18,13 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { query, user } = req.body;
 
+        console.log(req.body)
+
         if (!query) {
             return res.status(400).json({ message: 'Search query is required' });
         }
 
         await db.connect();
-
         const userUpdate = await User.findById(user._id);
         if (!userUpdate) {
             return res.status(404).json({ message: 'User not found' });
@@ -31,9 +32,9 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         userUpdate.searchHistory.push({ query });
         await userUpdate.save();
 
-        res.status(201).json({ message: 'Search history entry added successfully', searchHistory: user.searchHistory });
+        return res.status(201).json({ message: 'Search history entry added successfully' });
     } catch (err) {
-        res.status(500).json({ message: 'Error adding search history entry' });
+        return res.status(500).json({ message: 'Error adding search history entry' });
     } finally {
         await db.disconnect();
     }

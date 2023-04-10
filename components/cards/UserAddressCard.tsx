@@ -17,7 +17,7 @@ const UserAddressCard: React.FC<UserAddressCardProps> = ({ address }) => {
     const eitUserAddressModal = useEditUserAddressModal();
 
     return (
-        <div className='flex flex-col justify-between p-3 space-y-2 border rounded-md shadow-md'>
+        <div className='md:max-w-[320px] max-w-[80vw] min-w-[320px] w-full flex flex-col justify-between p-3 space-y-2 border rounded-md shadow-md'>
             <div>
                 <div className='flex items-center justify-start space-x-2'>
                     <Image src='/icons/home.svg' alt="home svg" width={24} height={24} />

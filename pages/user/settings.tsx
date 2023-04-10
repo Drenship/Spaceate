@@ -34,7 +34,7 @@ const UserSettings: NextPage<Props> = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isLoadingPassword, setIsLoadingPassword] = useState<boolean>(false)
     const [activeTab, setActiveTab] = useState<number>(1);
-    
+
     const formEmailRef = useRef<HTMLFormElement>(null);
     const [updateEmail, setUpdateEmail] = useState<{
         newEmail: string | null,
@@ -203,11 +203,11 @@ const UserSettings: NextPage<Props> = () => {
 
                             <div className='grid w-full grid-cols-1 mt-5 col-span-full md:grid-cols-2'>
                                 <TypographyH4 className='font-semibold col-span-full'>Changer d'addresse email</TypographyH4>
-                                <form 
+                                <form
                                     ref={formEmailRef}
-                                    onSubmit={e => e.preventDefault()} 
+                                    onSubmit={e => e.preventDefault()}
                                     className='w-full max-w-lg'
-                                    >
+                                >
                                     <InputEmail
                                         title="Nouvelle email"
                                         input={{
@@ -289,7 +289,7 @@ const UserSettings: NextPage<Props> = () => {
 
                                     <div className='flex items-center justify-center w-full'>
                                         <div className='w-full max-w-lg p-4 space-y-3'>
-                                            <TypographyH6 className='font-semibold col-span-full'>Modifier le mot de passe</TypographyH6>
+                                            <TypographyH6 className='font-semibold col-span-full'>Conditions de sécurité du mot de passe</TypographyH6>
                                             <div className='flex items-center space-x-2'>
                                                 {isValidConditions.hasOldPassword ? <CheckIcon className='w-5' /> : <RxCross1 className='w-5' />}
                                                 <span className={`text-base leading-[15px] ${isValidConditions.hasOldPassword && 'line-through'}`}>Entrer votre ancien mot de passe.</span>
@@ -323,13 +323,18 @@ const UserSettings: NextPage<Props> = () => {
                                 </div>
                             </div>
 
-                            <div className='grid w-full grid-cols-1 gap-4 py-5 mt-5 border-t col-span-full sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+                            <div className='grid w-full grid-cols-1 gap-4 py-5 mt-5 border-t'>
                                 <TypographyH4 className='font-semibold col-span-full'>Mes addresses</TypographyH4>
 
-                                {
-                                    useUser.user?.addresses?.map((address) => <UserAddressCard key={address._id} address={address} />)
-                                }
-                                <div className='flex items-center justify-end w-full mb-5 space-x-2 col-span-full'>
+                                <div
+                                    className='flex items-start w-full space-x-2 overflow-y-auto scrollbar-hide js-not-swipe'
+                                >
+
+                                    {
+                                        useUser.user?.addresses?.map((address) => <UserAddressCard key={address._id} address={address} />)
+                                    }
+                                </div>
+                                <div className='flex items-center justify-end w-full mb-5 space-x-2 col-span-full max'>
                                     <DefaultSendButton
                                         title='Ajouter un Addresse'
                                         isDisabled={isLoading}

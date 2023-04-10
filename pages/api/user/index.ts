@@ -17,15 +17,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 // get user data if is logged
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const { user } = req.body
+        const { user } = req.body;
+
 
         await db.connect()
-        const getUser = await User.findOne({ _id: user._id }, {
+        const getUser = await User.findOne({ email: user.email }, {
             password: 0,
             emailVerificationToken: 0,
             emailVerificationTokenExpires: 0,
         })
-        return res.status(200).json({ user: getUser });
+        if(getUser) {
+            return res.status(200).json({ user: getUser });
+        } 
+
+        return res.status(404).json({});
 
     } catch (error) {
         return res.status(500).json({ message: `Erreur lors de l'insertion en base de données : ${error}` });
