@@ -9,7 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
 import { TypeProduct } from "@libs/typings";
-import Productcard from "@components/cards/product-card";
+import Productcard from "@components/cards/ProductCard_V2";
 
 interface Props {
     overflow?: 'hidden' | 'visible'

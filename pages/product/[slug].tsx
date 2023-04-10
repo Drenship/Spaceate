@@ -16,7 +16,7 @@ import { setCartState, CART_ADD_ITEM } from "@atoms/setStates/setCartState"
 import { TypeCartItem, TypeProduct, TypeCommentaire, TypeUser } from '@libs/typings';
 import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
-import { replaceURL, teinteDeLimage } from '@libs/utils';
+import { fixedPriceToCurrency, replaceURL, teinteDeLimage } from '@libs/utils';
 import { useClickOutside, useEscapeGallery, useEscapeListener, useSwipeAndDoubleTap } from '@libs/hooks';
 import Order from '@libs/models/Order';
 
@@ -158,6 +158,15 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         return [fullUrl, baseUrl];
     }, [product])
 
+    const activePromotion = useMemo(() => {
+        const now = new Date();
+        return product?.promotions?.filter(promo => {
+            const startDate = new Date(promo.startDate);
+            const endDate = new Date(promo.endDate);
+            return now >= startDate && now <= endDate && promo.isActive === true;
+        });
+    }, [product]);
+
     return (
         <BasescreenWrapper
             title={product.name}
@@ -258,10 +267,21 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                                                 <p itemProp="description" key={product._id} className='mt-5 text-gray-600' dangerouslySetInnerHTML={{ __html: product.description }} />
 
-                                                <div className='mt-5 space-x-1'>
-                                                    <span className='text-2xl font-bold' itemProp="price">{product.price}€</span>
-                                                    <span className='text-xl'>/</span>
-                                                    <span className='text-xl'>{product.price_in}</span>
+                                                <div className="flex items-end mt-5 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
+                                                    {
+                                                        activePromotion && activePromotion[0] ? (
+                                                            <>
+                                                                <span className='text-base line-through '>{fixedPriceToCurrency(product.price)}</span>
+                                                                <span className='text-2xl text-red-600' itemProp="price">{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                                                <span className='text-xl'>/{product.price_in}</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <span className='text-2xl' itemProp="price">{fixedPriceToCurrency(product.price)}</span>
+                                                                <span className='text-xl'>/{product.price_in}</span>
+                                                            </>
+                                                        )
+                                                    }
                                                 </div>
 
                                                 {

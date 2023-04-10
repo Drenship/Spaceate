@@ -5,7 +5,7 @@ import { cartState } from "@atoms/cartState"
 import { setCartState, CART_ADD_ITEM, CART_REMOVE_ITEM } from "@atoms/setStates/setCartState"
 
 import { useNotifys } from '@libs/hooks/notify';
-import { replaceURL } from '@libs/utils';
+import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import { TypeCartItem } from '@libs/typings'
 
 import InputNumber from '@components/inputs/InputNumber'
@@ -73,6 +73,15 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
         })
     }
 
+    const activePromotion = useMemo(() => {
+        const now = new Date();
+        return product?.promotions?.filter(promo => {
+            const startDate = new Date(promo.startDate);
+            const endDate = new Date(promo.endDate);
+            return now >= startDate && now <= endDate && promo.isActive === true;
+        });
+    }, [product]);
+
     return (
         <div className='w-full'>
 
@@ -94,10 +103,21 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
 
                         <div className='flex flex-col items-start justify-between xs:hidden'>
                             <div className='text-2xl font-bold'>{(product.price * product.quantity).toFixed(2)}€</div>
-                            <div className='mt-1 space-x-1'>
-                                <span className='font-semibold text-md'>{(product.price).toFixed(2)}€</span>
-                                <span className='text-md'>/</span>
-                                <span className='text-md'>{product.price_in}</span>
+                            <div className="flex items-end mt-1 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
+                                {
+                                    activePromotion && activePromotion[0] ? (
+                                        <>
+                                            <span className='text-base line-through'>{fixedPriceToCurrency(product.price)}</span>
+                                            <span className='text-xl text-red-600'>{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                            <span className='text-base'>/{product.price_in}</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className='text-xl'>{fixedPriceToCurrency(product.price)}</span>
+                                            <span className='text-base'>d/{product.price_in}</span>
+                                        </>
+                                    )
+                                }
                             </div>
                         </div>
 
@@ -120,10 +140,21 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
 
                 <div className='flex-col items-end justify-between hidden xs:flex'>
                     <div className='text-2xl font-bold'>{(product.price * product.quantity).toFixed(2)}€</div>
-                    <div className='mt-1 space-x-1'>
-                        <span className='font-semibold text-md'>{(product.price).toFixed(2)}€</span>
-                        <span className='text-md'>/</span>
-                        <span className='text-md'>{product.price_in}</span>
+                    <div className="flex items-end mt-1 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
+                        {
+                            activePromotion && activePromotion[0] ? (
+                                <>
+                                    <span className='text-base line-through '>{fixedPriceToCurrency(product.price)}</span>
+                                    <span className='text-xl text-red-600'>{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                    <span className='text-base'>/{product.price_in}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className='text-xl'>{fixedPriceToCurrency(product.price)}</span>
+                                    <span className='text-base'>d/{product.price_in}</span>
+                                </>
+                            )
+                        }
                     </div>
                 </div>
 

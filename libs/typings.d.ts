@@ -1,6 +1,6 @@
 
 interface Address {
-    _id?:string;
+    _id?: string;
     fullName: string | null,
     streetAddress: string | null;
     city: string | null;
@@ -87,6 +87,14 @@ export interface TypeCategorie {
     subCategories: TypeSubCategories[];
 }
 
+export interface TypePromotions {
+    _id: string;
+    startDate: Date;
+    endDate: Date;
+    discountPercentage: Number;
+    isActive: Boolean
+}
+
 export interface TypeProduct {
     _id: string;
     slug: string;
@@ -101,7 +109,7 @@ export interface TypeProduct {
     price_in: string;
     rating: number;
     numReviews: number;
-    reviews: TypeCommentaire[];
+    reviews: TypeCommentaire[] | string[];
     advancePrice: {
         initialCost: number;
         tva: number;
@@ -110,6 +118,8 @@ export interface TypeProduct {
     stats: {
         totalSelled: number;
     };
+    promotions: TypePromotions[];
+    currency: string;
     isFeatured: boolean;
     isPublished: boolean;
     createdAt: string;

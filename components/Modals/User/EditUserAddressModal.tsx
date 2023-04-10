@@ -97,7 +97,7 @@ const EditUserAddressModal = () => {
             }
 
         } catch (error) {
-
+            toast.error(error?.message || "Une erreur server est survenue");
         } finally {
             setIsLoading(false)
             useUser.fetchUser();

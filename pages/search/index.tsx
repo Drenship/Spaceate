@@ -1,18 +1,21 @@
 import React, { useState, useMemo, useEffect } from 'react'
+import { XCircleIcon } from '@heroicons/react/solid';
 import { NextPage } from 'next/types'
 import { useRouter } from 'next/router'
-import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
-import Product from '@libs/models/Product';
-import db from '@libs/database/dbConnect';
-import BestsellerCard from '@components/cards/BestsellerCard';
-import { XCircleIcon } from '@heroicons/react/solid';
-import Categorie from '@libs/models/Categorie';
-import { querySecurMongoDB } from '@libs/utils';
-import { TypeCategorie, TypeProduct } from '@libs/typings';
 import { BsSliders } from 'react-icons/bs';
 import { RxEyeClosed } from 'react-icons/rx';
-import Pagination from '@components/contents/Pagination';
+
+import db from '@libs/database/dbConnect';
+import Product from '@libs/models/Product';
+import Categorie from '@libs/models/Categorie';
+import { querySecurMongoDB } from '@libs/utils';
 import { useSwipeAxeX } from '@libs/hooks';
+import { TypeCategorie, TypeProduct } from '@libs/typings';
+
+import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
+import Pagination from '@components/contents/Pagination';
+import ProductCard from '@components/cards/ProductCard_V2';
+
 
 const PAGE_SIZE = 20;
 const ratings = [1, 2, 3, 4, 5];
@@ -296,7 +299,7 @@ const Search: NextPage<Props> = ({ searchQuery, products, countProducts, categor
                     <div>
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {products.map((product, key) => (
-                                <BestsellerCard
+                                <ProductCard
                                     key={key}
                                     product={product}
                                 />

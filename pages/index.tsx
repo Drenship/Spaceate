@@ -16,9 +16,10 @@ type Props = {
     categorie: TypeCategorie
     items: TypeProduct[]
   }[];
+  promotions: TypeProduct[]
 }
 
-const Home: NextPage<Props> = ({ homePageDetails }) => {
+const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
 
   const services = [
     {
@@ -94,12 +95,10 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
             alt="Deal du jour"
             width="250"
             height="100"
-            className='select-none w-[35vw] max-w-[250px]'
+            className='select-none w-[35vw] max-w-[250px] mb-1'
           />
-          <CarouselProduct products={[]} />
+          <CarouselProduct products={promotions} />
         </div>
-
-
 
         {
           homePageDetails.map((categorie, key) => (
@@ -109,6 +108,7 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
             </div>
           ))
         }
+
       </div>
 
     </BasescreenWrapper>
@@ -118,6 +118,20 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
 export const getStaticProps = async () => {
   try {
     await db.connect();
+
+    const currentDate = new Date();
+
+    const productsWithActivePromotions = await Product.find({
+      promotions: {
+        $elemMatch: {
+          isActive: true,
+          startDate: { $lte: currentDate },
+          endDate: { $gte: currentDate },
+        },
+      },
+    })
+      .sort({ 'promotions.discountPercentage': -1 })
+      .limit(10);
 
     const results = await Product.aggregate([
       {
@@ -156,6 +170,7 @@ export const getStaticProps = async () => {
 
     return {
       props: {
+        promotions: JSON.parse(JSON.stringify(productsWithActivePromotions)),
         homePageDetails: JSON.parse(JSON.stringify(results)),
       },
       revalidate: 300, // => 5 minutes

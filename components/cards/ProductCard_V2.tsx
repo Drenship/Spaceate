@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import { cartState } from "@atoms/cartState"
 import { useRouter } from 'next/dist/client/router';
 import { CART_ADD_ITEM, setCartState } from '@atoms/setStates/setCartState';
-import { replaceURL } from '@libs/utils';
+import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import Rating from '@components/contents/Rating';
 import { TypeProduct } from '@libs/typings';
 
@@ -39,10 +39,20 @@ const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
         router.push('/cart')
     }
 
+
+    const activePromotion = useMemo(() => {
+        const now = new Date();
+        return product?.promotions?.filter(promo => {
+            const startDate = new Date(promo.startDate);
+            const endDate = new Date(promo.endDate);
+            return now >= startDate && now <= endDate && promo.isActive === true;
+        });
+    }, [product]);
+
     return (
         <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center w-full overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
             <div className="relative">
-                
+
                 <div className='relative aspect-[3/2] overflow-hidden'>
                     <div className='absolute z-[1] w-full h-full group-hover:bg-black/10 duration-300 transition-color' />
                     <img className="object-cover w-full h-full transition-transform duration-300 scale-100 group-hover:scale-110" src={replaceURL(product.main_image)} alt="watch" />
@@ -69,8 +79,21 @@ const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
                         <div>
                             <p className="text-lg font-medium leading-none text-gray-800">{product.name}</p>
                         </div>
-                        <div>
-                            <p className="text-lg leading-none text-right text-gray-600">{product.price}€</p>
+                        <div className="flex space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
+                            {
+                                activePromotion && activePromotion[0] ? (
+                                    <>
+                                        <span className='text-sm line-through'>{product.price}€</span>
+                                        <span className='text-red-600'>{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                        <span className='text-sm'>/{product.price_in}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>{fixedPriceToCurrency(product.price)}</span>
+                                        <span className='text-sm'>/{product.price_in}</span>
+                                    </>
+                                )
+                            }
                         </div>
                     </div>
                     <div className="flex justify-start space-x-1">

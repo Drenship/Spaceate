@@ -48,6 +48,10 @@
     }
 }
 
+.hide-rdrDefinedRangesWrapper .rdrDefinedRangesWrapper {
+    display: none;
+}
+
 .no-scroll {
     overflow: hidden !important;
 }
