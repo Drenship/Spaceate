@@ -52,7 +52,9 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
     const session = event.data.object;
 
     // verify si la session en live mode
-    //if(session.livemode === false) return res.status(400).send({ message: "This session is not ni livemode, u can't create order" }); 
+    if(process.env.NODE_ENV !== 'development') {
+        //if(session.livemode === false) return res.status(400).send({ message: "This session is not ni livemode, u can't create order" }); 
+    }
 
     try {
         await db.connect();

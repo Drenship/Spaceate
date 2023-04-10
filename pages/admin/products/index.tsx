@@ -9,6 +9,7 @@ import AdminscreenWrapper from '@components/Layouts/AdminscreenLayout'
 import TableProductLine from '@components/TableLines/TableProductLine';
 import AdminControlPannel from '@components/AdminContents/AdminControlPannel';
 import Pagination from '@components/contents/Pagination';
+import useAdminPromotionModal from '@libs/hooks/modals/useAdminPromotionModal';
 
 const PAGE_SIZE = 20;
 
@@ -26,9 +27,11 @@ interface PageHandler {
 
 function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: Props) {
 
+    const usePromotionStore = useAdminPromotionModal();
     const router = useRouter()
-    const [checkAll, setcheckAll] = useState(false);
     const [products, setProducts] = useState<TypeProduct[]>(initialProducts);
+    const [checkAll, setcheckAll] = useState(false);
+    const [checkedProducts, setCheckedProducts] = useState([]);
 
     const maxPages = useMemo(() => Math.ceil(totalResults / pageSize), [totalResults, pageSize]);
 
@@ -51,6 +54,8 @@ function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: 
 
     useEffect(() => setProducts(initialProducts), [initialProducts]);
 
+    useEffect(() => usePromotionStore.setProducts(checkedProducts), [checkedProducts]);
+
     return (
         <AdminscreenWrapper title="Products">
             <h1 className='text-xl font-bold uppercase'>Products</h1>
@@ -62,6 +67,13 @@ function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: 
                     page,
                     maxPages,
                     totalResults
+                }}
+
+                leftPanel={{
+                    promotions: {
+                        onClick: usePromotionStore.onOpen,
+                        isDisabled: checkedProducts.length === 0
+                    }
                 }}
 
                 rightPanel={{
@@ -118,6 +130,7 @@ function AdminProductsScreen({ pageSize, page, totalResults, initialProducts }: 
                                 product={product}
                                 checkAll={checkAll}
                                 updateMainProducts={setProducts}
+                                setCheckedProducts={setCheckedProducts}
                             />)
                         }
                     </tbody>

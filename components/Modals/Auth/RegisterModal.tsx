@@ -1,7 +1,6 @@
 'use client';
 
 import axios from "axios";
-import { AiFillGithub } from "react-icons/ai";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
@@ -11,11 +10,9 @@ import {
     SubmitHandler,
     useForm
 } from "react-hook-form";
-import { useRecoilState, useRecoilCallback } from 'recoil';
 
 import useRegisterModal from "@libs/hooks/modals/useRegisterModal";
 import useLoginModal from "@libs/hooks/modals/useLoginModal";
-
 
 import Modal from "@components/Modals/Modal";
 import Button from "@components/buttons/button";

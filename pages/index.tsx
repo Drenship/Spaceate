@@ -1,5 +1,6 @@
 import type { NextPage } from 'next/types'
 import React from 'react'
+import Image from 'next/image';
 
 import db from '@libs/database/dbConnect'
 import Product from '@libs/models/Product'
@@ -84,11 +85,26 @@ const Home: NextPage<Props> = ({ homePageDetails }) => {
         </div>
       </div>
 
+
       <div className="max-w-screen md:max-w-[1400px] w-full py-10 mx-auto space-y-8 px-4">
+
+        <div>
+          <Image
+            src="/icons/Deal-du-jour.svg"
+            alt="Deal du jour"
+            width="250"
+            height="100"
+            className='select-none w-[35vw] max-w-[250px]'
+          />
+          <CarouselProduct products={[]} />
+        </div>
+
+
+
         {
           homePageDetails.map((categorie, key) => (
             <div key={key}>
-              <h2 className='mb-3 text-2xl font-bold'>{categorie.categorie.name}</h2>
+              <h2 className='mb-3 text-4xl font-bold'>{categorie.categorie.name}</h2>
               <CarouselProduct products={categorie.items} />
             </div>
           ))

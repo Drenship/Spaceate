@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { authSessionMiddleware } from "@libs/Middleware/Api.Middleware.auth-session";
 import db from "@libs/database/dbConnect";
 import User from "@libs/models/User";
+import { TypeUser } from "@libs/typings";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     authSessionMiddleware({ authOnly: true, adminOnly: false })(req, res, () => {
@@ -132,15 +133,21 @@ const UPDATE_PASSWORD = async (req: NextApiRequest, res: NextApiResponse) => {
         await db.disconnect()
     }
 }
+
 const ADD_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { user, data } = req.body;
         await db.connect()
         const getUser = await User.findById(user._id);
+
+        if (data.address.isDefault) {
+            await updateDefaultAddress(getUser, data.address.addressType);
+        }
+
         getUser.addresses.push(data.address);
         await getUser.save();
 
-        return res.status(200).json({ success: true, message: "Votre address a bien été ajouter." });
+        return res.status(200).json({ success: true, message: "Votre adresse a bien été ajoutée." });
 
     } catch (error) {
         return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
@@ -154,10 +161,15 @@ const PUT_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
         await db.connect()
         const getUser = await User.findById(user._id);
         const address = getUser.addresses.id(data.addressId);
+
+        if (data.address.isDefault) {
+            await updateDefaultAddress(getUser, data.address.addressType);
+        }
+
         address.set(data.address);
         await getUser.save();
 
-        return res.status(200).json({ success: true, message: "Votre address a bien été mise à ajouter." });
+        return res.status(200).json({ success: true, message: "Votre adresse a bien été mise à jour." });
     } catch (error) {
         return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
     } finally {
@@ -172,7 +184,7 @@ const REMOVE_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
         getUser.addresses.id(data.addressId).remove();
         await getUser.save();
 
-        return res.status(200).json({ success: true, message: "Votre address a bien été supprimer." });
+        return res.status(200).json({ success: true, message: "Votre adresse a bien été supprimée." });
 
     } catch (error) {
         return res.status(500).json({ message: `Erreur lors de l'insertion en base de données` });
@@ -181,6 +193,16 @@ const REMOVE_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 }
 
+/*
+* OTHER FUNCTION FOR ADDRESS
+*/
+const updateDefaultAddress = async (user: TypeUser, addressType: string) => {
+    user.addresses.forEach(address => {
+        if (address.addressType === addressType && address.isDefault) {
+            address.isDefault = false;
+        }
+    });
+}
 
 
 export default handler;

@@ -51,16 +51,19 @@ const InputPhone: React.FC<InputPhoneProps> = ({ title, description, input, onCh
 
     const handleOnChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.trim();
+        if(value === inputData.phone) return;
 
         if (!value.startsWith(inputData.selectedCountry.prefix)) {
             value = value.length < inputData.selectedCountry.prefix.length
                 ? inputData.selectedCountry.prefix.slice(0, value.length)
                 : inputData.selectedCountry.prefix + value;
+
         } else if (value.slice(inputData.selectedCountry.prefix.length).startsWith(inputData.selectedCountry.prefix)) {
             value = inputData.selectedCountry.prefix + value.slice(inputData.selectedCountry.prefix.length * 2);
         }
 
         setInputData((prev) => ({ ...prev, phone: value, isValid: verifyPhone(value, PHONE_REQUIRED)[0] }));
+        e.target.value = value;
         onChange(e);
     }, [inputData.selectedCountry.prefix, onChange]);
 

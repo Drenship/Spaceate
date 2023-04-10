@@ -12,15 +12,10 @@ import { NotifyContextProvider } from '@libs/hooks/notify';
 import { TypeUser } from '@libs/typings';
 import useUserStore from '@libs/hooks/modals/useUserStore';
 
-import CookiePopup from '@components/Modals/CookiePopup';
 import Sidebar from '@components/Sidebar';
 import BodySkeleton from '@components/Loader/BodySkeleton';
-
-import LoginModal from '@components/Modals/LoginModal';
-import RegisterModal from '@components/Modals/RegisterModal';
-import EditUserAddressModal from '@components/Modals/EditUserAddressModal';
+import ExportModalIndex from '@components/Modals/ExportModalIndex';
 import { Analytics } from '@vercel/analytics/react';
-import ConfirmCodeModal from '@components/Modals/ConfirmCodeModal';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
@@ -80,12 +75,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
           <Analytics />
 
           <Sidebar />
-          <CookiePopup />
 
-          <LoginModal />
-          <RegisterModal />
-          <EditUserAddressModal />
-          <ConfirmCodeModal />
+          <ExportModalIndex />
 
         </NotifyContextProvider>
 

@@ -5,12 +5,18 @@ interface IProduct extends Document {
     name: string;
     slug: string;
     description: string;
-    categorie: string;
+    categorie: mongoose.Schema.Types.ObjectId;
     subCategorie: string;
     main_image: string;
     images: string[];
     price: number;
     price_in: string;
+    promotions: [{
+        startDate: Date;
+        endDate: Date;
+        discountPercentage: number;
+        isActive: boolean;
+    }];
     advancePrice: {
         initialCost: number;
         tva: number;
@@ -18,7 +24,9 @@ interface IProduct extends Document {
     };
     rating: number;
     numReviews: number;
-    reviews: [];
+    reviews: [mongoose.Schema.Types.ObjectId];
+    currency: string;
+    tags: [string];
     countInStock: number;
     isFeatured: boolean;
     isPublished: boolean;
@@ -35,8 +43,10 @@ const productSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            trim: true
+            trim: true,
+            match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/, // example regex for slug validation
         },
+        tags: [String],
         categorie: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Categorie',
@@ -68,6 +78,33 @@ const productSchema = new mongoose.Schema(
             required: true,
             default: "kg"
         },
+        promotions: [
+            {
+                startDate: {
+                    type: Date,
+                    required: true,
+                },
+                endDate: {
+                    type: Date,
+                    required: true,
+                },
+                discountPercentage: {
+                    type: Number,
+                    required: true,
+                    min: 0,
+                    max: 100,
+                },
+                isActive: {
+                    type: Boolean,
+                    default: true,
+                },
+            },
+        ],
+        currency: {
+            type: String,
+            required: true,
+            default: "USD",
+        },
         advancePrice: {
             initialCost: {
                 type: Number,
@@ -93,7 +130,12 @@ const productSchema = new mongoose.Schema(
             min: 0,
             default: 0
         },
-        reviews: [],
+        reviews: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Review',
+            },
+        ],
         countInStock: {
             type: Number,
             required: true,
@@ -154,14 +196,16 @@ productSchema.index({
 
 productSchema.plugin(require('mongoose-autopopulate'));
 
-let findstart = 0;
-productSchema.pre('find', function () {
-    console.log(this instanceof mongoose.Query); // true
-    findstart = Date.now();
-});
-
-productSchema.post('find', async function (result) {
-    console.log('find() product in ' + (Date.now() - findstart) + ' milliseconds');
-});
+if(process.env.NODE_ENV === 'development') {
+    let findstart = 0;
+    productSchema.pre('find', function () {
+        console.log(this instanceof mongoose.Query); // true
+        findstart = Date.now();
+    });
+    
+    productSchema.post('find', async function (result) {
+        console.log('find() product in ' + (Date.now() - findstart) + ' milliseconds');
+    });
+}
 
 export default mongoose.models.Product || mongoose.model<IProduct>("Product", productSchema)

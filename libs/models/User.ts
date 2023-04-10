@@ -196,15 +196,16 @@ userSchema.set('strictQuery', false)
 
 userSchema.plugin(require('mongoose-autopopulate'));
 
-let findstart = 0;
-userSchema.pre('find', function () {
-    console.log(this instanceof mongoose.Query); // true
-    findstart = Date.now();
-});
+if (process.env.NODE_ENV === 'development') {
+    let findstart = 0;
+    userSchema.pre('find', function () {
+        console.log(this instanceof mongoose.Query); // true
+        findstart = Date.now();
+    });
 
-userSchema.post('find', async function (result) {
-    console.log('find() user in ' + (Date.now() - findstart) + ' milliseconds');
-});
-
+    userSchema.post('find', async function (result) {
+        console.log('find() user in ' + (Date.now() - findstart) + ' milliseconds');
+    });
+}
 
 export default mongoose.models.User || mongoose.model('User', userSchema);

@@ -8,7 +8,7 @@ import { fetchDeleteJSON } from '@libs/utils/api-helpers';
 
 import BlurImage from '@components/contents/BlurImage';
 
-export default function TableProductLine({ product, checkAll, updateMainProducts }) {
+export default function TableProductLine({ product, checkAll, updateMainProducts, setCheckedProducts }) {
 
     const { pushNotify } = useNotifys();
 
@@ -21,6 +21,19 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
     });
 
     const checkboxChecked = useMemo(() => {
+
+        if (checkAll && checked || checked) {
+            setCheckedProducts(prev => {
+                if (!prev.includes(product._id)) {
+                    return [...prev, product._id];
+                }
+                return prev;
+            });
+        } else {
+            setCheckedProducts(prev => prev.filter(id => id !== product._id));
+        }
+
+
         if (prevCheck.checked !== checked) {
             setPrevCheck({
                 checkAll: checkAll,
@@ -72,7 +85,6 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
         }
     }
 
-
     useEscapeListener(seeMenuRef, () => setSeeMenu(false))
 
     return (
@@ -113,7 +125,7 @@ export default function TableProductLine({ product, checkAll, updateMainProducts
                         <div className="w-2 h-2 bg-red-600 rounded-full" />
                     )
                 }
-                
+
             </td>
             <td className="relative pr-8">
                 <div className={`absolute left-0 z-10 w-32 mt-8 -ml-12 shadow-md dropdown-content ${!seeMenu && 'hidden'}`}>

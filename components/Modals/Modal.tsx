@@ -78,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({
     return (
         <>
             <div
-                className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none cursor-pointer focus:outline-none bg-black/40"
+                className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto text-black outline-none cursor-pointer focus:outline-none bg-black/40"
                 onClick={handleClose}
             >
 
@@ -96,7 +96,7 @@ const Modal: React.FC<ModalProps> = ({
                             className="relative flex flex-col w-full h-full bg-white border-0 rounded-lg shadow-lg outline-none translate lg:h-auto md:h-auto focus:outline-none"
                         >
                             {/*header*/}
-                            <div className="flex items-center p-6 rounded-t justify-center relative border-b-[1px] text-black">
+                            <div className="flex items-center p-6 rounded-t justify-center relative border-b-[1px]">
                                 <button
                                     className="absolute p-1 transition border-0 hover:opacity-70 right-5 md:right-9"
                                     onClick={handleClose}

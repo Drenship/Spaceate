@@ -23,7 +23,7 @@ const UserAddressCard: React.FC<UserAddressCardProps> = ({ address }) => {
                     <Image src='/icons/home.svg' alt="home svg" width={24} height={24} />
                     <span className='font-bold'>{address.fullName}</span>
                 </div>
-                {address.isDefault && <span className='text-sm italic text-gray-400'>addresse de {address.addressType === "shipping" ? 'livraison' : 'facturation'} par default</span>}
+                <span className='text-sm italic text-gray-400'>addresse de {address.addressType === "shipping" ? 'livraison' : 'facturation'} {address.isDefault && " par default"}</span>
             </div>
             <div className='flex flex-col space-y-0.5'>
                 <span> {address.streetAddress} </span>

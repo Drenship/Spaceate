@@ -77,15 +77,16 @@ const orderSchema = new mongoose.Schema(
 
 orderSchema.set('strictQuery', false);
 
+if (process.env.NODE_ENV === 'development') {
+    let findstart = 0;
+    orderSchema.pre('find', function () {
+        console.log(this instanceof mongoose.Query); // true
+        findstart = Date.now();
+    });
 
-let findstart = 0;
-orderSchema.pre('find', function () {
-    console.log(this instanceof mongoose.Query); // true
-    findstart = Date.now();
-});
-
-orderSchema.post('find', async function (result) {
-    console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds');
-});
+    orderSchema.post('find', async function (result) {
+        console.log('find() order in ' + (Date.now() - findstart) + ' milliseconds');
+    });
+}
 
 export default mongoose.models.Order || mongoose.model('Order', orderSchema);
