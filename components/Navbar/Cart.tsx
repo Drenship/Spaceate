@@ -3,17 +3,29 @@ import { useRouter } from "next/navigation";
 import { useRecoilState } from 'recoil';
 
 import { cartState } from "@atoms/cartState"
-import { TypeCartItem } from '@libs/typings';
+import { TypeCartItem, TypePromotions } from '@libs/typings';
 import { replaceURL } from '@libs/utils';
 
 export default function Cart() {
     const router = useRouter();
     const [cartItem] = useRecoilState(cartState)
 
+
+    const activePromotion = (product: TypeCartItem) => {
+        const now = new Date();
+        return product?.promotions?.filter(promo => {
+            const startDate = new Date(promo.startDate);
+            const endDate = new Date(promo.endDate);
+            return now >= startDate && now <= endDate && promo.isActive === true;
+        });
+    };
+
+    const priceWithPromotion = (product: TypeCartItem, activePromotion: TypePromotions[]) => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
+
     // cart details
     const [totalCartValue, totalCountItems] = useMemo(() => {
         let total = 0
-        cartItem.forEach((item: TypeCartItem) => total += (item.price * item.quantity))
+        cartItem.forEach((item: TypeCartItem) => total += (priceWithPromotion(item, activePromotion(item)) * item.quantity))
         const countItems = cartItem.length;
         return [total, countItems]
     }, [cartItem]);

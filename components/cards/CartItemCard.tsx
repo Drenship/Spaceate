@@ -82,6 +82,8 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
         });
     }, [product]);
 
+    const priceWithPromotion = useMemo(() => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price, [product, activePromotion])
+
     return (
         <div className='w-full'>
 
@@ -102,13 +104,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
                         </Link>
 
                         <div className='flex flex-col items-start justify-between xs:hidden'>
-                            <div className='text-2xl font-bold'>{(product.price * product.quantity).toFixed(2)}€</div>
+                            <div className='text-2xl font-bold'>{(priceWithPromotion * product.quantity).toFixed(2)}€</div>
                             <div className="flex items-end mt-1 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
                                 {
                                     activePromotion && activePromotion[0] ? (
                                         <>
                                             <span className='text-base line-through'>{fixedPriceToCurrency(product.price)}</span>
-                                            <span className='text-xl text-red-600'>{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                            <span className='text-xl text-red-600'>{fixedPriceToCurrency(priceWithPromotion)}</span>
                                             <span className='text-base'>/{product.price_in}</span>
                                         </>
                                     ) : (
@@ -139,13 +141,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
                 </div>
 
                 <div className='flex-col items-end justify-between hidden xs:flex'>
-                    <div className='text-2xl font-bold'>{(product.price * product.quantity).toFixed(2)}€</div>
+                    <div className='text-2xl font-bold'>{(priceWithPromotion * product.quantity).toFixed(2)}€</div>
                     <div className="flex items-end mt-1 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
                         {
                             activePromotion && activePromotion[0] ? (
                                 <>
                                     <span className='text-base line-through '>{fixedPriceToCurrency(product.price)}</span>
-                                    <span className='text-xl text-red-600'>{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                    <span className='text-xl text-red-600'>{fixedPriceToCurrency(priceWithPromotion)}</span>
                                     <span className='text-base'>/{product.price_in}</span>
                                 </>
                             ) : (

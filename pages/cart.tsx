@@ -32,13 +32,24 @@ const Cart: NextPage = () => {
 
     const shipping = 9.99;
 
+    const activePromotion = (product) => {
+        const now = new Date();
+        return product?.promotions?.filter(promo => {
+            const startDate = new Date(promo.startDate);
+            const endDate = new Date(promo.endDate);
+            return now >= startDate && now <= endDate && promo.isActive === true;
+        });
+    };
+
+    const priceWithPromotion = (product, activePromotion) => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
+
+
     // sub total du panier
     const totalPrice = useMemo(() => {
         let total = 0
-        cartItems.forEach(item => total += (item.price * item.quantity))
+        cartItems.forEach(item => total += (priceWithPromotion(item, activePromotion(item)) * item.quantity))
         return total
     }, [cartItems]);
-
 
 
     const createCheckoutSession = async () => {

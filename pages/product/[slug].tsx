@@ -26,6 +26,7 @@ import BlurImage from '@components/contents/BlurImage'
 import InputNumber from '@components/inputs/InputNumber'
 import CarouselProduct from '@components/Carousel/CarouselProduct';
 import Rating from "@components/contents/Rating"
+import { TypographyH4 } from '@components/Typography/Typography';
 
 
 type Props = {
@@ -167,6 +168,9 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         });
     }, [product]);
 
+    const priceWithPromotion = useMemo(() => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price, [product, activePromotion])
+
+
     return (
         <BasescreenWrapper
             title={product.name}
@@ -265,14 +269,12 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                     </p>
                                                 </div>
 
-                                                <p itemProp="description" key={product._id} className='mt-5 text-gray-600' dangerouslySetInnerHTML={{ __html: product.description }} />
-
                                                 <div className="flex items-end mt-5 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
                                                     {
                                                         activePromotion && activePromotion[0] ? (
                                                             <>
                                                                 <span className='text-base line-through '>{fixedPriceToCurrency(product.price)}</span>
-                                                                <span className='text-2xl text-red-600' itemProp="price">{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                                                <span className='text-2xl text-red-600' itemProp="price">{fixedPriceToCurrency(priceWithPromotion)}</span>
                                                                 <span className='text-xl'>/{product.price_in}</span>
                                                             </>
                                                         ) : (
@@ -298,7 +300,6 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                     )
                                                 }
 
-
                                                 <button
                                                     onClick={addItemsToCart}
                                                     disabled={isOutOfStock}
@@ -308,6 +309,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
                                                         isOutOfStock ? "Rupture de stock" : "Ajouter au panier"
                                                     }
                                                 </button>
+
+                                                <TypographyH4 className='mt-5 mb-2 underline'>Description :</TypographyH4>
+                                                <p itemProp="description" key={product._id} className='text-gray-600' dangerouslySetInnerHTML={{ __html: product.description }} />
+
 
                                                 { /* Livraison details */}
                                             </article>

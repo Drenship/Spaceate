@@ -49,6 +49,8 @@ const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
         });
     }, [product]);
 
+    const priceWithPromotion = useMemo(() => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price, [product, activePromotion])
+
     return (
         <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center w-full overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
             <div className="relative">
@@ -84,7 +86,7 @@ const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
                                 activePromotion && activePromotion[0] ? (
                                     <>
                                         <span className='text-sm line-through'>{product.price}€</span>
-                                        <span className='text-red-600'>{fixedPriceToCurrency(product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100))}</span>
+                                        <span className='text-red-600'>{fixedPriceToCurrency(priceWithPromotion)}</span>
                                         <span className='text-sm'>/{product.price_in}</span>
                                     </>
                                 ) : (

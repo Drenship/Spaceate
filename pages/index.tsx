@@ -39,30 +39,6 @@ const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
     }
   ]
 
-  const slidesData = [
-    {
-      image: "https://images.unsplash.com/photo-1456518563096-0ff5ee08204e?auto=format&fit=crop&w=1351&q=60&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
-      title: "Slider One",
-      subtitle: "Tagline • 2017",
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.",
-      link: "#",
-    },
-    {
-      image: "https://images.unsplash.com/photo-1510709657750-f5a80fc8da9c?auto=format&fit=crop&w=1950&q=60&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
-      title: "Slider Two",
-      subtitle: "Tagline • 2017",
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.",
-      link: "#",
-    },
-    {
-      image: "https://images.unsplash.com/photo-1505567745926-ba89000d255a?auto=format&fit=crop&w=1951&q=60&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
-      title: "Slider Three",
-      subtitle: "Tagline • 2017",
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.",
-      link: "#",
-    }
-  ]
-
   return (
     <BasescreenWrapper title="Accueil" footer={true}>
       <div>
