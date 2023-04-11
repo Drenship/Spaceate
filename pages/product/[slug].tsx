@@ -509,6 +509,7 @@ export const getServerSideProps = async (context: any) => {
                     price: 1,
                     price_in: 1,
                     rating: 1,
+                    promotions: 1,
                     countInStock: 1,
                     numReviews: 1
                 })

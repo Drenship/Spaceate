@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { authSessionMiddleware } from '@libs/Middleware/Api.Middleware.auth-session';
 import Order from '@libs/models/Order';
 import db from '@libs/database/dbConnect';
-import { TypeCartItem } from '@libs/typings';
+import { TypeCartItem, TypePromotions } from '@libs/typings';
 import Product from '@libs/models/Product';
 import User from '@libs/models/User';
 
@@ -21,13 +21,24 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const cartItems = req.body.items
 
+        const activePromotion = (product: TypeCartItem) => {
+            const now = new Date();
+            return product?.promotions?.filter(promo => {
+                const startDate = new Date(promo.startDate);
+                const endDate = new Date(promo.endDate);
+                return now >= startDate && now <= endDate && promo.isActive === true;
+            });
+        };
+
+        const priceWithPromotion = (product: TypeCartItem, activePromotion: TypePromotions[]): number => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
+
         const orderItems: TypeCartItem[] = cartItems.map((item: TypeCartItem) => ({
             _id: item._id,
             name: item.name,
             slug: item.slug,
             quantity: item.quantity,
             image: item.main_image,
-            price: item.price,
+            price: priceWithPromotion(item, activePromotion(item)),
             price_in: item.price_in
         }))
 
@@ -51,16 +62,6 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         })
         const order = await newOrder.save();
         // update product stats
-
-        const orderItemsUpdatesProduct = cartItems.map((item: TypeCartItem) => ({
-            filter: { _id: item._id },
-            update: {
-                $inc: {
-                    countInStock: item.quantity - (item.quantity * 2),
-                    "stats.totalSellInAwait": item.quantity
-                }
-            }
-        }))
 
         const updateProducts = async () => {
             try {

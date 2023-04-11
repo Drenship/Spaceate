@@ -3,7 +3,7 @@ import { authSessionMiddleware } from '@libs/Middleware/Api.Middleware.auth-sess
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 import { formatAmountForStripe } from "@libs/utils/stripe-helpers";
 import { CURRENCY } from "@config/index"
-import { TypeCartItem } from '@libs/typings';
+import { TypeCartItem, TypePromotions } from '@libs/typings';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     authSessionMiddleware({ authOnly: true, adminOnly: false })(req, res, () => {
@@ -22,11 +22,22 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     const order_id = req.body.order_id
     const user = req.body.user;
 
+    const activePromotion = (product: TypeCartItem) => {
+        const now = new Date();
+        return product?.promotions?.filter(promo => {
+            const startDate = new Date(promo.startDate);
+            const endDate = new Date(promo.endDate);
+            return now >= startDate && now <= endDate && promo.isActive === true;
+        });
+    };
+
+    const priceWithPromotion = (product: TypeCartItem, activePromotion: TypePromotions[]): number => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
+
     // This is the shape in which stripe expects the data to be
     const cart_line_items = cartItems.map((item) => ({
         name: item.name,
         description: "test description",
-        amount: formatAmountForStripe(item.price, CURRENCY),
+        amount: formatAmountForStripe(priceWithPromotion(item, activePromotion(item)), CURRENCY),
         currency: CURRENCY,
         quantity: item.quantity,
     }));
