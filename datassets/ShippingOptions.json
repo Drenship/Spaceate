@@ -1,0 +1,62 @@
+[
+    {
+        "shipping_rate_data": {
+            "type": "fixed_amount",
+            "fixed_amount": {
+                "amount": 0,
+                "currency": "eur"
+            },
+            "display_name": "Livraison Locale",
+            "delivery_estimate": {
+                "minimum": {
+                    "unit": "hour",
+                    "value": 2
+                },
+                "maximum": {
+                    "unit": "hour",
+                    "value": 10
+                }
+            }
+        }
+    },
+    {
+        "shipping_rate_data": {
+            "type": "fixed_amount",
+            "fixed_amount": {
+                "amount": 999,
+                "currency": "eur"
+            },
+            "display_name": "La poste",
+            "delivery_estimate": {
+                "minimum": {
+                    "unit": "day",
+                    "value": 1
+                },
+                "maximum": {
+                    "unit": "day",
+                    "value": 2
+                }
+            }
+        }
+    },
+    {
+        "shipping_rate_data": {
+            "type": "fixed_amount",
+            "fixed_amount": {
+                "amount": 1199,
+                "currency": "eur"
+            },
+            "display_name": "Livraison Express",
+            "delivery_estimate": {
+                "minimum": {
+                    "unit": "day",
+                    "value": 1
+                },
+                "maximum": {
+                    "unit": "day",
+                    "value": 3
+                }
+            }
+        }
+    }
+]

@@ -1,9 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { authSessionMiddleware } from '@libs/Middleware/Api.Middleware.auth-session';
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
-import { formatAmountForStripe } from "@libs/utils/stripe-helpers";
+import { NextApiRequest, NextApiResponse } from 'next';
 import { CURRENCY } from "@config/index"
-import { TypeCartItem, TypePromotions } from '@libs/typings';
+import { authSessionMiddleware } from '@libs/Middleware/Api.Middleware.auth-session';
+import { formatAmountForStripe } from "@libs/utils/stripe-helpers";
+import { TypeCartItem } from '@libs/typings';
+import { activePromotion, priceWithPromotion } from '@libs/utils/productUtils';
+
+import ShippingOptions from '@datassets/ShippingOptions.json'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     authSessionMiddleware({ authOnly: true, adminOnly: false })(req, res, () => {
@@ -18,23 +21,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
-    const cartItems: TypeCartItem[] = req.body.items;
-    const order_id = req.body.order_id
-    const user = req.body.user;
+    const { user, order_id, items: cartItems } = req.body
 
-    const activePromotion = (product: TypeCartItem) => {
-        const now = new Date();
-        return product?.promotions?.filter(promo => {
-            const startDate = new Date(promo.startDate);
-            const endDate = new Date(promo.endDate);
-            return now >= startDate && now <= endDate && promo.isActive === true;
-        });
-    };
-
-    const priceWithPromotion = (product: TypeCartItem, activePromotion: TypePromotions[]): number => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
-
-    // This is the shape in which stripe expects the data to be
-    const cart_line_items = cartItems.map((item) => ({
+    const cart_line_items = cartItems.map((item: TypeCartItem) => ({
         name: item.name,
         description: "test description",
         amount: formatAmountForStripe(priceWithPromotion(item, activePromotion(item)), CURRENCY),
@@ -43,53 +32,27 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     }));
 
     try {
+        
+        // get order in apy
+
+
         const checkoutSession = await stripe.checkout.sessions.create({
             mode: "payment",
             submit_type: 'pay',
             payment_method_types: ['card'],
 
             billing_address_collection: "auto",
-            shipping_options: [
-                {
-                    shipping_rate_data: {
-                        type: 'fixed_amount',
-                        fixed_amount: { amount: 0, currency: 'eur' },
-                        display_name: 'Livraison Locale',
-                        delivery_estimate: {
-                            minimum: { unit: 'hour', value: 2 },
-                            maximum: { unit: 'hour', value: 10 },
-                        },
-                    },
-                },
-                {
-                    shipping_rate_data: {
-                        type: 'fixed_amount',
-                        fixed_amount: { amount: 999, currency: 'eur' },
-                        display_name: 'La poste',
-                        delivery_estimate: {
-                            minimum: { unit: 'day', value: 1 },
-                            maximum: { unit: 'day', value: 2 },
-                        },
-                    },
-                },
-                {
-                    shipping_rate_data: {
-                        type: 'fixed_amount',
-                        fixed_amount: { amount: 1199, currency: 'eur' },
-                        display_name: 'Livraison Express',
-                        delivery_estimate: {
-                            minimum: { unit: 'day', value: 1 },
-                            maximum: { unit: 'day', value: 3 },
-                        },
-                    },
-                }
-            ],
+            //shipping: {
+            //    name: user.name,
+            //    address: userAddress,
+            //},
+            shipping_options: ShippingOptions,
             shipping_address_collection: {
                 allowed_countries: ["FR"],
             },
 
             line_items: cart_line_items,
-            success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${req.headers.origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${req.headers.origin}/cart`,
 
             customer_email: user.email,
@@ -103,7 +66,6 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
         res.status(200).json(checkoutSession);
     } catch (err) {
-        console.log(err)
         res.status(500).json({ err: err, statusCode: 500, message: "Internal server error" });
     }
 

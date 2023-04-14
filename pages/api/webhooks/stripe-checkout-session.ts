@@ -75,6 +75,8 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
             order.stripeDetails.session_id = session.id;
             order.stripeDetails.customer_id = session.customer;
             order.stripeDetails.payment_intent_id = session.payment_intent;
+
+            order.stripeDetails.paymentResultStripe = session;
             order.shippingAddress = {
                 fullName: session.shipping_details.name,
                 address: session.shipping_details.address.line1,
@@ -84,11 +86,11 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
                 country: session.shipping_details.address.country,
             };
             order.paymentMethod = session.payment_method_types[0];
+            
             order.itemsPrice = session.amount_subtotal / 100;
             order.shippingPrice = session.shipping_cost.amount_total / 100;
             order.taxPrice = (session.amount_subtotal * 0.055) / 100;
             order.totalPrice = session.amount_total / 100;
-            order.paymentResultStripe = session;
             order.isPaid = true;
             order.paidAt = new Date();
 

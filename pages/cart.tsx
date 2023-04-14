@@ -1,18 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import type { NextPage } from 'next/types'
 import dynamic from 'next/dynamic';
-import axios from 'axios';
-import { useRecoilState } from 'recoil';
 
-import { CART_UPDATE_ITEM, setCartState } from '@atoms/setStates/setCartState';
-import { cartState } from '@atoms/cartState';
-import { TypeCartItem, TypeUser } from '@libs/typings'
-import { fetchPostJSON } from "@libs/utils/api-helpers";
-import { getStripe } from "@libs/utils/stripe-helpers";
+import { TypeCartItem } from '@libs/typings'
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import CartItemCard from '@components/cards/CartItemCard';
-import { useSession } from 'next-auth/react';
+import { activePromotion, priceWithPromotion } from '@libs/utils/productUtils';
+import useUserStore from '@libs/hooks/modals/useUserStore';
+import useProcessOrderStore from '@libs/hooks/modals/useProcessOrderModal';
+import DefaultSendButton from '@components/buttons/DefaultSendButton';
 
 
 interface Update {
@@ -20,29 +17,19 @@ interface Update {
     text: string
 }
 
-const Cart: NextPage = () => {
+const CartScreen: NextPage = () => {
     const [hasMounted, setHasMounted] = useState(false);
     useEffect(() => setHasMounted(true), [])
 
-    const [loading, setLoading] = useState(false)
-    const { data: session } = useSession();
-    const user = session && session.user as TypeUser || null;
-    const [priceChange, setPriceChange] = useState<Update[]>([])
-    const [cartItems, setCartItem] = useRecoilState<TypeCartItem[]>(cartState)
+    const useProcessOrder = useProcessOrderStore();
+    const useUser = useUserStore();
+    const { user, cart: cartItems } = useUser;
+    const [loading, setLoading] = useState(false);
 
+    const [priceChange, setPriceChange] = useState<Update[]>([])
     const shipping = 9.99;
 
-    const activePromotion = (product) => {
-        const now = new Date();
-        return product?.promotions?.filter(promo => {
-            const startDate = new Date(promo.startDate);
-            const endDate = new Date(promo.endDate);
-            return now >= startDate && now <= endDate && promo.isActive === true;
-        });
-    };
-
-    const priceWithPromotion = (product, activePromotion) => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
-
+    const disabledCheckoutButton = useMemo(() => loading || cartItems.length === 0 || !user, [user, cartItems, loading]);
 
     // sub total du panier
     const totalPrice = useMemo(() => {
@@ -51,103 +38,58 @@ const Cart: NextPage = () => {
         return total
     }, [cartItems]);
 
+    console.log(cartItems)
 
-    const createCheckoutSession = async () => {
+    /*const checkUpdateCart = async () => {
+     const ids: string[] = []
+     const oldCartData = cartItems;
+     cartItems.forEach(item => ids.push(item._id))
+ 
+     if (ids.length === 0) return;
+ 
+     const { data: { data } } = await axios.post('/api/product/checkUpdate', { ids: ids })
+ 
+     data.forEach((item: any) => {
+         setCartState({
+             action: CART_UPDATE_ITEM,
+             product: item,
+             cartItem: cartItems,
+             setCartItem: setCartItem
+         })
+ 
+         const findItem: TypeCartItem = oldCartData.filter(i => i.slug === item.slug)[0]
+ 
+         if (findItem && findItem.price !== item.price || findItem && findItem.quantity > item.countInStock || item.countInStock <= 0) {
+             setPriceChange(prev => {
+                 if (prev.findIndex(e => e.product.slug === item.slug) !== -1) {
+                     return [...prev]
+                 };
+ 
+                 if (item.countInStock <= 0) {
+                     return [...prev, {
+                         product: findItem,
+                         text: `Le produit ${findItem.name} est en rupture de stock !`
+                     }]
+                 }
+ 
+                 if (findItem.quantity > item.countInStock) {
+                     return [...prev, {
+                         product: findItem,
+                         text: `La quantité demandée n'est pas disponible pour des ${findItem.name}, il en reste ${item.countInStock} en stock !`
+                     }]
+                 }
+ 
+                 return [...prev, {
+                     product: findItem,
+                     text: `Le prix des ${findItem.name} passe de ${findItem.price}€ à ${item.price}€`
+                 }]
+ 
+             })
+         }
+     })
+     }*/
 
-        if (!user) return;
-
-        setLoading(true);
-
-        const itemsForCheckout = [...cartItems].filter(i => {
-            if (i.outOfQuantity === true || i.outOfStock === true) return;
-            return i;
-        })
-
-        if (itemsForCheckout.length <= 0) return;
-
-        // init stripe
-        const stripe = await getStripe();
-        if (!stripe) {
-            setLoading(false);
-            return;
-        }
-
-        // Put order
-        const createOrder = await fetchPostJSON("/api/order", { items: itemsForCheckout });
-        if (!createOrder || createOrder.err) {
-            setLoading(false);
-            return;
-        }
-
-        const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: itemsForCheckout, order_id: createOrder.data._id });
-        // Internal Server Error
-        if ((checkoutSession).statusCode === 500) {
-            console.error((checkoutSession).message);
-            setLoading(false);
-            return;
-        }
-
-        // Redirect to checkout
-        const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
-        if (!stripe) alert(error.message);
-
-        setLoading(false);
-    };
-
-    const disabledCheckoutButton = useMemo(() => loading || cartItems.length === 0 || !user, [user, cartItems, loading]);
-
-
-    const checkUpdateCart = async () => {
-        const ids: string[] = []
-        const oldCartData = cartItems;
-        cartItems.forEach(item => ids.push(item._id))
-
-        if (ids.length === 0) return;
-
-        const { data: { data } } = await axios.post('/api/product/checkUpdate', { ids: ids })
-
-        data.forEach((item: any) => {
-            setCartState({
-                action: CART_UPDATE_ITEM,
-                product: item,
-                cartItem: cartItems,
-                setCartItem: setCartItem
-            })
-
-            const findItem: TypeCartItem = oldCartData.filter(i => i.slug === item.slug)[0]
-
-            if (findItem && findItem.price !== item.price || findItem && findItem.quantity > item.countInStock || item.countInStock <= 0) {
-                setPriceChange(prev => {
-                    if (prev.findIndex(e => e.product.slug === item.slug) !== -1) {
-                        return [...prev]
-                    };
-
-                    if (item.countInStock <= 0) {
-                        return [...prev, {
-                            product: findItem,
-                            text: `Le produit ${findItem.name} est en rupture de stock !`
-                        }]
-                    }
-
-                    if (findItem.quantity > item.countInStock) {
-                        return [...prev, {
-                            product: findItem,
-                            text: `La quantité demandée n'est pas disponible pour des ${findItem.name}, il en reste ${item.countInStock} en stock !`
-                        }]
-                    }
-
-                    return [...prev, {
-                        product: findItem,
-                        text: `Le prix des ${findItem.name} passe de ${findItem.price}€ à ${item.price}€`
-                    }]
-
-                })
-            }
-        })
-    }
-
-    // PB double rendu de checkUpdateCart
-    useEffect(() => { hasMounted && checkUpdateCart() }, [hasMounted]);
+    //useEffect(() => { hasMounted && checkUpdateCart() }, [hasMounted]);
 
     return (
         <BasescreenWrapper title="Panier" footer={true}>
@@ -193,19 +135,17 @@ const Cart: NextPage = () => {
                                 <p className="text-base leading-none">{(shipping).toFixed(2)}€</p>
                             </div>
 
-
-
                             <div className="flex items-center justify-between pt-20 lg:pt-5">
                                 <p className="text-2xl leading-normal">Total</p>
                                 <p className="text-2xl font-bold leading-normal text-right">{(totalPrice + shipping).toFixed(2)}€</p>
                             </div>
 
-                            <button
-                                role="link"
-                                className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100'
-                                onClick={createCheckoutSession}
-                                disabled={disabledCheckoutButton}
-                            >{loading ? "Chargement..." : "Paiement"}</button>
+                            <DefaultSendButton
+                                className='w-full'
+                                isDisabled={disabledCheckoutButton}
+                                onClick={useProcessOrder.onOpen}
+                                title='Passer commande'
+                            />
                         </div>
 
                     </div>
@@ -216,4 +156,4 @@ const Cart: NextPage = () => {
     )
 }
 
-export default dynamic(() => Promise.resolve(Cart), { ssr: false });
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });

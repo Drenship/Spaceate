@@ -1,7 +1,7 @@
 'use client';
 
 import Button from "@components/buttons/button";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
 
@@ -16,6 +16,7 @@ interface ModalProps {
     disabled?: boolean;
     secondaryAction?: () => void;
     secondaryActionLabel?: string;
+    size?: 'small' | 'medium' | 'large'
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -28,7 +29,8 @@ const Modal: React.FC<ModalProps> = ({
     footer,
     disabled,
     secondaryAction,
-    secondaryActionLabel
+    secondaryActionLabel,
+    size
 }) => {
     const [showModal, setShowModal] = useState(isOpen);
 
@@ -75,6 +77,16 @@ const Modal: React.FC<ModalProps> = ({
         return null;
     }
 
+    const sizeModal = () => {
+        return size === 'large'
+            ? 'md:max-w-[80vw] md:max-h-[90vh]'
+            : size === 'small'
+                ? 'md:w-4/6 lg:w-3/6 xl:w-2/5 lg:h-auto md:h-auto'
+                : 'md:w-4/6 lg:w-3/6 xl:w-2/5 lg:h-auto md:h-auto'
+
+    }
+
+
     return (
         <>
             <div
@@ -83,17 +95,17 @@ const Modal: React.FC<ModalProps> = ({
             >
 
                 <div
-                    className="relative w-full h-full mx-auto my-6 cursor-default md:w-4/6 lg:w-3/6 xl:w-2/5 lg:h-auto md:h-auto"
+                    className={`relative w-full h-full mx-auto my-6 cursor-default ${sizeModal()}`}
                     onClick={(e) => e.stopPropagation()}
                 >
 
                     {/*content*/}
                     <div className={`translate duration-300 h-full ${showModal ? 'translate-y-0' : 'translate-y-full'} ${showModal ? 'opacity-100' : 'opacity-0'}`}>
                         <form
-                            onSubmit={e => { 
+                            onSubmit={e => {
                                 e.preventDefault();
                             }}
-                            className="relative flex flex-col w-full h-full bg-white border-0 rounded-lg shadow-lg outline-none translate lg:h-auto md:h-auto focus:outline-none"
+                            className="relative flex flex-col w-full h-full bg-white border-0 rounded-lg shadow-lg outline-none translate focus:outline-none"
                         >
                             {/*header*/}
                             <div className="flex items-center p-6 rounded-t justify-center relative border-b-[1px]">
@@ -113,21 +125,23 @@ const Modal: React.FC<ModalProps> = ({
                             </div>
                             {/*footer*/}
                             <div className="flex flex-col gap-2 p-6">
-                                <div className="flex flex-row items-center w-full gap-4">
-                                    {secondaryAction && secondaryActionLabel && (
+                                {!footer && (
+                                    <div className="flex flex-row items-center w-full gap-4">
+                                        {secondaryAction && secondaryActionLabel && (
+                                            <Button
+                                                disabled={disabled}
+                                                label={secondaryActionLabel}
+                                                onClick={handleSecondaryAction}
+                                                outline
+                                            />
+                                        )}
                                         <Button
                                             disabled={disabled}
-                                            label={secondaryActionLabel}
-                                            onClick={handleSecondaryAction}
-                                            outline
+                                            label={actionLabel}
+                                            onClick={handleSubmit}
                                         />
-                                    )}
-                                    <Button
-                                        disabled={disabled}
-                                        label={actionLabel}
-                                        onClick={handleSubmit}
-                                    />
-                                </div>
+                                    </div>
+                                )}
                                 {footer}
                             </div>
                         </form>

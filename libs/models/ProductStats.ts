@@ -1,4 +1,5 @@
 import mongoose, { Document } from "mongoose";
+mongoose.set('strictQuery', true);
 
 interface IDailyStats {
     date: Date;

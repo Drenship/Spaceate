@@ -127,6 +127,9 @@ export interface TypeProduct {
 }
 
 export interface TypeCartItem extends TypeProduct {
+    _id: string;
+    cart_id?: string;
+    productId?: TypeProduct;
     quantity: number;
     outOfStock?: boolean; // rupture de stock
     outOfQuantity?: boolean; // quantité demandée non disponible mais pas en rupture
@@ -139,14 +142,6 @@ export interface TypeCommentaire {
     rating: string
     description: string
     date: string
-}
-
-export interface TypeOrderItem {
-    _id: string
-    name: string
-    quantity: number
-    image: string
-    price: number
 }
 
 export interface TypeOrderProduct {

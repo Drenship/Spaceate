@@ -1,34 +1,23 @@
 import React, { useMemo } from 'react'
 import { useRouter } from "next/navigation";
-import { useRecoilState } from 'recoil';
 
-import { cartState } from "@atoms/cartState"
-import { TypeCartItem, TypePromotions } from '@libs/typings';
+import { TypeCartItem } from '@libs/typings';
 import { replaceURL } from '@libs/utils';
+import { activePromotion, priceWithPromotion } from '@libs/utils/productUtils';
+import useUserStore from '@libs/hooks/modals/useUserStore';
 
 export default function Cart() {
     const router = useRouter();
-    const [cartItem] = useRecoilState(cartState)
-
-
-    const activePromotion = (product: TypeCartItem) => {
-        const now = new Date();
-        return product?.promotions?.filter(promo => {
-            const startDate = new Date(promo.startDate);
-            const endDate = new Date(promo.endDate);
-            return now >= startDate && now <= endDate && promo.isActive === true;
-        });
-    };
-
-    const priceWithPromotion = (product: TypeCartItem, activePromotion: TypePromotions[]) => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
+    const useUser = useUserStore();
+    const { cart: cartItems } = useUser;
 
     // cart details
     const [totalCartValue, totalCountItems] = useMemo(() => {
         let total = 0
-        cartItem.forEach((item: TypeCartItem) => total += (priceWithPromotion(item, activePromotion(item)) * item.quantity))
-        const countItems = cartItem.length;
+        cartItems.forEach((item: TypeCartItem) => total += (priceWithPromotion(item, activePromotion(item)) * item.quantity))
+        const countItems = cartItems.length;
         return [total, countItems]
-    }, [cartItem]);
+    }, [cartItems]);
 
     return (
 
@@ -45,7 +34,7 @@ export default function Cart() {
                     <div className="-space-x-6 avatar-group">
 
                         {
-                            cartItem.length > 0 && [...cartItem].slice(0, 4).map((p, k) => <div key={k} className="avatar">
+                            cartItems.length > 0 && [...cartItems].slice(0, 4).map((p, k) => <div key={k} className="avatar">
                                 <div className="w-12">
                                     <img src={replaceURL(p.main_image)} alt={`panier spaceate - ${p.name}`} />
                                 </div>
@@ -53,7 +42,7 @@ export default function Cart() {
                         }
 
                         {
-                            cartItem.length > 4 && (
+                            cartItems.length > 4 && (
                                 <div className="select-none avatar placeholder">
                                     <div className="w-12 bg-neutral-focus text-neutral-content">
                                         <span>+{totalCountItems - 3}</span>

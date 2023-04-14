@@ -5,7 +5,6 @@ import { NextComponentType, NextPageContext } from 'next';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { Router, useRouter } from 'next/router';
 import ProgressBar from "@badrap/bar-of-progress";
-import { RecoilRoot, RecoilEnv } from 'recoil';
 import { Toaster } from 'react-hot-toast';
 
 import { NotifyContextProvider } from '@libs/hooks/notify';
@@ -16,8 +15,6 @@ import Sidebar from '@components/Sidebar';
 import BodySkeleton from '@components/Loader/BodySkeleton';
 import ExportModalIndex from '@components/Modals/ExportModalIndex';
 import { Analytics } from '@vercel/analytics/react';
-
-RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
 const progress = new ProgressBar({
   size: 4,
@@ -53,7 +50,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
 
   return (
     <SessionProvider session={session}>
-      <RecoilRoot>
 
         <NotifyContextProvider>
           <Toaster
@@ -81,7 +77,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
         </NotifyContextProvider>
 
 
-      </RecoilRoot>
     </SessionProvider>
   )
 }

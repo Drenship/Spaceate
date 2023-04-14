@@ -1,13 +1,9 @@
 import Link from 'next/link';
-import React, { useCallback } from 'react';
-import { signOut, useSession } from 'next-auth/react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
-import { cartState } from "@atoms/cartState"
-import { CART_EMPTY, setCartState } from '@atoms/setStates/setCartState';
+import React from 'react';
+import { signOut } from 'next-auth/react';
 import { HomeIcon, LoginIcon, LogoutIcon, UserAddIcon } from '@heroicons/react/solid';
 import { BsPerson, BsTools } from 'react-icons/bs';
 import { BiBox } from 'react-icons/bi';
-import { TypeUser } from '@libs/typings';
 import useLoginModal from '@libs/hooks/modals/useLoginModal';
 import useRegisterModal from '@libs/hooks/modals/useRegisterModal';
 import useUserStore from '@libs/hooks/modals/useUserStore';
@@ -20,15 +16,10 @@ const Sidebar: React.FC<SidebarProps> = () => {
     const useUser = useUserStore();
     const user = useUser.user;
 
-    const [cartItem, setCartItem] = useRecoilState(cartState)
 
     const logoutClickHandler = () => {
-        setCartState({
-            action: CART_EMPTY,
-            product: {},
-            cartItem: cartItem,
-            setCartItem: setCartItem
-        })
+        useUser.clearUser();
+        useUser.clearCart();
         signOut({ callbackUrl: '/' });
     };
 

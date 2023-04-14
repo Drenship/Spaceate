@@ -3,22 +3,22 @@ import { NextPage } from 'next/types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AnnotationIcon } from '@heroicons/react/solid';
-import { useRecoilState } from "recoil"
 import isMobile from "is-mobile";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard } from "swiper";
-import { getSession, useSession } from 'next-auth/react';
+import { getSession } from 'next-auth/react';
 import "swiper/css";
 import "swiper/css/navigation";
 
-import { cartState } from "@atoms/cartState"
-import { setCartState, CART_ADD_ITEM } from "@atoms/setStates/setCartState"
-import { TypeCartItem, TypeProduct, TypeCommentaire, TypeUser } from '@libs/typings';
+import { TypeProduct, TypeCommentaire, TypeUser } from '@libs/typings';
 import db from '@libs/database/dbConnect';
 import Product from '@libs/models/Product';
+import Order from '@libs/models/Order';
 import { fixedPriceToCurrency, replaceURL, teinteDeLimage } from '@libs/utils';
 import { useClickOutside, useEscapeGallery, useEscapeListener, useSwipeAndDoubleTap } from '@libs/hooks';
-import Order from '@libs/models/Order';
+import { activePromotion, priceWithPromotion } from '@libs/utils/productUtils';
+import useUserStore from '@libs/hooks/modals/useUserStore';
+
 
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import CommentaireCard from '@components/cards/CommentaireCard'
@@ -39,15 +39,15 @@ type Props = {
 const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProducts, frequentlyBoughtProducts }) => {
     const router = useRouter();
 
-    const { data: session } = useSession();
-    const user: TypeUser | null = session?.user ?? null;
+    const useUser = useUserStore();
+    const { user } = useUser;
+
     const seeMenuRef = useRef(null);
     const [seeMenu, setSeeMenu] = useState<boolean>(false);
 
     const [product, setProduct] = useState<TypeProduct>(initialProduct);
     const [commentaires, setCommentaires] = useState<TypeCommentaire[]>([]);
     const [quantity, setQuantity] = useState(1);
-    const [cartItem, setCartItem] = useRecoilState(cartState)
     const [color, setColor] = useState<string>("");
 
     const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
@@ -72,17 +72,7 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
             return alert('le produit est en rupture de stock');
         }
 
-        let newProductCart: TypeCartItem = {
-            ...product,
-            quantity: quantity
-        }
-
-        setCartState({
-            action: CART_ADD_ITEM,
-            product: newProductCart,
-            cartItem: cartItem,
-            setCartItem: setCartItem
-        })
+        useUser.addToCart({ ...product, quantity: quantity })
 
         router.push('/cart')
     }
@@ -159,17 +149,9 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
         return [fullUrl, baseUrl];
     }, [product])
 
-    const activePromotion = useMemo(() => {
-        const now = new Date();
-        return product?.promotions?.filter(promo => {
-            const startDate = new Date(promo.startDate);
-            const endDate = new Date(promo.endDate);
-            return now >= startDate && now <= endDate && promo.isActive === true;
-        });
-    }, [product]);
 
-    const priceWithPromotion = useMemo(() => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price, [product, activePromotion])
-
+    const activePromotionList = useMemo(() => activePromotion(product), [product]);
+    const getPriceWithPromotion = useMemo(() => priceWithPromotion(product, activePromotionList), [product, activePromotionList]);
 
     return (
         <BasescreenWrapper
@@ -271,10 +253,10 @@ const ProductPage: NextPage<Props> = ({ productFind, initialProduct, sameProduct
 
                                                 <div className="flex items-end mt-5 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
                                                     {
-                                                        activePromotion && activePromotion[0] ? (
+                                                        activePromotionList && activePromotionList[0] ? (
                                                             <>
                                                                 <span className='text-base line-through '>{fixedPriceToCurrency(product.price)}</span>
-                                                                <span className='text-2xl text-red-600' itemProp="price">{fixedPriceToCurrency(priceWithPromotion)}</span>
+                                                                <span className='text-2xl text-red-600' itemProp="price">{fixedPriceToCurrency(getPriceWithPromotion)}</span>
                                                                 <span className='text-xl'>/{product.price_in}</span>
                                                             </>
                                                         ) : (

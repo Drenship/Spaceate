@@ -20,13 +20,10 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.body.updateType) {
         case 'UPDATE_NEW_EMAIL':
             return UPDATE_NEW_EMAIL(req, res);
-
         case 'UPDATE_PASSWORD':
             return UPDATE_PASSWORD(req, res);
-
         case 'UPDATE_INFORMATION':
             return UPDATE_INFORMATION(req, res);
-
 
         case 'ADD_ADDRESS':
             return ADD_ADDRESS(req, res);
@@ -34,6 +31,14 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             return PUT_ADDRESS(req, res);
         case 'REMOVE_ADDRESS':
             return REMOVE_ADDRESS(req, res);
+
+        case 'ADD_ITEM_CART':
+            return ADD_ITEM_CART(req, res);
+        case 'REMOVE_ITEM_CART':
+            return REMOVE_ITEM_CART(req, res);
+        case 'UPDATE_ITEM_QUANTITY_CART':
+            return UPDATE_ITEM_QUANTITY_CART(req, res);
+
 
         default:
             return res.status(405).send({ message: 'La méthode d\'envoi n\'est pas autorisée' });
@@ -192,6 +197,59 @@ const REMOVE_ADDRESS = async (req: NextApiRequest, res: NextApiResponse) => {
         await db.disconnect()
     }
 }
+
+const ADD_ITEM_CART = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const { user, data } = req.body;
+        await db.connect();
+        const getUser = await User.findById(user._id);
+        getUser.cart.push(data);
+        const result = await getUser.save();
+        return res.status(200).json({ success: true, message: "L'article a bien été ajouté au panier.", data: result });
+    } catch (error) {
+        return res.status(500).json({ message: `Erreur lors de l'ajout de l'article au panier` });
+    } finally {
+        await db.disconnect();
+    }
+}
+
+const REMOVE_ITEM_CART = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const { user, data } = req.body;
+        const { itemId } = data;
+        await db.connect();
+        const getUser = await User.findById(user._id);
+
+        getUser.cart.id(itemId).remove();
+        await getUser.save();
+
+        return res.status(200).json({ success: true, message: "L'article a bien été supprimé du panier." });
+    } catch (error) {
+        return res.status(500).json({ message: `Erreur lors de la suppression de l'article du panier` });
+    } finally {
+        await db.disconnect();
+    }
+}
+
+const UPDATE_ITEM_QUANTITY_CART = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+        const { user, data } = req.body;
+        const { itemId, quantity } = data;
+        await db.connect();
+        const getUser = await User.findById(user._id);
+
+        const item = getUser.cart.id(itemId);
+        item.quantity = quantity;
+        await getUser.save();
+
+        return res.status(200).json({ success: true, message: "La quantité de l'article a bien été mise à jour." });
+    } catch (error) {
+        return res.status(500).json({ message: `Erreur lors de la mise à jour de la quantité de l'article` });
+    } finally {
+        await db.disconnect();
+    }
+}
+
 
 /*
 * OTHER FUNCTION FOR ADDRESS

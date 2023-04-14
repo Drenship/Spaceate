@@ -1,12 +1,16 @@
+"use client";
+
 import Link from 'next/link';
-import React, { useEffect, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import React, { useMemo } from 'react';
 import { cartState } from "@atoms/cartState"
 import { useRouter } from 'next/dist/client/router';
 import { CART_ADD_ITEM, setCartState } from '@atoms/setStates/setCartState';
 import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import Rating from '@components/contents/Rating';
 import { TypeProduct } from '@libs/typings';
+import { activePromotion, priceWithPromotion } from '@libs/utils/productUtils';
+import useUserStore from '@libs/hooks/modals/useUserStore';
+import { toast } from 'react-hot-toast';
 
 
 interface BestsellerCardProps {
@@ -14,42 +18,25 @@ interface BestsellerCardProps {
 }
 const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
 
-    const router = useRouter()
-    const [cartItem, setCartItem] = useRecoilState(cartState)
+    const useUser = useUserStore();
+    const router = useRouter();
 
     const isOutOfStock = useMemo<boolean>(() => product.countInStock <= 0, [product]);
+
+    const activePromotionList = useMemo(() => activePromotion(product), [product]);
+    const getPriceWithPromotion = useMemo(() => priceWithPromotion(product, activePromotionList), [product, activePromotionList]);
 
     const addItemsToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (isOutOfStock) {
-            return alert('le produit est en rupture de stock');
+            return toast.error('le produit est en rupture de stock');
         }
 
-        let newProductCart = { ...product }
-        newProductCart.quantity = 1
-
-        setCartState({
-            action: CART_ADD_ITEM,
-            product: newProductCart,
-            cartItem: cartItem,
-            setCartItem: setCartItem
-        })
+        useUser.addToCart({ ...product, quantity: 1 })
 
         router.push('/cart')
     }
-
-
-    const activePromotion = useMemo(() => {
-        const now = new Date();
-        return product?.promotions?.filter(promo => {
-            const startDate = new Date(promo.startDate);
-            const endDate = new Date(promo.endDate);
-            return now >= startDate && now <= endDate && promo.isActive === true;
-        });
-    }, [product]);
-
-    const priceWithPromotion = useMemo(() => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price, [product, activePromotion])
 
     return (
         <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center w-full overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
@@ -83,10 +70,10 @@ const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
                         </div>
                         <div className="flex space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
                             {
-                                activePromotion && activePromotion[0] ? (
+                                activePromotionList && activePromotionList[0] ? (
                                     <>
                                         <span className='text-sm line-through'>{product.price}€</span>
-                                        <span className='text-red-600'>{fixedPriceToCurrency(priceWithPromotion)}</span>
+                                        <span className='text-red-600'>{fixedPriceToCurrency(getPriceWithPromotion)}</span>
                                         <span className='text-sm'>/{product.price_in}</span>
                                     </>
                                 ) : (

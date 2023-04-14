@@ -26,6 +26,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
             emailVerificationToken: 0,
             emailVerificationTokenExpires: 0,
         })
+
         if(getUser) {
             return res.status(200).json({ user: getUser });
         } 

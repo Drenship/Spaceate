@@ -1,5 +1,6 @@
 import mongoose, { Document } from "mongoose";
 import "@libs/models/Categorie";
+mongoose.set('strictQuery', true);
 
 interface IProduct extends Document {
     name: string;
@@ -182,9 +183,6 @@ const productSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
-
-
-productSchema.set('strictQuery', false)
 
 productSchema.index({
     slug: 1,

@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import '@libs/models/Order';
+import '@libs/models/Product';
+mongoose.set('strictQuery', true);
 
 const userSchema = new mongoose.Schema(
     {
@@ -87,12 +89,13 @@ const userSchema = new mongoose.Schema(
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
                     required: true,
-                    autopopulate: false
+                    autopopulate: true
                 },
                 quantity: {
                     type: Number,
                     required: true,
-                    default: 1
+                    min: 1,
+                    default: 1,
                 }
             }
         ],
@@ -191,8 +194,6 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ emailVerificationToken: 1 }, { unique: true, partialFilterExpression: { emailVerificationToken: { $exists: true } } });
-
-userSchema.set('strictQuery', false)
 
 userSchema.plugin(require('mongoose-autopopulate'));
 

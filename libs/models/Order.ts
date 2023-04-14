@@ -11,6 +11,8 @@ const orderSchema = new mongoose.Schema(
             payment_intent_id: { type: String, required: false },
             refund_id: { type: String, required: false },
             charge_id: { type: String, required: false },
+            
+            paymentResultStripe: { type: Object },
         },
 
         orderItems: [
@@ -22,24 +24,30 @@ const orderSchema = new mongoose.Schema(
                 image: { type: String, required: true },
                 price: { type: Number, required: true },
                 price_in: { type: String, required: false },
+                currency: { type: String, required: true, default: "eur" },
+
+                //tva: { type: Number, required: false },
+                //priceHT: { type: Number, required: false },
+                //priceTTC: { type: Number, required: false },
             }
         ],
+
         shippingAddress: {
             fullName: { type: String, required: true },
-            address: { type: String, required: true },
-            address2: { type: String, required: false },
+            streetAddress: { type: String, required: true },
             city: { type: String, required: true },
             postalCode: { type: String, required: true },
             country: { type: String, required: true },
+            phone: { type: String, required: false, trim: true },
         },
 
-        blindingAdress: {
-            fullName: { type: String, required: false },
-            address: { type: String, required: false },
-            address2: { type: String, required: false },
-            city: { type: String, required: false },
-            postalCode: { type: String, required: false },
-            country: { type: String, required: false },
+        billingAddress: {
+            fullName: { type: String, required: true },
+            streetAddress: { type: String, required: true },
+            city: { type: String, required: true },
+            postalCode: { type: String, required: true },
+            country: { type: String, required: true },
+            phone: { type: String, required: false, trim: true },
         },
 
         shippingTrack: {
@@ -52,7 +60,6 @@ const orderSchema = new mongoose.Schema(
         shippingPrice: { type: Number, required: true },
         taxPrice: { type: Number, required: true },
         totalPrice: { type: Number, required: true },
-        paymentResultStripe: { type: Object },
 
         isCancel: { type: Boolean, required: true, default: false },
         isPaid: { type: Boolean, required: true, default: false },

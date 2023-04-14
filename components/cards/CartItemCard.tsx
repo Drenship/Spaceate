@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link';
-import { useRecoilState } from 'recoil';
-import { cartState } from "@atoms/cartState"
-import { setCartState, CART_ADD_ITEM, CART_REMOVE_ITEM } from "@atoms/setStates/setCartState"
 
 import { useNotifys } from '@libs/hooks/notify';
 import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
@@ -10,35 +7,31 @@ import { TypeCartItem } from '@libs/typings'
 
 import InputNumber from '@components/inputs/InputNumber'
 import BlurImage from '@components/contents/BlurImage'
+import { activePromotion, priceWithPromotion } from '@libs/utils/productUtils';
+import useUserStore from '@libs/hooks/modals/useUserStore';
+import { toast } from 'react-hot-toast';
 
 interface CartItemCardProps {
     product: TypeCartItem
 }
 
 const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
+    const useUser = useUserStore();
 
     const { pushNotify } = useNotifys();
     const [notify, setNotify] = useState(false);
     const [quantity, setQuantity] = useState(product.quantity);
-    const [cartItem, setCartItem] = useRecoilState(cartState)
 
     const isOutOfStock = useMemo(() => product.countInStock <= 0, [product]);
 
     useEffect(() => {
         const updateItemToCart = () => {
             if (isOutOfStock) {
-                return alert('le produit est en rupture de stock');
+                return toast.error('le produit est en rupture de stock');
             }
 
-            let newProductCart = { ...product }
-            newProductCart.quantity = quantity
+            useUser.updateCartItemQuantity(product.cart_id, quantity)
 
-            setCartState({
-                action: CART_ADD_ITEM,
-                product: newProductCart,
-                cartItem: cartItem,
-                setCartItem: setCartItem
-            })
             if (notify === false) {
                 pushNotify({
                     title: product.name,
@@ -58,12 +51,8 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
     }, [quantity]);
 
     const removeItemToCart = () => {
-        setCartState({
-            action: CART_REMOVE_ITEM,
-            product: product,
-            cartItem: cartItem,
-            setCartItem: setCartItem
-        })
+
+        useUser.removeFromCart(product.cart_id)
 
         pushNotify({
             title: "",
@@ -73,16 +62,8 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
         })
     }
 
-    const activePromotion = useMemo(() => {
-        const now = new Date();
-        return product?.promotions?.filter(promo => {
-            const startDate = new Date(promo.startDate);
-            const endDate = new Date(promo.endDate);
-            return now >= startDate && now <= endDate && promo.isActive === true;
-        });
-    }, [product]);
-
-    const priceWithPromotion = useMemo(() => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price, [product, activePromotion])
+    const activePromotionList = useMemo(() => activePromotion(product), [product]);
+    const getPriceWithPromotion = useMemo(() => priceWithPromotion(product, activePromotionList), [product, activePromotionList]);
 
     return (
         <div className='w-full'>
@@ -104,13 +85,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
                         </Link>
 
                         <div className='flex flex-col items-start justify-between xs:hidden'>
-                            <div className='text-2xl font-bold'>{(priceWithPromotion * product.quantity).toFixed(2)}€</div>
+                            <div className='text-2xl font-bold'>{(getPriceWithPromotion * product.quantity).toFixed(2)}€</div>
                             <div className="flex items-end mt-1 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
                                 {
-                                    activePromotion && activePromotion[0] ? (
+                                    activePromotionList && activePromotionList[0] ? (
                                         <>
                                             <span className='text-base line-through'>{fixedPriceToCurrency(product.price)}</span>
-                                            <span className='text-xl text-red-600'>{fixedPriceToCurrency(priceWithPromotion)}</span>
+                                            <span className='text-xl text-red-600'>{fixedPriceToCurrency(getPriceWithPromotion)}</span>
                                             <span className='text-base'>/{product.price_in}</span>
                                         </>
                                     ) : (
@@ -141,13 +122,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ product }) => {
                 </div>
 
                 <div className='flex-col items-end justify-between hidden xs:flex'>
-                    <div className='text-2xl font-bold'>{(priceWithPromotion * product.quantity).toFixed(2)}€</div>
+                    <div className='text-2xl font-bold'>{(getPriceWithPromotion * product.quantity).toFixed(2)}€</div>
                     <div className="flex items-end mt-1 space-x-0.5 text-lg font-semibold leading-none text-right text-gray-600">
                         {
-                            activePromotion && activePromotion[0] ? (
+                            activePromotionList && activePromotionList[0] ? (
                                 <>
                                     <span className='text-base line-through '>{fixedPriceToCurrency(product.price)}</span>
-                                    <span className='text-xl text-red-600'>{fixedPriceToCurrency(priceWithPromotion)}</span>
+                                    <span className='text-xl text-red-600'>{fixedPriceToCurrency(getPriceWithPromotion)}</span>
                                     <span className='text-base'>/{product.price_in}</span>
                                 </>
                             ) : (
