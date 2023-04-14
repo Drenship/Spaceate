@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 
 type InputRadioProps = {
     label: string,
+    description?: string,
     input: {
         name: string,
         value: any,
@@ -11,7 +12,7 @@ type InputRadioProps = {
     onChange?: (e: React.BaseSyntheticEvent) => void
 }
 
-const InputRadio: React.FC<InputRadioProps> = ({ label, input, onChange }) => {
+const InputRadio: React.FC<InputRadioProps> = ({ label, description, input, onChange }) => {
     const { name, value, checked } = input;
 
     const uuid = useMemo(generateUUID, []);
@@ -21,13 +22,19 @@ const InputRadio: React.FC<InputRadioProps> = ({ label, input, onChange }) => {
             <input
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 cursor-pointer"
                 id={uuid}
+                aria-describedby={"helper-" + uuid}
                 type="radio"
                 name={name}
                 value={value}
                 checked={checked}
                 onChange={onChange}
             />
-            <label htmlFor={uuid} className="w-full py-4 ml-2 text-sm font-medium cursor-pointer">{label}</label>
+            <div className='flex flex-col items-start justify-center w-full py-2 pl-4'>
+                <label htmlFor={uuid} className="w-full text-sm font-medium cursor-pointer">{label}</label>
+                {description && (
+                    <p id={"helper-" + uuid} className="text-xs leading-[15px] text-gray-600">{description}</p>
+                )}
+            </div>
         </div>
     );
 }

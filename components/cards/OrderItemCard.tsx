@@ -1,3 +1,5 @@
+"use client";
+
 import BlurImage from '@components/contents/BlurImage';
 import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import Link from 'next/link';

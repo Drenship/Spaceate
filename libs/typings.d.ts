@@ -1,5 +1,5 @@
 
-interface Address {
+export interface Address {
     _id?: string;
     fullName: string | null,
     streetAddress: string | null;

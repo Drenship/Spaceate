@@ -29,11 +29,10 @@ const Success: NextPage = () => {
         <BasescreenWrapper title="Panier" footer={false}>
             <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-128px)] md:min-h-[calc(100vh-64px)] bg-gray-100">
                 <div className="w-full p-8 bg-white rounded-lg shadow-md sm:w-96">
-                    <h2 className="mb-6 text-2xl font-bold text-center">Commande réussie</h2>
+                    <h2 className="mb-6 text-2xl font-bold text-center">404 - Page introuvable</h2>
                     <p className="mb-4 text-center text-gray-700">
-                        Merci pour votre commande ! Un email de confirmation vous a été envoyé.
+                        Désolé, la page que vous cherchez n'existe pas ou a été déplacée.
                     </p>
-
                     <div className="flex justify-center">
                         <a
                             href="/"

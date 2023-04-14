@@ -12,13 +12,22 @@ export const activePromotion = (product: TypeProduct) => {
 
 export const priceWithPromotion = (product: TypeProduct, activePromotion: TypePromotions[]): number => activePromotion && activePromotion[0] ? (product.price * (1 - (activePromotion[0]?.discountPercentage || 0) / 100)) : product.price
 
-export const processOrderItems = (cartItems: TypeCartItem[]): TypeOrderProduct[] => cartItems.map((item: TypeCartItem) => ({
-    _id: item._id,
-    name: item.name,
-    slug: item.slug,
-    quantity: item.quantity,
-    image: item.main_image,
-    price: priceWithPromotion(item, activePromotion(item)),
-    price_in: item.price_in,
-    currency: item.currency ? item.currency : CURRENCY,
-}));
+export const processOrderItems = (cartItems: TypeCartItem[]): TypeOrderProduct[] =>
+    cartItems.map((item: TypeCartItem) => {
+        const price = priceWithPromotion(item, activePromotion(item));
+        const tva = item.advancePrice.tva;
+        const priceHT = price / (1 + tva / 100);
+
+        return {
+            _id: item._id,
+            name: item.name,
+            slug: item.slug,
+            quantity: item.quantity,
+            image: item.main_image,
+            price,
+            price_in: item.price_in,
+            currency: item.currency ? item.currency : CURRENCY,
+            tva,
+            priceHT,
+        };
+    });

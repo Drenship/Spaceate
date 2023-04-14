@@ -1,5 +1,6 @@
 [
     {
+        "_id": 1,
         "shipping_rate_data": {
             "type": "fixed_amount",
             "fixed_amount": {
@@ -20,6 +21,7 @@
         }
     },
     {
+        "_id": 2,
         "shipping_rate_data": {
             "type": "fixed_amount",
             "fixed_amount": {
@@ -40,6 +42,7 @@
         }
     },
     {
+        "_id": 3,
         "shipping_rate_data": {
             "type": "fixed_amount",
             "fixed_amount": {

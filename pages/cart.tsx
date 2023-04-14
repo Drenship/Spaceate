@@ -38,8 +38,6 @@ const CartScreen: NextPage = () => {
         return total
     }, [cartItems]);
 
-    console.log(cartItems)
-
     /*const checkUpdateCart = async () => {
      const ids: string[] = []
      const oldCartData = cartItems;

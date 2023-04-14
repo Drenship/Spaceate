@@ -26,22 +26,35 @@ const updateProductStats = async (cartItems: TypeCartItem[]) => {
 
 const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const { user, shippingAddress, billingAddress, items: cartItems } = req.body;
-
-        const orderItems: TypeOrderProduct[] = processOrderItems(cartItems)
+        const { user, shippingAddress, sameAddress, billingAddress, shippingMethode } = req.body;
 
         await db.connect();
+        const getUser = await User.findById(user._id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+
+        const cartItems = getUser.cart.map((c: TypeCartItem) => ({ ...c.productId, quantity: c.quantity, cart_id: c._id }))
+        const orderItems: TypeOrderProduct[] = processOrderItems(cartItems)
+
+        const itemsPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+        const taxPrice = orderItems.reduce((acc, item) => acc + (item.price - item.priceHT) * item.quantity, 0);
+        const shippingPrice = shippingMethode.shipping_rate_data.fixed_amount.amount / 100;
+        const totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
         // create order
         const newOrder = new Order({
             user: user._id,
             orderItems: orderItems,
             shippingAddress: shippingAddress,
-            billingAddress: billingAddress,
+            billingAddress: sameAddress ? shippingAddress : billingAddress,
             paymentMethod: " ",
-            itemsPrice: 0,
-            shippingPrice: 0,
-            taxPrice: 0,
-            totalPrice: 0,
+            itemsPrice: itemsPrice,
+            shippingPrice: shippingPrice,
+            taxPrice: taxPrice,
+            totalPrice: totalPrice + shippingPrice,
+            shippingMethode: shippingMethode.shipping_rate_data
         })
         const order = await newOrder.save();
 
@@ -49,10 +62,7 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         await updateProductStats(cartItems);
 
         // update user
-        const getUser = await User.findById(user._id);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+
         getUser.orders.push(order._id);
         getUser.cart.set([]);
         await getUser.save();

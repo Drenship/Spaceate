@@ -11,9 +11,8 @@ const orderSchema = new mongoose.Schema(
             payment_intent_id: { type: String, required: false },
             refund_id: { type: String, required: false },
             charge_id: { type: String, required: false },
-            
-            paymentResultStripe: { type: Object },
         },
+        paymentResultStripe: { type: Object },
 
         orderItems: [
             {
@@ -26,9 +25,8 @@ const orderSchema = new mongoose.Schema(
                 price_in: { type: String, required: false },
                 currency: { type: String, required: true, default: "eur" },
 
-                //tva: { type: Number, required: false },
-                //priceHT: { type: Number, required: false },
-                //priceTTC: { type: Number, required: false },
+                tva: { type: Number, required: false },
+                priceHT: { type: Number, required: false },
             }
         ],
 
@@ -48,6 +46,52 @@ const orderSchema = new mongoose.Schema(
             postalCode: { type: String, required: true },
             country: { type: String, required: true },
             phone: { type: String, required: false, trim: true },
+        },
+
+        shippingMethode: {
+            type: {
+                type: String,
+                enum: ['fixed_amount'],
+                required: true,
+            },
+            fixed_amount: {
+                amount: {
+                    type: Number,
+                    required: true,
+                },
+                currency: {
+                    type: String,
+                    required: true,
+                },
+            },
+            display_name: {
+                type: String,
+                required: true,
+            },
+            delivery_estimate: {
+                minimum: {
+                    unit: {
+                        type: String,
+                        enum: ['hour', 'day'],
+                        required: true,
+                    },
+                    value: {
+                        type: Number,
+                        required: true,
+                    },
+                },
+                maximum: {
+                    unit: {
+                        type: String,
+                        enum: ['hour', 'day'],
+                        required: true,
+                    },
+                    value: {
+                        type: Number,
+                        required: true,
+                    },
+                },
+            },
         },
 
         shippingTrack: {
