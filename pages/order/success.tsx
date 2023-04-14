@@ -4,16 +4,13 @@ import { useRouter } from 'next/router';
 import { NextPage } from 'next/types';
 import useSWR from 'swr';
 
-import { useRecoilState } from 'recoil';
-import { cartState } from '@atoms/cartState';
-import { CART_EMPTY, setCartState } from '@atoms/setStates/setCartState';
-
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import { fetchGetJSON } from '@libs/utils/api-helpers';
+import useUserStore from '@libs/hooks/modals/useUserStore';
 
 const Success: NextPage = () => {
     const router = useRouter();
-    const [cartItems, setCartItem] = useRecoilState(cartState)
+    const useUser = useUserStore();
 
     const { data, error } = useSWR(
         router.query.session_id
@@ -24,12 +21,7 @@ const Success: NextPage = () => {
 
     useEffect(() => {
         if(data?.payment_intent?.status && data?.payment_intent?.status !== "requires_payment_method") {
-            setCartState({
-                action: CART_EMPTY,
-                product: {},
-                cartItems: cartItems,
-                setCartItem: setCartItem
-            })
+            useUser.clearCart();
         }
     }, [data]);
 
