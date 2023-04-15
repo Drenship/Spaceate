@@ -152,6 +152,9 @@ export interface TypeOrderProduct {
     image: string;
     price: number;
     price_in: string;
+    currency: string;
+    priceHT: number;
+    tva: number;
 }
 
 export interface TypeShippingAddress {
@@ -174,8 +177,11 @@ export interface TypeOrder {
         charge_id: string;
     },
     orderItems: TypeOrderProduct[];
-    shippingAddress: TypeShippingAddress;
-    blindingAdress?: TypeShippingAddress;
+    shippingAddress: Address;
+    billingAddress: Address;
+    shippingMethode: {
+        display_name: string;
+    }
     shippingTrack?: {
         id?: string;
         service?: string;
