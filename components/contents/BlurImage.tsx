@@ -35,7 +35,7 @@ export default function BlurImage({ src, alt, className, hoverOpacity, onClick, 
                         objectFit={objectFit}
                         alt={alt || "spaceate fruit & legume"}
                         className={cn(
-                            'duration-700 ease-in-out object-cover',
+                            'duration-700 ease-in-out object-cover w-full',
                             hoverOpacity && "group-hover:opacity-80 active:opacity-100 group-focus:opacity-100 focus:opacity-100",
                             className,
                             isLoading

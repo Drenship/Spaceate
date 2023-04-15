@@ -31,11 +31,28 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         await db.connect();
         const getUser = await User.findById(user._id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        if(getUser.cart.length === 0) {
+            return res.status(404).json({ message: "Votre panier est vide" });
+        }
+
+        if(shippingAddress === null) {
+            return res.status(404).json({ message: "Ajouter une adresse de livraison !" });
+        }
+        
+        if(billingAddress === null && sameAddress === false) {
+            return res.status(404).json({ message: "Ajouter une adresse de facturation !" });
+        }
+
+        if(shippingMethode === null) {
+            return res.status(404).json({ message: "Sélectionner le mode de livraison !" });
         }
 
 
-        const cartItems = getUser.cart.map((c: TypeCartItem) => ({ ...c.productId, quantity: c.quantity, cart_id: c._id }))
+        
+        const cartItems = getUser.cart.map((c: any) => ({ ...c.productId._doc, quantity: c.quantity }))
         const orderItems: TypeOrderProduct[] = processOrderItems(cartItems)
 
         const itemsPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -62,14 +79,17 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
         await updateProductStats(cartItems);
 
         // update user
+        const updateUser = await User.findById(user._id);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+        updateUser.orders.push(order._id);
+        updateUser.cart = [];
+        await updateUser.save();
 
-        getUser.orders.push(order._id);
-        getUser.cart.set([]);
-        await getUser.save();
-
-        return res.send({ message: 'Order created successfully', data: order });
+        return res.send({ message: "Commande créée avec succès", data: order });
     } catch (err) {
-        return res.status(500).send({ err: err, message: 'An error has occurred' });
+        return res.status(500).send({ err: err, message: "Une erreur s'est produite" });    
     } finally {
         await db.disconnect();
     }

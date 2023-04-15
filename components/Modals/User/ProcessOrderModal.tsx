@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
+import { toast } from "react-hot-toast";
 
 import useProcessOrderStore from "@libs/hooks/modals/useProcessOrderModal";
 import useUserStore from "@libs/hooks/modals/useUserStore";
 import { getStripe } from "@libs/utils/stripe-helpers";
 import { fetchPostJSON } from "@libs/utils/api-helpers";
+import { Address } from "@libs/typings";
 
 import Modal from "@components/Modals/Modal";
-
-import ShippingOptions from '@datassets/ShippingOptions.json'
 import OrderAddressCard from "@components/cards/OrderAddressCard";
 import { TypographyH4 } from "@components/Typography/Typography";
 import InputRadio from "@components/inputs/InputRadio";
-import { Address } from "@libs/typings";
 import InputCheckbox from "@components/inputs/InputCheckbox";
+import ShippingOptions from '@datassets/ShippingOptions.json'
 
 
 const ProcessOrderModal = () => {
@@ -35,62 +35,80 @@ const ProcessOrderModal = () => {
     shippingMethode: null,
   });
 
+  const disabledCheckoutButton = useMemo(() => {
+    console.log(orderOptions)
+    return isLoading
+      || cartItems.length === 0
+      || !user
+      || orderOptions.shippingAddress === null
+      || orderOptions.billingAddress === null && orderOptions.sameAddress === false
+      || orderOptions.shippingMethode === null
+      ? true
+      : false
+  }, [user, cartItems, isLoading, orderOptions]);
 
 
-
-  const disabledCheckoutButton = useMemo(() => isLoading || cartItems.length === 0 || !user, [user, cartItems, isLoading]);
   const createCheckoutSession = async () => {
+    try {
+      setLoading(true);
 
-    if (!user) return;
+      if (!user) {
+        return toast.error("Vous devez être connecté pour passer une commande !");
+      };
 
-    setLoading(true);
+      const itemsForCheckout = [...cartItems].filter(i => {
+        if (i.outOfQuantity === true || i.outOfStock === true) return;
+        return i;
+      })
 
-    const itemsForCheckout = [...cartItems].filter(i => {
-      if (i.outOfQuantity === true || i.outOfStock === true) return;
-      return i;
-    })
+      if (itemsForCheckout.length <= 0) {
+        return toast.error("Votre panier est vide !");
+      };
 
-    if (itemsForCheckout.length <= 0) return;
+      // orderOptions verify
+      if (orderOptions.shippingAddress === null) {
+        return toast.error("Ajouter une adresse de livraison !");
+      };
+      if (orderOptions.billingAddress === null && orderOptions.sameAddress === false) {
+        return toast.error("Ajouter une adresse de facturation !");
+      };
+      if (orderOptions.shippingMethode === null) {
+        return toast.error("Sélectionner le mode de livraison !");
+      };
 
-    // init stripe
-    const stripe = await getStripe();
-    if (!stripe) {
+      // init stripe
+      const stripe = await getStripe();
+      if (!stripe) {
+        return toast.error("Une erreur est survenue lors du chargement du processeur de paiement.");
+      }
+
+      // Put order
+      const createOrder = await fetchPostJSON("/api/order", { items: itemsForCheckout, ...orderOptions });
+      if (!createOrder || createOrder.err) {
+        return toast.error(createOrder?.message || "Une erreur est survenue lors du passage de la commande.");
+      }
+
+      const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: itemsForCheckout, order_id: createOrder.data._id });
+      // Internal Server Error
+      if ((checkoutSession).statusCode === 500) {
+        return toast.error((checkoutSession).message);
+      }
+
+      // Redirect to checkout
+      const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
+      if (!stripe) {
+        return toast.error(error?.message || "La redirection vers la session de paiement a échoué.")
+      };
+
+    } catch (error: any) {
+      return toast.error(error?.message || "Une erreur est survenue, veuillez réessayer plus tard.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-// verif
-
-
-    // Put order
-    const createOrder = await fetchPostJSON("/api/order", { items: itemsForCheckout, ...orderOptions });
-    if (!createOrder || createOrder.err) {
-      setLoading(false);
-      return;
-    }
-
-    const checkoutSession = await fetchPostJSON("/api/checkout_sessions", { items: itemsForCheckout, order_id: createOrder.data._id });
-    // Internal Server Error
-    if ((checkoutSession).statusCode === 500) {
-      console.error((checkoutSession).message);
-      setLoading(false);
-      return;
-    }
-
-    // Redirect to checkout
-    const { error } = await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
-    if (!stripe) alert(error.message);
-
-    setLoading(false);
   };
 
   const onShippingAddressSelect = async (address: Address) => setOrderOptions(prev => ({ ...prev, shippingAddress: address }))
   const onBillingAddressSelect = async (address: Address) => setOrderOptions(prev => ({ ...prev, billingAddress: address }))
-
-  const onSubmit = async () => { }
-
-  useEffect(() => console.log(orderOptions), [orderOptions])
-
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -136,7 +154,7 @@ const ProcessOrderModal = () => {
         }
 
         <InputCheckbox
-          title="L'address de facturation et de livraison son identique"
+          title="L'adresse de facturation et de livraison est identique"
           input={{
             name: "sameAddress",
             checked: orderOptions.sameAddress,
@@ -154,7 +172,11 @@ const ProcessOrderModal = () => {
               ShippingOptions.map(option => <div key={option._id} className="min-w-[180px]">
                 <InputRadio
                   label={option.shipping_rate_data.display_name}
-                  description={`${option.shipping_rate_data.fixed_amount.amount / 100} ${option.shipping_rate_data.fixed_amount.currency}`}
+                  description={
+                    option.shipping_rate_data.fixed_amount.amount === 0
+                      ? "Gratuit"
+                      : `${option.shipping_rate_data.fixed_amount.amount / 100} ${option.shipping_rate_data.fixed_amount.currency}`
+                  }
                   input={{
                     name: "shippingMethode",
                     value: option._id,
@@ -177,7 +199,7 @@ const ProcessOrderModal = () => {
       className='px-8 py-4 mt-5 text-white uppercase bg-black button-click-effect disabled:bg-gray-600 disabled:text-gray-300 disabled:hover:active:scale-100'
       onClick={createCheckoutSession}
       disabled={disabledCheckoutButton}
-    >{isLoading ? "Chargement..." : "Paiement"}</button>
+    >{isLoading ? "Chargement..." : "Valider et passer la commande"}</button>
   )
 
   return (
@@ -186,10 +208,9 @@ const ProcessOrderModal = () => {
       disabled={isLoading}
       isOpen={useProcessOrder.isOpen}
       onClose={useProcessOrder.onClose}
-      onSubmit={onSubmit}
-
-      title={"Passer la commande"}
-      actionLabel={"Passer commande"}
+      onSubmit={() => { }}
+      title={"Finalisez votre achat : Passer la commande"}
+      actionLabel={"Valider et passer la commande"}
       body={bodyContent}
       footer={footerContent}
     />

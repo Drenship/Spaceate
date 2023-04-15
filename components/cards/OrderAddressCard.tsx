@@ -9,7 +9,7 @@ interface OrderAddressCardProps {
 }
 
 const OrderAddressCard: React.FC<OrderAddressCardProps> = ({ address, currentValue, onAddressSelect }) => {
-    const [isChecked, setIsChecked] = useState(address.isDefault);
+    const [isChecked, setIsChecked] = useState(false);
 
     const handleDivClick = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();

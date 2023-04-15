@@ -54,7 +54,6 @@ const VERIFY_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
       subject: 'Vérification de votre adresse e-mail',
       text: `Veuillez cliquer sur le lien suivant pour vérifier votre adresse e-mail: ${verificationUrl}`,
       html: `Veuillez cliquer sur le lien suivant pour vérifier votre adresse e-mail: <a href="${verificationUrl}">${verificationUrl}</a>`,
-
     })
 
     return res.status(result.status).json({ success: true, message: result.message, result: result });

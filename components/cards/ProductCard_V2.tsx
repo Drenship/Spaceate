@@ -2,15 +2,14 @@
 
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import { cartState } from "@atoms/cartState"
 import { useRouter } from 'next/dist/client/router';
-import { CART_ADD_ITEM, setCartState } from '@atoms/setStates/setCartState';
 import { fixedPriceToCurrency, replaceURL } from '@libs/utils';
 import Rating from '@components/contents/Rating';
 import { TypeProduct } from '@libs/typings';
 import { activePromotion, priceWithPromotion } from '@libs/utils/productUtils';
 import useUserStore from '@libs/hooks/modals/useUserStore';
 import { toast } from 'react-hot-toast';
+import Image from 'next/image';
 
 
 interface BestsellerCardProps {
@@ -28,23 +27,26 @@ const BestsellerCard: React.FC<BestsellerCardProps> = ({ product }) => {
 
     const addItemsToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-
         if (isOutOfStock) {
             return toast.error('le produit est en rupture de stock');
         }
-
         useUser.addToCart({ ...product, quantity: 1 })
-
         router.push('/cart')
     }
 
     return (
         <Link href={`/product/${product.slug}`} className="flex flex-col items-start justify-center w-full overflow-hidden bg-white rounded-md shadow-md group button-click-effect">
-            <div className="relative">
+            <div className="relative w-full aspect-[3/2]">
 
                 <div className='relative aspect-[3/2] overflow-hidden'>
                     <div className='absolute z-[1] w-full h-full group-hover:bg-black/10 duration-300 transition-color' />
-                    <img className="object-cover w-full h-full transition-transform duration-300 scale-100 group-hover:scale-110" src={replaceURL(product.main_image)} alt="watch" />
+                    <Image
+                        className="object-cover w-full h-full transition-transform duration-300 scale-100 group-hover:scale-110"
+                        src={replaceURL(product.main_image)}
+                        alt="watch"
+                        width={327}
+                        height={218}
+                    />
                 </div>
 
                 <button

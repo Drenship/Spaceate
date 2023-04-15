@@ -14,9 +14,11 @@ export const priceWithPromotion = (product: TypeProduct, activePromotion: TypePr
 
 export const processOrderItems = (cartItems: TypeCartItem[]): TypeOrderProduct[] =>
     cartItems.map((item: TypeCartItem) => {
+        //console.log(item)
         const price = priceWithPromotion(item, activePromotion(item));
         const tva = item.advancePrice.tva;
         const priceHT = price / (1 + tva / 100);
+
 
         return {
             _id: item._id,

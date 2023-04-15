@@ -75,16 +75,7 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
             order.stripeDetails.session_id = session.id;
             order.stripeDetails.customer_id = session.customer;
             order.stripeDetails.payment_intent_id = session.payment_intent;
-
             order.paymentResultStripe = session;
-            //order.shippingAddress = {
-            //    fullName: session.shipping_details.name,
-            //    address: session.shipping_details.address.line1,
-            //    address2: session.shipping_details.address.line2,
-            //    city: session.shipping_details.address.city,
-            //    postalCode: session.shipping_details.address.postal_code,
-            //    country: session.shipping_details.address.country,
-            //};
             order.paymentMethod = session.payment_method_types[0];
             
             order.itemsPrice = session.amount_subtotal / 100;
@@ -110,12 +101,72 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
                 }
                 await updateStatsAndStockProducts();
 
+                const generateOrderItemsHTML = (items) => {
+                    return items
+                      .map(
+                        (item) => `
+                      <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.price.toFixed(2)} ${item.currency}</td>
+                      </tr>
+                    `
+                      )
+                      .join("");
+                  };
+                  
+                  const orderDetailsHTML = `
+                    <h1>Confirmation de commande</h1>
+                    <p>Merci pour votre commande ! Voici le récapitulatif de votre commande :</p>
+                  
+                    <h2>Produits commandés</h2>
+                    <table border="1" cellpadding="5" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Nom du produit</th>
+                          <th>Quantité</th>
+                          <th>Prix</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${generateOrderItemsHTML(order.orderItems)}
+                      </tbody>
+                    </table>
+                  
+                    <h2>Adresse de livraison</h2>
+                    <p>
+                      ${order.shippingAddress.fullName}<br>
+                      ${order.shippingAddress.streetAddress}<br>
+                      ${order.shippingAddress.city}, ${order.shippingAddress.postalCode}<br>
+                      ${order.shippingAddress.country}<br>
+                      Téléphone : ${order.shippingAddress.phone || "Non renseigné"}
+                    </p>
+                  
+                    <h2>Adresse de facturation</h2>
+                    <p>
+                      ${order.billingAddress.fullName}<br>
+                      ${order.billingAddress.streetAddress}<br>
+                      ${order.billingAddress.city}, ${order.billingAddress.postalCode}<br>
+                      ${order.billingAddress.country}<br>
+                      Téléphone : ${order.billingAddress.phone || "Non renseigné"}
+                    </p>
+                  
+                    <h2>Mode de livraison</h2>
+                    <p>${order.shippingMethode.display_name}</p>
+                  
+                    <h2>Total de la commande</h2>
+                    <p>Prix des articles : ${order.itemsPrice.toFixed(2)} ${order.orderItems[0].currency}</p>
+                    <p>Frais de livraison : ${order.shippingPrice.toFixed(2)} ${order.orderItems[0].currency}</p>
+                    <p>Taxes : ${order.taxPrice.toFixed(2)} ${order.orderItems[0].currency}</p>
+                    <p><strong>Total : ${order.totalPrice.toFixed(2)} ${order.orderItems[0].currency}</strong></p>
+                  `;
+
                 const result = await sendMail({
                     from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
                     to: session.metadata.userEmail,
                     subject: 'Confirmation de commande',
-                    text: 'Votre commande a bien était payer !',
-                    html: '<p style={{text-color: "blue"}}">Votre commande a bien était payer.</p>',
+                    text: `Votre commande a bien était payer !`,
+                    html: orderDetailsHTML,
                 })
 
                 return res.send({ message: 'Order update successfully', email: result.message });

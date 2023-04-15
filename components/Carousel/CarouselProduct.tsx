@@ -9,7 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
 import { TypeProduct } from "@libs/typings";
-import Productcard from "@components/cards/ProductCard_V2";
+import ProductCard_V2 from "@components/cards/ProductCard_V2";
 
 interface Props {
     overflow?: 'hidden' | 'visible'
@@ -54,8 +54,8 @@ function CarouselProduct({ products, overflow }: Props) {
             style={{ overflow: `${overflow} !important` }}
         >
             {
-                products.map((data, key) => <SwiperSlide key={key}>
-                    <Productcard product={data} />
+                products.map((data, key) => <SwiperSlide key={key} className="w-full">
+                    <ProductCard_V2 product={data} />
                 </SwiperSlide>)
             }
         </Swiper>
