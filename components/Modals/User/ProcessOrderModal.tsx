@@ -36,7 +36,6 @@ const ProcessOrderModal = () => {
   });
 
   const disabledCheckoutButton = useMemo(() => {
-    console.log(orderOptions)
     return isLoading
       || cartItems.length === 0
       || !user

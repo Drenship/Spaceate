@@ -125,23 +125,22 @@ const Modal: React.FC<ModalProps> = ({
                             </div>
                             {/*footer*/}
                             <div className="flex flex-col gap-2 p-6">
-                                {!footer && (
-                                    <div className="flex flex-row items-center w-full gap-4">
-                                        {secondaryAction && secondaryActionLabel && (
-                                            <Button
-                                                disabled={disabled}
-                                                label={secondaryActionLabel}
-                                                onClick={handleSecondaryAction}
-                                                outline
-                                            />
-                                        )}
+
+                                <div className="flex flex-row items-center w-full gap-4">
+                                    {secondaryAction && secondaryActionLabel && (
                                         <Button
                                             disabled={disabled}
-                                            label={actionLabel}
-                                            onClick={handleSubmit}
+                                            label={secondaryActionLabel}
+                                            onClick={handleSecondaryAction}
+                                            outline
                                         />
-                                    </div>
-                                )}
+                                    )}
+                                    <Button
+                                        disabled={disabled}
+                                        label={actionLabel}
+                                        onClick={handleSubmit}
+                                    />
+                                </div>
                                 {footer}
                             </div>
                         </form>

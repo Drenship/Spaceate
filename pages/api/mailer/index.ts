@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import bcrypt from "bcrypt"
 import { sendMail } from '@libs/utils/email-sendgrid';
 import db from '@libs/database/dbConnect';
 import User from '@libs/models/User';
@@ -20,6 +21,10 @@ const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
       return VERIFY_MAIL(req, res);
     case 'VERIFY_NEW_MAIL':
       return VERIFY_NEW_MAIL(req, res);
+
+    case 'RECOVERY_PASSWORD_MAIL':
+      return RECOVERY_PASSWORD_MAIL(req, res);
+
     default:
       return res.status(405).send({ message: 'The send method is not allowed' });
   }
@@ -31,7 +36,6 @@ const VERIFY_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!user) {
       return res.status(400).json({ message: "we need data for send mail" });
     }
-
 
     await db.connect();
 
@@ -46,7 +50,7 @@ const VERIFY_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
     dbUser.emailVerificationTokenExpires = Date.now() + 60 * 60 * 1000; // 1H
     await dbUser.save();
 
-    const verificationUrl = `${process.env.NEXTDOMAIN_URL}/api/user/verify-email/${token}`;
+    const verificationUrl = `${process.env.NEXTDOMAIN_URL}/verify-email?token=${token}`;
 
     const result = await sendMail({
       from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
@@ -140,5 +144,71 @@ const VERIFY_NEW_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
     await db.disconnect();
   }
 }
+
+const RECOVERY_PASSWORD_MAIL = async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "we need data for send mail" });
+    }
+
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: "L'email n'est pas valide." });
+    }
+
+    const code = generateCode();
+    const hashedCode = await bcrypt.hash(code, 12);
+
+    await db.connect();
+
+    const dbUser = await User.findOne({ email })
+
+    if (!dbUser) {
+      return res.status(404).json({ message: "this user is not found" });
+    }
+
+    dbUser.security.code = hashedCode;
+    dbUser.security.codeEndDate = Date.now() + 30 * 60 * 1000; // 30min
+    await dbUser.save();
+
+    const result = await sendMail({
+      from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
+      to: email,
+      subject: 'Votre code de récupération de mot de passe',
+      text: `Cher(e) ${dbUser.name},
+      
+      Pour réinitialiser votre mot de passe, veuillez entrer le code de récupération suivant dans [Votre service] :
+      
+      Code de récupération : ${code}
+      
+      Ce code est valable pendant 30 minutes à compter de la réception de cet e-mail. Si vous n'avez pas demandé ce code, vous pouvez ignorer cet e-mail.
+            
+      Cordialement`,
+
+      html: `Cher(e) ${dbUser.name},
+      <br/>
+      <br/>
+      Pour réinitialiser votre mot de passe, veuillez entrer le code de récupération suivant dans [Votre service] :
+      <br/>
+      <br/>
+      Code de récupération : ${code}
+      <br/>
+      <br/>
+      Ce code est valable pendant 30 minutes à compter de la réception de cet e-mail. Si vous n'avez pas demandé ce code, vous pouvez ignorer cet e-mail.
+      <br/>
+      <br/>
+      Cordialement`,
+    })
+
+    return res.status(result.status).json({ success: true, message: result.message, result: result });
+
+  } catch (error) {
+    console.log("error", error)
+    res.status(500).json({ message: `Erreur lors de l'envoi de l'email: ${error}` });
+  } finally {
+    await db.disconnect();
+  }
+}
+
 
 export default handler;

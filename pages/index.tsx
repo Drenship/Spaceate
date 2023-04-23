@@ -9,6 +9,7 @@ import { TypeCategorie, TypeProduct } from '@libs/typings'
 import BasescreenWrapper from '@components/Layouts/BasescreenLayout'
 import CarouselProduct from '@components/Carousel/CarouselProduct'
 import ServiceCard from '@components/cards/ServiceCard'
+import Slider from '@components/Carousel/Slider';
 
 type Props = {
   homePageDetails: {
@@ -36,6 +37,11 @@ const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
       title: "Fleurs",
       src: "https://img.freepik.com/photos-premium/fleurs-lumineuses-fantastiques-nuit-beau-fond-floral-ai-generative_788189-2607.jpg?w=2000",
       link: "/search?query=&categorie=63fb7f1173b8b3dfdd2f78f3&subCategorie=all"
+    },
+    {
+      title: "Herbes aromatiques",
+      src: "/banner/d98de407e5c695dfb66185798aacaab9.jpg",
+      link: "/search?query=&categorie=642832b3f777fbce28f1b08e&subCategorie=all"
     }
   ]
 
@@ -43,11 +49,12 @@ const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
     <BasescreenWrapper title="Accueil" footer={true}>
       <div>
         <div className='relative'>
-          <div className='absolute bottom-0 w-full h-full' />
+          <div className='absolute top-0 bottom-0 w-full h-full' />
 
-          <div className='absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-white/20'>
-            <div className='relative w-full overflow-hidden'>
+          <div className='absolute left-0 flex flex-col items-center justify-center w-full h-full -top-2 bg-white/20'>
+            <div className='relative w-full overflow-hidden md:max-w-[1400px] aspect-video'>
 
+              <Slider />
 
             </div>
           </div>
@@ -55,7 +62,7 @@ const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
           <div className='absolute bottom-0 z-0 w-full h-32 bg-gradient-to-t from-white to-transparent' />
           <img src="https://blog.liebherr.com/electromenager/fr/wp-content/uploads/sites/13/2020/10/harvestedfood-min-1-1920x800.png" className='w-screen max-h-[100vh] h-full min-h-[50vh] object-cover' alt="" />
         </div>
-        <div className='max-w-[1400px] mx-auto -mt-10 grid grid-cols-1 sm:grid-cols-3 gap-x-5 px-4'>
+        <div className='max-w-[1400px] mx-auto -mt-80 grid grid-cols-1 sm:grid-cols-4 gap-x-5 px-4'>
           {
             services.map((data, key) => <ServiceCard service={data} key={key} />)
           }
@@ -65,16 +72,20 @@ const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
 
       <div className="max-w-screen md:max-w-[1400px] w-full py-10 mx-auto space-y-8 px-4">
 
-        <div>
-          <Image
-            src="/icons/Deal-du-jour.svg"
-            alt="Deal du jour"
-            width="250"
-            height="100"
-            className='select-none w-[35vw] max-w-[250px] mb-1'
-          />
-          <CarouselProduct products={promotions} />
-        </div>
+        {
+          promotions && promotions.length > 0 && (
+            <div>
+              <Image
+                src="/icons/Deal-du-jour.svg"
+                alt="Deal du jour"
+                width="250"
+                height="100"
+                className='select-none w-[35vw] max-w-[250px] mb-1'
+              />
+              <CarouselProduct products={promotions} />
+            </div>
+          )
+        }
 
         {
           homePageDetails.map((categorie, key) => (

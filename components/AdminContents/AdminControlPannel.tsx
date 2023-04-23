@@ -20,6 +20,7 @@ interface AdminControlPannelProps {
             onClick: () => void;
             isDisabled: boolean
         }
+        custom?: React.ReactNode;
     },
     rightPanel?: {
         itemsByPage?: {
@@ -69,6 +70,7 @@ export default function AdminControlPannel({ pageHandler, navigationPanel, leftP
                 leftPanel! ? (
                     <div className="flex flex-col items-start w-full lg:w-1/3 lg:flex-row lg:items-center">
                         <div className="flex items-center">
+                            { leftPanel! && leftPanel.custom && (leftPanel.custom) }
                             {
                                 leftPanel! && leftPanel.edit && (
                                     <button

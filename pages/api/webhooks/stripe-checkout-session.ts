@@ -102,9 +102,7 @@ const handleStripeCheckoutSessionCompleted = async (req: NextApiRequest, res: Ne
                 }
                 await updateStatsAndStockProducts();
 
-
                 const orderDetailsHTML = generateOrderConfirmationEmail(order);
-
                 const result = await sendMail({
                     from: process.env.WEBSITE_EMAIL || 'florentin.greneche@gmail.com',
                     to: session.metadata.userEmail,

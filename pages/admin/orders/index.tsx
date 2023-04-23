@@ -19,6 +19,7 @@ interface Props {
     totalResults: number;
     page: number;
     pageSize: number;
+    order_wait_sending_id: string | null
 }
 
 interface PageHandler {
@@ -29,7 +30,7 @@ interface PageHandler {
 
 const PAGE_SIZE = 20;
 
-function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Props) {
+function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize, order_wait_sending_id }: Props) {
 
     const router = useRouter()
     const [orders, setOrders] = useState(initialOrders);
@@ -46,12 +47,12 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
         if (page) query.page = page;
         if (pageSize) query.pageSize = pageSize;
         if (filter) {
-            
+
             query.filter = filter;
             if (query.filterWithNot) delete query.filterWithNot;
             if (filter === "isPaid") query.filterWithNot = ["isCancel", "isRefund"]
-            if (filter === "all") delete  query.filter
-            if(filter === "inAwait"){
+            if (filter === "all") delete query.filter
+            if (filter === "inAwait") {
                 query.filter = "all"
                 query.filterWithNot = ["isCancel", "isRefund", "isPaid"]
             }
@@ -139,6 +140,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
         fetchData();
     }, []);
 
+
     return (
         <AdminscreenWrapper title="Orders">
             <h1 className='text-xl font-bold uppercase'>Orders</h1>
@@ -156,6 +158,13 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize }: Prop
                     page,
                     maxPages,
                     totalResults
+                }}
+
+                leftPanel={{
+                    custom: order_wait_sending_id && <button
+                        className='px-3 py-2 text-white bg-yellow-600 rounded-md button-click-effect'
+                        onClick={() =>router.push(`/admin/orders/${order_wait_sending_id}`)}
+                    >Préparation des commandes</button>
                 }}
 
                 rightPanel={{
@@ -262,6 +271,12 @@ export const getServerSideProps = async ({ query }: QuerySearch) => {
             .lean();
 
         const totalResults = await Order.countDocuments(orderSearchFullQuery);
+
+        const order_wait_sending_id = await Order.findOne(
+            { isPaid: true, isSended: false }, // conditions de recherche
+            { _id: 1 } // objet de projection
+        );
+
         await db.disconnect();
 
         return {
@@ -269,7 +284,8 @@ export const getServerSideProps = async ({ query }: QuerySearch) => {
                 initialOrders: JSON.parse(JSON.stringify(orders)),
                 totalResults: totalResults,
                 page: page,
-                pageSize: pageSize
+                pageSize: pageSize,
+                order_wait_sending_id: JSON.parse(JSON.stringify(order_wait_sending_id))._id,
             },
         }
     } catch (error) {
@@ -279,7 +295,8 @@ export const getServerSideProps = async ({ query }: QuerySearch) => {
                 initialOrders: [],
                 totalResults: 0,
                 page: 1,
-                pageSize: pageSize
+                pageSize: pageSize,
+                order_wait_sending_id: null
             },
         }
     }

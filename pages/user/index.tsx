@@ -16,6 +16,7 @@ import BasescreenWrapper from '@components/Layouts/BasescreenLayout';
 import CommentaireCard from '@components/cards/CommentaireCard';
 import TableProfilOrderLine from '@components/TableLines/TableProfilOrderLine';
 import UserProfilOrderCard from '@components/cards/UserProfilOrderCard';
+import { toast } from 'react-hot-toast';
 
 
 interface Props {
@@ -53,8 +54,10 @@ const UserProfil: NextPage<Props> = ({ initialOrders }) => {
         })
 
         if (result.success) {
+            toast.success("Mail envoyer")
             setSendMailDisablerd(true)
         } else {
+            toast.error("Fail to send email")
             setSendMailDisablerd(false)
         }
     }

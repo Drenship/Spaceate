@@ -4,7 +4,7 @@ import ScrollShadowWrapper from './ScrollShadowWrapper';
 interface PopupWrapperProps {
     toggleModal: boolean,
     setToggleModal: (state: boolean) => void;
-    children: ReactNode;
+    children: React.ReactNode;
 }
 
 export default function PopupWrapper({ toggleModal, setToggleModal, children }: PopupWrapperProps) {

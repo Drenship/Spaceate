@@ -4,14 +4,14 @@ import User from '@libs/models/User';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
-        case 'GET':
-            return handleGetRequest(req, res);
+        case 'POST':
+            return handlePostRequest(req, res);
         default:
             return res.status(405).send({ message: 'Method not allowed' });
     }
 };
 
-const handleGetRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+const handlePostRequest = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
         const { token } = req.query;
