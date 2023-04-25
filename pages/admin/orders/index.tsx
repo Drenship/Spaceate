@@ -163,7 +163,7 @@ function AdminOrdersScreen({ initialOrders, totalResults, page, pageSize, order_
                 leftPanel={{
                     custom: order_wait_sending_id && <button
                         className='px-3 py-2 text-white bg-yellow-600 rounded-md button-click-effect'
-                        onClick={() =>router.push(`/admin/orders/${order_wait_sending_id}`)}
+                        onClick={() => router.push(`/admin/orders/${order_wait_sending_id}`)}
                     >Préparation des commandes</button>
                 }}
 
@@ -273,7 +273,14 @@ export const getServerSideProps = async ({ query }: QuerySearch) => {
         const totalResults = await Order.countDocuments(orderSearchFullQuery);
 
         const order_wait_sending_id = await Order.findOne(
-            { isPaid: true, isSended: false }, // conditions de recherche
+            {
+                isPaid: true,
+                isSended: false,
+                isRefund: false,
+                isRefundAsked: false,
+                isCancel: false,
+                isDelivered: false,
+            },
             { _id: 1 } // objet de projection
         );
 

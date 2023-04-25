@@ -30,7 +30,7 @@ const Slider: React.FC = () => {
     ];
 
     return (
-        <div className="relative w-full max-h-[420px] h-full">
+        <div className="relative w-full max-h-[420px] aspect-[28/9] h-full">
             <Swiper
                 spaceBetween={0}
                 slidesPerView={1}

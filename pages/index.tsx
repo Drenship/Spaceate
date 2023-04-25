@@ -47,25 +47,31 @@ const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
 
   return (
     <BasescreenWrapper title="Accueil" footer={true}>
-      <div>
-        <div className='relative'>
+      
+      <div className='w-full'>
+        <div className='relative w-screen '>
+
+          <div className='absolute bottom-0 z-10 w-full h-32 bg-gradient-to-t from-white to-transparent' />
+          <img src="https://blog.liebherr.com/electromenager/fr/wp-content/uploads/sites/13/2020/10/harvestedfood-min-1-1920x800.png" className='absolute top-0 bottom-0 z-0 object-cover w-screen max-h-[100vh] h-full min-h-[50vh] opacity-80' alt="" />
           <div className='absolute top-0 bottom-0 w-full h-full' />
 
-          <div className='absolute left-0 flex flex-col items-center justify-center w-full h-full -top-2 bg-white/20'>
-            <div className='relative w-full overflow-hidden md:max-w-[1400px] aspect-video'>
-
+          <div className='flex flex-col items-center justify-center w-full h-full bg-white/20'>
+            
+            <div className='relative w-full md:max-w-[1400px] overflow-hidden'>
               <Slider />
-
             </div>
-          </div>
 
-          <div className='absolute bottom-0 z-0 w-full h-32 bg-gradient-to-t from-white to-transparent' />
-          <img src="https://blog.liebherr.com/electromenager/fr/wp-content/uploads/sites/13/2020/10/harvestedfood-min-1-1920x800.png" className='w-screen max-h-[100vh] h-full min-h-[50vh] object-cover' alt="" />
-        </div>
-        <div className='max-w-[1400px] mx-auto -mt-80 grid grid-cols-1 sm:grid-cols-4 gap-x-5 px-4'>
-          {
-            services.map((data, key) => <ServiceCard service={data} key={key} />)
-          }
+            <div className='max-w-[1400px] w-full inline-flex overflow-visible px-4 md:px-0 mt-5'>
+              <div className='inline-grid w-full'>
+                <div className='flex items-start w-full gap-2 overflow-x-auto js-not-swipe'>
+                  {
+                    services.map((data, key) => <ServiceCard service={data} key={key} />)
+                  }
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 

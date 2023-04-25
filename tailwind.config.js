@@ -20,6 +20,12 @@ module.exports = {
       textColor: {
         'blue-600': '#185ee0',
       },
+      aspectRatio: {
+        '142/199': '71.36%',
+      },
+      minWidth: {
+        '280px': '280px',
+      },
     },
   },
   daisyui: {
