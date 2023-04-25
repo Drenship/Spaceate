@@ -61,9 +61,9 @@ const Home: NextPage<Props> = ({ homePageDetails, promotions }) => {
               <Slider />
             </div>
 
-            <div className='max-w-[1400px] w-full inline-flex px-4 md:px-0 mt-5'>
+            <div className='max-w-[1400px] w-full inline-flex md:px-0 mt-5 overflow-visible'>
               <div className='inline-grid w-full'>
-                <div className='flex items-start w-full gap-2 overflow-auto scrollbar-hide js-not-swipe'>
+                <div className='flex items-start w-full gap-2 px-4 overflow-y-auto scrollbar-hide js-not-swipe'>
                   {
                     services.map((data, key) => <ServiceCard service={data} key={key} />)
                   }
